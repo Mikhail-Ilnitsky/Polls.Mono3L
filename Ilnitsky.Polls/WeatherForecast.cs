@@ -1,3 +1,5 @@
+﻿using System;
+
 namespace Ilnitsky.Polls
 {
     public class WeatherForecast
