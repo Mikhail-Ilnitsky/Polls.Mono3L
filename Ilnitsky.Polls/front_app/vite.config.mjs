@@ -11,9 +11,28 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    base: './', //process.env.NODE_ENV === 'production' ? './' : '/',
     build: {
         outDir: '../wwwroot',
+        assetsDir: 'assets',
         emptyOutDir: true,
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+                assetFileNames: 'assets/[name]-[hash][extname]',
+                chunkFileNames: 'assets/[name]-[hash].js',
+                entryFileNames: 'assets/[name]-[hash].js',
+            }
+        },
+        // Для разработки с ASP.NET бэкендом
+        server: {
+            proxy: {
+                '/api': {
+                    target: 'http://localhost:44356', // порт ASP.NET
+                    changeOrigin: true
+                }
+            }
+        }
     },
     plugins: [
         VueRouter(),

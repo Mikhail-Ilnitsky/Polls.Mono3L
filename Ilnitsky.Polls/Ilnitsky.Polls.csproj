@@ -17,4 +17,12 @@
     <ProjectReference Include="..\Ilnitsky.Polls.BusinessLogic\Ilnitsky.Polls.BusinessLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <Target Name="ActionsBeforePublish" BeforeTargets="Publish">
+	<Exec WorkingDirectory="front_app" Command="npm run build" />
+  </Target>
+
 </Project>
