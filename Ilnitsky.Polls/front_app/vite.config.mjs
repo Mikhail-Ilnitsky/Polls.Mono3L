@@ -1,4 +1,4 @@
-﻿// Plugins
+// Plugins
 import Components from 'unplugin-vue-components/vite'
 import Vue from '@vitejs/plugin-vue'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
@@ -16,12 +16,24 @@ export default defineConfig({
         outDir: '../wwwroot',
         assetsDir: 'assets',
         emptyOutDir: true,
+        sourcemap: false,       // Отключаем sourcemaps для production
+        cssCodeSplit: true,
         rollupOptions: {
             output: {
                 manualChunks: undefined,
-                assetFileNames: 'assets/[name]-[hash][extname]',
+
+                // Оптимизация имён файлов
                 chunkFileNames: 'assets/[name]-[hash].js',
                 entryFileNames: 'assets/[name]-[hash].js',
+                assetFileNames: ({ name }) => {
+                    if (/\.(eot|ttf|woff|woff2)$/.test(name)) {
+                        return 'assets/fonts/[name]-[hash][extname]'
+                    }
+                    if (/\.css$/.test(name)) {
+                        return 'assets/css/[name]-[hash][extname]'
+                    }
+                    return 'assets/[name]-[hash][extname]'
+                },
             }
         },
         // Для разработки с ASP.NET бэкендом
