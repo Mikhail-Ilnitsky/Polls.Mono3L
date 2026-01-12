@@ -8,9 +8,14 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.json]
-charset = utf-8
 
 [*.{js,jsx,ts,tsx,vue,htm,html}]
 indent_style = space
 indent_size = 4
+
+
+[*.{cs,cshtml,razor}]
+indent_style = space
+indent_size = 4
+# Отключаем BOM для C# файлов
+dotnet_style_encoding = utf-8_without_bom:warning
