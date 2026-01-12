@@ -1,28 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<UserSecretsId>67717e96-b806-4971-ad0b-ef828e7da497</UserSecretsId>
-		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UserSecretsId>67717e96-b806-4971-ad0b-ef828e7da497</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Ilnitsky.Polls.BusinessLogic\Ilnitsky.Polls.BusinessLogic.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ilnitsky.Polls.BusinessLogic\Ilnitsky.Polls.BusinessLogic.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="wwwroot\" />
-	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
 
-	<Target Name="ActionsBeforePublish" BeforeTargets="Publish">
-		<Exec WorkingDirectory="front_app" Command="npm run build" />
-	</Target>
+  <Target Name="ActionsBeforePublish" BeforeTargets="Publish">
+    <Exec WorkingDirectory="front_app" Command="npm run build" />
+  </Target>
 
 </Project>
