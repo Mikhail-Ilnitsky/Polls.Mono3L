@@ -1,0 +1,10 @@
+# Бинарные файлы
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+
+# Установка UTF-8 для всех текстовых файлов
+* text=auto eol=lf charset=utf-8
