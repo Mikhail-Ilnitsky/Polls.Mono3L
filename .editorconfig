@@ -14,6 +14,12 @@ indent_style = space
 indent_size = 2
 
 
+[*.{js,ts,vue}]
+semi = true
+javascript_semi = true
+typescript_semi = true
+
+
 [*.csproj]
 indent_style = space
 indent_size = 2
