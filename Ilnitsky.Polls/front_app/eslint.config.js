@@ -11,6 +11,8 @@ export default vuetify(
 
       // Отключаем правило, которое может ругаться на "лишние" точки
       '@stylistic/no-extra-semi': 'error',
+
+      'vue/attributes-order': 'off',
     },
   },
 );
