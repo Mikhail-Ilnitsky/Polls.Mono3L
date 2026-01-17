@@ -30,6 +30,7 @@ export default createStore({
       {
         name: 'Как вы варите картошку',
         pollId: '1111',
+        html: null,
         questions: [
           {
             questionId: '111111',
@@ -46,6 +47,7 @@ export default createStore({
       {
         name: 'Чем вы заправляете оливье',
         pollId: '2222',
+        html: null,
         questions: [
           {
             questionId: '111222',
@@ -62,6 +64,7 @@ export default createStore({
       {
         name: 'Как ваши дети питаются в школе',
         pollId: '3333',
+        html: null,
         questions: [
           {
             questionId: '111333',
@@ -78,6 +81,7 @@ export default createStore({
       {
         name: 'За какую футбольную команду вы болеете',
         pollId: '4444',
+        html: null,
         questions: [
           {
             questionId: '111444',
@@ -94,6 +98,7 @@ export default createStore({
       {
         name: 'Брак и семья',
         pollId: '5555',
+        html: '<img class="mb-1 w-100" src="https://st.depositphotos.com/1075946/3664/i/950/depositphotos_36646171-stock-photo-parents-with-children.jpg">',
         questions: [
           {
             questionId: '112211',

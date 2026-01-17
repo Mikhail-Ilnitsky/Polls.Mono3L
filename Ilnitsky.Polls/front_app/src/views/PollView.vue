@@ -2,24 +2,24 @@
   <div class="poll-view">
     <v-container>
       <v-row>
-        <v-col cols="12">
-          Html с описанием опроса
+        <v-spacer />
+        <v-col cols="12" sm="8" md="4" xl="2">
+          <PollCard :poll="poll" />
         </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-card>
-            <h1>pollId: {{ pollId }}</h1>
-          </v-card>
-        </v-col>
+        <v-spacer />
       </v-row>
     </v-container>
   </div>
 </template>
 
 <script>
+  import { mapState } from 'vuex';
+  import PollCard from '@/components/PollCard.vue';
+
   export default {
-    components: {},
+    components: {
+      PollCard,
+    },
 
     props: {
       pollId: {
@@ -32,7 +32,13 @@
       return {};
     },
 
-    computed: {},
+    computed: {
+      ...mapState(['polls']),
+
+      poll() {
+        return this.polls.find(p => p.pollId === this.pollId);
+      },
+    },
   };
 </script>
 
