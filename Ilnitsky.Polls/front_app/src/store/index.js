@@ -28,9 +28,9 @@ export default createStore({
 
     polls: [
       {
-        name: 'Как вы варите картошку',
+        name: 'Варка картошки',
         pollId: '1111',
-        html: null,
+        html: '<img class="mb-1 w-100" src="https://img.freepik.com/premium-photo/fresh-peeled-potatoes-wooden-table_220925-51555.jpg?semt=ais_hybrid&w=740&q=80">',
         questions: [
           {
             questionId: '111111',
@@ -45,9 +45,9 @@ export default createStore({
         ],
       },
       {
-        name: 'Чем вы заправляете оливье',
+        name: 'Чем заправлять оливье',
         pollId: '2222',
-        html: null,
+        html: '<img class="mb-1 w-100" src="https://avatars.mds.yandex.net/i?id=bc05f1be7ca98bc42e73968391df00edd8ce8846-11408895-images-thumbs&n=13">',
         questions: [
           {
             questionId: '111222',
@@ -62,7 +62,7 @@ export default createStore({
         ],
       },
       {
-        name: 'Как ваши дети питаются в школе',
+        name: 'Питание в школе',
         pollId: '3333',
         html: null,
         questions: [
@@ -79,7 +79,7 @@ export default createStore({
         ],
       },
       {
-        name: 'За какую футбольную команду вы болеете',
+        name: 'Футбольные команды',
         pollId: '4444',
         html: null,
         questions: [
@@ -103,7 +103,7 @@ export default createStore({
           {
             questionId: '112211',
             question: 'Сколько вам лет?',
-            answers: ['младше 16', 'от 16 до 17', 'от 18 до 19', 'от 20 до 21', 'от 22 до 24', 'от 25 до 30', 'от 31 до 35', 'от 36 до 40', 'после 40', 'от 41 до 45', 'от 46 до 50', 'от 51 до 60', 'от 61 до 70', 'от 71 до 80', '81 и больше'],
+            answers: ['младше 16', 'от 16 до 17', 'от 18 до 19', 'от 20 до 21', 'от 22 до 24', 'от 25 до 30', 'от 31 до 35', 'от 36 до 40', 'от 41 до 45', 'от 46 до 50', 'от 51 до 60', 'от 61 до 70', 'от 71 до 80', '81 и больше'],
             allowCustomAnswer: false,
             number: 1,
             conditionAnswer: null,
