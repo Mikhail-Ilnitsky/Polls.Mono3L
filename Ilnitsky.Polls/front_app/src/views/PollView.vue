@@ -28,7 +28,7 @@
       },
     },
 
-    data () {
+    data() {
       return {};
     },
 

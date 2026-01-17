@@ -11,7 +11,7 @@ import vuetify from './vuetify';
 
 const router = createRouterWithStore(store);
 
-export function registerPlugins (app) {
+export function registerPlugins(app) {
   app
     .use(store)
     .use(vuetify)

@@ -217,12 +217,12 @@ export default createStore({
   },
 
   mutations: {
-    loginUser (state, user) {
+    loginUser(state, user) {
       state.userId = user.id;
       state.userName = user.name;
     },
 
-    logoutUser (state) {
+    logoutUser(state) {
       state.userId = null;
       state.userName = null;
     },

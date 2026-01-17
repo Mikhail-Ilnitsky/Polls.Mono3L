@@ -52,7 +52,7 @@
   import { mapGetters, mapState } from 'vuex';
 
   export default {
-    data () {
+    data() {
       return {
         username: null,
         password: null,
@@ -64,7 +64,7 @@
       ...mapGetters(['isAuthorized']),
       ...mapState(['users']),
 
-      isValid () {
+      isValid() {
         return this.username && this.password;
       },
     },
@@ -72,11 +72,11 @@
     watch: {},
 
     methods: {
-      clear () {
+      clear() {
         this.username = null;
         this.password = null;
       },
-      login () {
+      login() {
         if (!this.isValid) {
           return;
         }

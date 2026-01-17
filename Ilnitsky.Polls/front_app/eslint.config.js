@@ -12,7 +12,11 @@ export default vuetify(
       // Отключаем правило, которое может ругаться на "лишние" точки
       '@stylistic/no-extra-semi': 'error',
 
+      // Отключаем сортировку атрибутов тегов для vue-файлов
       'vue/attributes-order': 'off',
+
+      // Отключаем пробелы между именем функции и круглыми скобками с аргументами
+      '@stylistic/space-before-function-paren': ['error', 'never'],
     },
   },
 );
