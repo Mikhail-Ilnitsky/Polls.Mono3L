@@ -25,7 +25,7 @@
       </v-card>
     </template>
 
-    <v-card v-else>
+    <v-card v-else variant="outlined">
       <v-card-text>
         <h1>Спасибо за ответы!</h1>
       </v-card-text>

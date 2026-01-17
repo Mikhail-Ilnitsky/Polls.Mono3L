@@ -1,50 +1,44 @@
 <template>
   <div class="login-view">
-    <v-container>
-      <v-row>
-        <v-spacer />
-        <v-col cols="12" sm="8" md="4" xl="2">
-          <v-card title="Вход" width="100%">
-            <v-form class="pa-4">
-              <v-text-field
-                v-model="username"
-                autocomplete="username"
-                clearable
-                label="Логин"
-                prepend-icon="mdi-account"
-              />
-              <v-text-field
-                v-model="password"
-                autocomplete="new-password"
-                clearable
-                label="Пароль"
-                :prepend-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                :type="showPassword ? 'text' : 'password'"
-                @click:prepend="showPassword = !showPassword"
-              />
-            </v-form>
-            <v-card-actions class="mx-2 mb-2 mt-n6">
-              <v-spacer />
-              <v-btn
-                color="secondary"
-                text="Очистить"
-                variant="elevated"
-                @click="clear"
-              />
-              <v-btn
-                class="ml-2"
-                color="primary"
-                :disabled="!isValid"
-                text="Войти"
-                variant="elevated"
-                @click="login"
-              />
-            </v-card-actions>
-          </v-card>
-        </v-col>
-        <v-spacer />
-      </v-row>
-    </v-container>
+    <CommonGrid>
+      <v-card title="Вход" class="w-100" variant="outlined">
+        <v-form class="pa-4">
+          <v-text-field
+            v-model="username"
+            autocomplete="username"
+            clearable
+            label="Логин"
+            prepend-icon="mdi-account"
+          />
+          <v-text-field
+            v-model="password"
+            autocomplete="new-password"
+            clearable
+            label="Пароль"
+            :prepend-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="showPassword ? 'text' : 'password'"
+            @click:prepend="showPassword = !showPassword"
+          />
+        </v-form>
+        <v-card-actions class="mx-2 mb-2 mt-n6">
+          <v-spacer />
+          <v-btn
+            color="secondary"
+            text="Очистить"
+            variant="elevated"
+            @click="clear"
+          />
+          <v-btn
+            class="ml-2"
+            color="primary"
+            :disabled="!isValid"
+            text="Войти"
+            variant="elevated"
+            @click="login"
+          />
+        </v-card-actions>
+      </v-card>
+    </CommonGrid>
   </div>
 </template>
 
