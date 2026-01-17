@@ -3,7 +3,7 @@
     <v-container>
       <v-row>
         <v-spacer />
-        <v-col cols="12" sm="8" md="4" xl="2">
+        <v-col cols="12" sm="8" md="6" xl="4">
           <slot />
         </v-col>
         <v-spacer />

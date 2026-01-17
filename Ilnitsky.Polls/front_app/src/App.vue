@@ -3,8 +3,9 @@
     <v-navigation-drawer
       class="pt-4"
       color="grey-lighten-3"
-      model-value
-      rail
+      width="160"
+      permanent
+      :rail="isSmall"
     >
       <v-list-item
         color="primary"
@@ -13,10 +14,24 @@
         :to="{ name: 'LastPollsPage' }"
       >
         <template #prepend>
-          <v-icon>mdi-format-list-checks</v-icon>
+          <v-icon>mdi-script-text-outline</v-icon>
         </template>
 
         <v-list-item-title>Опросы</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item
+        v-if="isPollPage"
+        color="primary"
+        active
+        exact
+        link
+      >
+        <template #prepend>
+          <v-icon>mdi-format-list-checks</v-icon>
+        </template>
+
+        <v-list-item-title>Опрос</v-list-item-title>
       </v-list-item>
 
       <template v-if="!isAuthorized">
@@ -44,7 +59,7 @@
             <v-icon>mdi-account-box-outline</v-icon>
           </template>
 
-          <v-list-item-title>Личный кабинет</v-list-item-title>
+          <v-list-item-title>Кабинет</v-list-item-title>
         </v-list-item>
       </template>
 
@@ -69,6 +84,30 @@
     computed: {
       ...mapGetters(['isAuthorized']),
       ...mapState(['userName']),
+
+      gridName() {
+        return this.$vuetify.display.name;
+      },
+
+      isXS() {
+        return this.gridName === 'xs';
+      },
+
+      isSM() {
+        return this.gridName === 'sm';
+      },
+
+      isSmall() {
+        return this.isXS || this.isSM;
+      },
+
+      pageName() {
+        return this.$route.name;
+      },
+
+      isPollPage() {
+        return this.pageName === 'PollPage';
+      },
     },
   };
 </script>
