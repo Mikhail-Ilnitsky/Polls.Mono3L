@@ -1,12 +1,13 @@
 <template>
   <div class="last-polls-view">
     <CommonGrid>
-      <v-card title="Последние опросы" variant="outlined">
+      <v-card title="Последние опросы" variant="outlined" class="text-primary">
         <v-list class="mt-n2">
           <v-list-item
             v-for="poll in polls"
             :key="poll.id"
           >
+            <v-icon class="mr-2 text-primary">mdi-help-circle-outline</v-icon>
             <router-link color="red" :to="{ name: 'PollPage', params: { pollId: poll.pollId} }">{{ poll.name }}</router-link>
           </v-list-item>
         </v-list>

@@ -15,5 +15,6 @@ declare module 'vue' {
     PollCard: typeof import('./src/components/PollCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ThemeChanger: typeof import('./src/components/ThemeChanger.vue')['default']
   }
 }

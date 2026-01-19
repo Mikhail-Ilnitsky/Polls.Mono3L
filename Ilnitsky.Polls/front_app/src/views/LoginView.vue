@@ -1,8 +1,8 @@
 <template>
   <div class="login-view">
     <CommonGrid>
-      <v-card title="Вход" class="w-100" variant="outlined">
-        <v-form class="pa-4">
+      <v-card title="Вход" variant="outlined" class="w-100 text-primary">
+        <v-form class="pa-4 text-tabular">
           <v-text-field
             v-model="username"
             autocomplete="username"

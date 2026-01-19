@@ -1,8 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer
-      class="pt-4"
-      color="grey-lighten-3"
+      class="pt-4 border-e-lg border-primary"
       width="160"
       permanent
       :rail="isSmall"

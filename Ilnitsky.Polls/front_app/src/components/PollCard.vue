@@ -1,10 +1,10 @@
 <template>
   <div class="poll-card">
     <template v-if="currentQuestion">
-      <h3>{{ poll.name }}</h3>
+      <h3 class="text-primary">{{ poll.name }}</h3>
       <div v-if="poll?.html" v-html="poll.html" />
-      <v-card :title="currentQuestion?.question" variant="outlined">
-        <v-card-text>
+      <v-card :title="currentQuestion?.question" variant="outlined" class="text-primary">
+        <v-card-text class="text-tabular">
           <v-radio-group v-model="userAnswer">
             <v-radio v-for="answer in currentQuestion?.answers" :key="answer" :label="answer" :value="answer" />
             <v-radio v-if="currentQuestion?.allowCustomAnswer" :label="customAnswer" :value="customAnswer" />
@@ -25,9 +25,9 @@
       </v-card>
     </template>
 
-    <v-card v-else variant="outlined">
+    <v-card v-else variant="outlined" class="text-primary">
       <v-card-text>
-        <h1>Спасибо за ответы!</h1>
+        <h2>Спасибо за ответы!</h2>
       </v-card-text>
 
       <v-card-actions class="mt-0">
