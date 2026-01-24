@@ -5,11 +5,27 @@
       <div v-if="poll?.html" v-html="poll.html" />
       <v-card :title="currentQuestion?.question" variant="outlined" class="text-primary">
         <v-card-text class="text-tabular">
-          <v-radio-group v-model="userAnswer">
-            <v-radio v-for="answer in currentQuestion?.answers" :key="answer" :label="answer" :value="answer" />
-            <v-radio v-if="currentQuestion?.allowCustomAnswer" :label="customAnswer" :value="customAnswer" />
-          </v-radio-group>
-          <v-text-field v-if="userAnswer === customAnswer" label="мой вариант" v-model.trim="userCustomAnswer" />
+
+          <div v-if="currentQuestion.allowMultipleChoice">
+            <v-checkbox
+              v-for="answer in currentQuestion?.answers"
+              :key="answer"
+              v-model="userMultipleAnswer"
+              :label="answer"
+              :value="answer"
+              class="my-0 py-0"
+              density="compact"
+            />
+          </div>
+
+          <div v-else>
+            <v-radio-group v-model="userAnswer">
+              <v-radio v-for="answer in currentQuestion?.answers" :key="answer" :label="answer" :value="answer" />
+              <v-radio v-if="currentQuestion?.allowCustomAnswer" :label="customAnswer" :value="customAnswer" />
+            </v-radio-group>
+            <v-text-field v-if="userAnswer === customAnswer" label="мой вариант" v-model.trim="userCustomAnswer" />
+          </div>
+
         </v-card-text>
 
         <v-card-actions class="mt-n8 mr-2 mb-2">
@@ -61,6 +77,7 @@
         currentQuestionNumber: 1,
         userAnswer: null,
         userCustomAnswer: null,
+        userMultipleAnswer: [],
       };
     },
 
@@ -71,19 +88,30 @@
       currentQuestion() {
         return this.poll.questions.find(q => q.number === this.currentQuestionNumber);
       },
+      allowMultipleChoice() {
+        return this.currentQuestion.allowMultipleChoice;
+      },
+      allowCustomAnswer() {
+        return this.currentQuestion.allowCustomAnswer;
+      },
       isAnswer() {
-        return (!this.currentQuestion.allowCustomAnswer && this.userAnswer)
-          || (this.currentQuestion.allowCustomAnswer && this.userAnswer && this.userAnswer !== this.customAnswer)
-          || (this.currentQuestion.allowCustomAnswer && this.userAnswer === this.customAnswer && this.userCustomAnswer);
+        return (this.allowMultipleChoice && this.userMultipleAnswer?.length > 0)
+          || (!this.allowMultipleChoice && !this.allowCustomAnswer && this.userAnswer)
+          || (!this.allowMultipleChoice && this.allowCustomAnswer && this.userAnswer && this.userAnswer !== this.customAnswer)
+          || (!this.allowMultipleChoice && this.allowCustomAnswer && this.userAnswer === this.customAnswer && this.userCustomAnswer);
       },
       resultAnswer() {
         if (!this.isAnswer) {
           return null;
         }
 
+        if (this.allowMultipleChoice) {
+          return this.userMultipleAnswer;
+        }
+
         return this.currentQuestion.allowCustomAnswer && this.userAnswer === this.customAnswer
-          ? this.userCustomAnswer
-          : this.userAnswer;
+          ? [this.userCustomAnswer]
+          : [this.userAnswer];
       },
       nextNumber() {
         if (this.currentQuestion.conditionAnswer === null) {
@@ -111,6 +139,7 @@
           this.currentQuestionNumber = this.nextNumber;
           this.userAnswer = null;
           this.userCustomAnswer = null;
+          this.userMultipleAnswer = [];
         }
       },
     },
