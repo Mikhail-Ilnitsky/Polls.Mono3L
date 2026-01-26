@@ -32,6 +32,10 @@
       ...mapState(['polls']),
     },
 
+    created() {
+      this.$store.dispatch('loadPolls');
+    },
+
     methods: {},
 
   };

@@ -1,7 +1,13 @@
 import { createStore } from 'vuex';
 
+import PollsService from '@/services/pollsService';
+
 export default createStore({
   state: {
+    // Services:
+    pollsService: new PollsService(),
+
+    // User:
     userId: null,
     userName: null,
 
@@ -267,7 +273,18 @@ export default createStore({
       state.userId = null;
       state.userName = null;
     },
+
+    setPolls(state, newValue) {
+      state.polls = newValue;
+    },
   },
 
-  actions: {},
+  actions: {
+    loadPolls({ state, commit }) {
+      state.pollsService.getPolls({})
+        .then(response => {
+          commit('setPolls', response.data);
+        });
+    },
+  },
 });
