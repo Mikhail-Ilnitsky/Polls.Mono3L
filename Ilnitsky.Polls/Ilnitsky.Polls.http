@@ -1,6 +1,6 @@
-@Ilnitsky.Polls_HostAddress = http://localhost:5071
+@Ilnitsky.Polls_HostAddress = https://localhost:44356
 
-GET {{Ilnitsky.Polls_HostAddress}}/weatherforecast/
+GET {{Ilnitsky.Polls_HostAddress}}/api/v1/polls/
 Accept: application/json
 
 ###

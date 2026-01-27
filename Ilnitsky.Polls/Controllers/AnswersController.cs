@@ -11,9 +11,9 @@ namespace Ilnitsky.Polls.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] RespondentAnswerDto answer)
         {
+            Trace.WriteLine("");
             Trace.WriteLine("Trace Answers POST:");
             Trace.WriteLine(answer);
-            Trace.WriteLine(HttpContext);
             Trace.WriteLine("");
             return Ok();
         }
