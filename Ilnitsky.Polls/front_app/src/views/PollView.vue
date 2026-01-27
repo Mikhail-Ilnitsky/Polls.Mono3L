@@ -1,7 +1,10 @@
 <template>
   <div class="poll-view">
     <CommonGrid>
-      <PollCard :poll="poll" />
+      <PollCard
+        :poll="poll"
+        @select-answer="saveAnswer"
+      />
     </CommonGrid>
   </div>
 </template>
@@ -28,6 +31,12 @@
 
       poll() {
         return this.polls.find(p => p.pollId === this.pollId);
+      },
+    },
+
+    methods: {
+      saveAnswer(answer) {
+        this.$store.dispatch('uploadAnswer', answer);
       },
     },
   };

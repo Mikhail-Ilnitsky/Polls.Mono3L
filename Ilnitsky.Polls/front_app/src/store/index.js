@@ -1,11 +1,13 @@
 import { createStore } from 'vuex';
 
+import AnswersService from '@/services/answersService';
 import PollsService from '@/services/pollsService';
 
 export default createStore({
   state: {
     // Services:
     pollsService: new PollsService(),
+    answersService: new AnswersService(),
 
     // User:
     userId: null,
@@ -280,11 +282,15 @@ export default createStore({
   },
 
   actions: {
-    loadPolls({ state, commit }) {
-      state.pollsService.getPolls({})
+    loadPolls({ state, commit }, params) {
+      state.pollsService.getPolls(params)
         .then(response => {
           commit('setPolls', response.data);
         });
+    },
+
+    uploadAnswer({ state }, response) {
+      state.answersService.postAnswer(response);
     },
   },
 });

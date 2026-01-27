@@ -130,7 +130,13 @@
           return;
         }
 
-        this.$emit('select-answer', this.resultAnswer);
+        const result = {
+          pollId: this.poll.pollId,
+          questionId: this.currentQuestion.questionId,
+          answers: this.resultAnswer,
+        };
+
+        this.$emit('select-answer', result);
 
         if (this.nextNumber === null) {
           this.$emit('end-poll');
