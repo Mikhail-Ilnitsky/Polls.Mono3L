@@ -8,4 +8,4 @@ public record PollDto(
     string Name,
     string Html,
     bool IsActive,
-    List<QuestionDto> questions);
+    List<QuestionDto> Questions);

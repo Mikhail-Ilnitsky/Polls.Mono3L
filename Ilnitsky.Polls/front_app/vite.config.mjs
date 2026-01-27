@@ -21,11 +21,11 @@ export default defineConfig({
         // Оптимизация имён файлов
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: ({ name }) => {
-          if (/\.(eot|ttf|woff|woff2)$/.test(name)) {
+        assetFileNames: ({ fileName }) => {
+          if (/\.(eot|ttf|woff|woff2)$/.test(fileName)) {
             return 'assets/fonts/[name]-[hash][extname]';
           }
-          if (/\.css$/.test(name)) {
+          if (/\.css$/.test(fileName)) {
             return 'assets/css/[name]-[hash][extname]';
           }
           return 'assets/[name]-[hash][extname]';

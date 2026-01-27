@@ -10,15 +10,14 @@ namespace Ilnitsky.Polls.Controllers;
 [ApiController]
 public class PollsController : ControllerBase
 {
-    static readonly List<PollDto> _polls = new()
-    {
+    private static readonly List<PollDto> _polls =
+    [
         new PollDto(
             Guid.NewGuid(),
             "Марки китайских автомобилей",
             "<img class=\"mb-1 w-100\" src=\"https://infotables.ru/images/avto/logo_auto/logo_china_auto.png\">",
             true,
-            new List<QuestionDto>
-            {
+            [
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Какие марки китайских автомобилей вы знаете?",
@@ -28,21 +27,19 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     null,
-                    new List<string>
-                    {
+                    [
                         "Brilliance", "BYD", "Changan", "Chery", "Dongfeng",
                         "FAW", "Foton", "GAC", "Geely", "Great Wall",
                         "Hafei", "Haima", "Haval", "Hawtai", "JAC",
                         "Lifan", "Zotye",
-                    }),
-            }),
+                    ]),
+            ]),
         new PollDto(
             Guid.NewGuid(),
             "Футбольные команды",
             "",
             true,
-            new List<QuestionDto>
-            {
+            [
                 new QuestionDto(
                     Guid.NewGuid(),
                     "За какую футбольную команду вы болеете?",
@@ -52,19 +49,17 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     null,
-                    new List<string>
-                    {
+                    [
                         "Реал Мадрид", "Барселона", "Манчестер Юнайтед",
                         "Ливерпуль", "Бавария", "Манчестер Сити", "ПСЖ",
-                    }),
-            }),
+                    ]),
+            ]),
         new PollDto(
             Guid.NewGuid(),
             "Чем заправлять оливье",
             "<img class=\"mb-1 w-100\" src=\"https://avatars.mds.yandex.net/i?id=bc05f1be7ca98bc42e73968391df00edd8ce8846-11408895-images-thumbs&n=13\">",
             true,
-            new List<QuestionDto>
-            {
+            [
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Чем вы заправляете оливье?",
@@ -74,18 +69,16 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     null,
-                    new List<string>
-                    {
+                    [
                         "Сметаной", "Майонезом", "Оливковым маслом",
-                    }),
-            }),
+                    ]),
+            ]),
         new PollDto(
             Guid.NewGuid(),
             "Варка картошки",
             "<img class=\"mb-1 w-100\" src=\"https://img.freepik.com/premium-photo/fresh-peeled-potatoes-wooden-table_220925-51555.jpg?semt=ais_hybrid&w=740&q=80\">",
             true,
-            new List<QuestionDto>
-            {
+            [
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Как вы варите картошку?",
@@ -95,18 +88,16 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     null,
-                    new List<string>
-                    {
+                    [
                         "В кожуре", "Почищенную", "Почищенную и порезанную",
-                    }),
-            }),
+                    ]),
+            ]),
         new PollDto(
             Guid.NewGuid(),
             "Питание в школе",
             "",
             true,
-            new List<QuestionDto>
-            {
+            [
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Как ваши дети питаются в школе?",
@@ -116,18 +107,16 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     null,
-                    new List<string>
-                    {
+                    [
                         "Платим за столовую в Кенгу.ру", "Покупает снеки в соседнем магазине", "Приносит еду из дома",
-                    }),
-            }),
+                    ]),
+            ]),
         new PollDto(
             Guid.NewGuid(),
             "Брак и семья",
             "<img class=\"mb-1 w-100\" src=\"https://st.depositphotos.com/1075946/3664/i/950/depositphotos_36646171-stock-photo-parents-with-children.jpg\">",
             true,
-            new List<QuestionDto>
-            {
+            [
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Сколько вам лет?",
@@ -137,13 +126,12 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     2,
-                    new List<string>
-                    {
+                    [
                         "младше 16", "от 16 до 17", "от 18 до 19", "от 20 до 21",
                         "от 22 до 24", "от 25 до 30", "от 31 до 35", "от 36 до 40",
                         "от 41 до 45", "от 46 до 50", "от 51 до 60", "от 61 до 70",
                         "от 71 до 80", "81 и больше",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Ваш пол?",
@@ -153,10 +141,9 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     3,
-                    new List<string>
-                    {
+                    [
                         "мужчина", "женщина",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "В каком возрасте вы вступили в брак (в первый раз)?",
@@ -166,11 +153,10 @@ public class PollsController : ControllerBase
                     "никогда не был(а) в браке",
                     7,
                     4,
-                    new List<string>
-                    {
+                    [
                         "младше 16", "от 16 до 17", "от 18 до 19", "от 20 до 21", "от 22 до 24",
                         "от 25 до 30", "от 31 до 35", "от 36 до 40", "после 40", "никогда не был(а) в браке",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Вы развелись?",
@@ -180,10 +166,9 @@ public class PollsController : ControllerBase
                     "да, в итоге развелись",
                     5,
                     7,
-                    new List<string>
-                    {
+                    [
                         "да, в итоге развелись", "нет, не разводились",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Сколько раз вы были в браке?",
@@ -193,10 +178,9 @@ public class PollsController : ControllerBase
                     "1",
                     7,
                     6,
-                    new List<string>
-                    {
+                    [
                         "1", "2", "3", "4", "5", "6", "7", "больше 7",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Сейчас вы состоите в браке?",
@@ -206,10 +190,9 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     7,
-                    new List<string>
-                    {
+                    [
                         "да", "нет",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "У вас есть родные дети?",
@@ -219,10 +202,9 @@ public class PollsController : ControllerBase
                     "да",
                     8,
                     10,
-                    new List<string>
-                    {
+                    [
                         "да", "нет",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Сколько у вас родных детей?",
@@ -232,10 +214,9 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     9,
-                    new List<string>
-                    {
+                    [
                         "1", "2", "3", "4", "5", "6", "7", "больше 7",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "В каком возрасте у вас родился первый ребёнок?",
@@ -245,11 +226,10 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     10,
-                    new List<string>
-                    {
+                    [
                         "младше 16", "от 16 до 17", "от 18 до 19", "от 20 до 21",
                         "от 22 до 24", "от 25 до 30", "от 31 до 35", "от 36 до 40", "после 40",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "У вас есть приёмные дети?",
@@ -259,10 +239,9 @@ public class PollsController : ControllerBase
                     "да",
                     11,
                     null,
-                    new List<string>
-                    {
+                    [
                         "да", "нет",
-                    }),
+                    ]),
                 new QuestionDto(
                     Guid.NewGuid(),
                     "Сколько у вас приёмных детей?",
@@ -272,12 +251,11 @@ public class PollsController : ControllerBase
                     null,
                     null,
                     null,
-                    new List<string>
-                    {
+                    [
                         "1", "2", "3", "4", "5", "6", "7", "больше 7",
-                    }),
-            }),
-    };
+                    ]),
+            ]),
+    ];
 
     [HttpGet]
     public IEnumerable<PollDto> Get()
@@ -292,21 +270,24 @@ public class PollsController : ControllerBase
     }
 
     [HttpPost]
-    public void Post([FromBody] PollDto poll)
+    public IActionResult Post([FromBody] PollDto poll)
     {
         _polls.Add(poll);
+        return Ok();
     }
 
     [HttpPut("{id}")]
-    public void Put(Guid id, [FromBody] PollDto poll)
+    public IActionResult Put(Guid id, [FromBody] PollDto poll)
     {
         _polls.RemoveAll(p => p.PollId == id);
         _polls.Add(poll);
+        return Ok();
     }
 
     [HttpDelete("{id}")]
-    public void Delete(Guid id)
+    public IActionResult Delete(Guid id)
     {
         _polls.RemoveAll(p => p.PollId == id);
+        return Ok();
     }
 }
