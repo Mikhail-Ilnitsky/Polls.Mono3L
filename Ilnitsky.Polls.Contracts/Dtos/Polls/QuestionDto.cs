@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ilnitsky.Polls.Contracts.Polls;
+namespace Ilnitsky.Polls.Contracts.Dtos.Polls;
 
 public record QuestionDto(
     Guid QuestionId,
@@ -9,7 +9,7 @@ public record QuestionDto(
     bool AllowCustomAnswer,
     bool AllowMultipleChoice,
     int Number,
-    string? ConditionAnswer,
-    int? IfConditionNextNumber,
-    int? IfNotConditionNextNumber,
+    string? TargetAnswer,
+    int? MatchNextNumber,
+    int? DefaultNextNumber,
     List<string> Answers);

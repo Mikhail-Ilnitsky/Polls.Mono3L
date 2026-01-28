@@ -114,13 +114,13 @@
           : [this.userAnswer];
       },
       nextNumber() {
-        if (this.currentQuestion.conditionAnswer === null) {
-          return this.currentQuestion.ifNotConditionNextNumber;
+        if (this.currentQuestion.targetAnswer === null) {
+          return this.currentQuestion.defaultNextNumber;
         }
-        if (this.currentQuestion.conditionAnswer === this.userAnswer) {
-          return this.currentQuestion.ifConditionNextNumber;
+        if (this.currentQuestion.targetAnswer === this.userAnswer) {
+          return this.currentQuestion.matchNextNumber;
         }
-        return this.currentQuestion.ifNotConditionNextNumber;
+        return this.currentQuestion.defaultNextNumber;
       },
     },
 

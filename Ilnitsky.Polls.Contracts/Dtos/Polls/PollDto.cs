@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ilnitsky.Polls.Contracts.Polls;
+namespace Ilnitsky.Polls.Contracts.Dtos.Polls;
 
 public record PollDto(
     Guid PollId,
     string Name,
-    string Html,
+    string? Html,
     bool IsActive,
     List<QuestionDto> Questions);
