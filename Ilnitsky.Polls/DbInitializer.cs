@@ -1,3 +1,4 @@
+using Ilnitsky.Polls.BusinessLogic;
 using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DataAccess.Entities.Polls;
 using System;
@@ -30,30 +31,37 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
 
     public async Task InitDatabaseAsync()
     {
+        if (_dbContext.Polls.Any())
+        {
+            return;
+        }
+
         _dbContext.Polls.AddRange(CreatePolls());
 
         await _dbContext.SaveChangesAsync();
     }
 
-    public List<Answer> CreateAnswers(List<string> answers)
+    public static Guid CreateGuidV7() => GuidHelper.CreateGuidV7();
+
+    public static List<Answer> CreateAnswers(List<string> answers)
         => answers
-            .Select(a => new Answer { Id = Guid.NewGuid(), Text = a })
+            .Select(a => new Answer { Id = CreateGuidV7(), Text = a })
             .ToList();
 
-    public List<Poll> CreatePolls()
+    public static List<Poll> CreatePolls()
     {
         List<Poll> polls =
         [
             new Poll
             {
-                Id = Guid.NewGuid(),
+                Id = CreateGuidV7(),
                 Name = "Марки китайских автомобилей",
                 Html = "<img class=\"mb-1 w-100\" src=\"https://infotables.ru/images/avto/logo_auto/logo_china_auto.png\">",
                 IsActive = true,
                 Questions = [
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Какие марки китайских автомобилей вы знаете?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = true,
@@ -72,14 +80,14 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             },
             new Poll
             {
-                Id = Guid.NewGuid(),
+                Id = CreateGuidV7(),
                 Name = "Футбольные команды",
                 Html = "",
                 IsActive = true,
                 Questions = [
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "За какую футбольную команду вы болеете?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -96,14 +104,14 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             },
             new Poll
             {
-                Id = Guid.NewGuid(),
+                Id = CreateGuidV7(),
                 Name = "Чем заправлять оливье",
                 Html = "<img class=\"mb-1 w-100\" src=\"https://avatars.mds.yandex.net/i?id=bc05f1be7ca98bc42e73968391df00edd8ce8846-11408895-images-thumbs&n=13\">",
                 IsActive = true,
                 Questions = [
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Чем вы заправляете оливье?",
                         AllowCustomAnswer = true,
                         AllowMultipleChoice = false,
@@ -119,13 +127,13 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             },
             new Poll
             {
-                Id = Guid.NewGuid(),
+                Id = CreateGuidV7(),
                 Name = "Варка картошки",
                 Html = "<img class=\"mb-1 w-100\" src=\"https://img.freepik.com/premium-photo/fresh-peeled-potatoes-wooden-table_220925-51555.jpg?semt=ais_hybrid&w=740&q=80\">",
                 IsActive = true,
                 Questions = [
                     new Question{
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Как вы варите картошку?",
                         AllowCustomAnswer = true,
                         AllowMultipleChoice = false,
@@ -141,13 +149,13 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             },
             new Poll
             {
-                Id = Guid.NewGuid(),
+                Id = CreateGuidV7(),
                 Name = "Питание в школе",
                 Html = "",
                 IsActive = true,
                 Questions = [
                     new Question{
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Как ваши дети питаются в школе?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -163,14 +171,14 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             },
             new Poll
             {
-                Id = Guid.NewGuid(),
+                Id = CreateGuidV7(),
                 Name = "Брак и семья",
                 Html = "<img class=\"mb-1 w-100\" src=\"https://st.depositphotos.com/1075946/3664/i/950/depositphotos_36646171-stock-photo-parents-with-children.jpg\">",
                 IsActive = true,
                 Questions = [
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Сколько вам лет?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -187,7 +195,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Ваш пол?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -201,7 +209,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "В каком возрасте вы вступили в брак (в первый раз)?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -216,7 +224,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Вы развелись?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -230,7 +238,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Сколько раз вы были в браке?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -244,7 +252,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Сейчас вы состоите в браке?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -258,7 +266,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "У вас есть родные дети?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -272,7 +280,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Сколько у вас родных детей?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -286,7 +294,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "В каком возрасте у вас родился первый ребёнок?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -301,7 +309,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "У вас есть приёмные дети?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,
@@ -315,7 +323,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                     },
                     new Question
                     {
-                        Id = Guid.NewGuid(),
+                        Id = CreateGuidV7(),
                         Text = "Сколько у вас приёмных детей?",
                         AllowCustomAnswer = false,
                         AllowMultipleChoice = false,

@@ -20,7 +20,7 @@ public static class MappingExtensions
     public static Poll ToEntity(this PollDto dto, bool createId = false)
         => new Poll
         {
-            Id = !createId ? dto.PollId : Guid.NewGuid(),
+            Id = !createId ? dto.PollId : GuidHelper.CreateGuidV7(),
             Name = dto.Name,
             Html = dto.Html,
             IsActive = dto.IsActive,
@@ -46,7 +46,7 @@ public static class MappingExtensions
     public static Question ToEntity(this QuestionDto dto, bool createId = false)
         => new Question
         {
-            Id = !createId ? dto.QuestionId : Guid.NewGuid(),
+            Id = !createId ? dto.QuestionId : GuidHelper.CreateGuidV7(),
             Text = dto.Question,
             AllowCustomAnswer = dto.AllowCustomAnswer,
             AllowMultipleChoice = dto.AllowMultipleChoice,
@@ -57,7 +57,7 @@ public static class MappingExtensions
             Answers = dto.Answers
                 .Select(a => new Answer
                 {
-                    Id = !createId ? Guid.Empty : Guid.NewGuid(),
+                    Id = !createId ? Guid.Empty : GuidHelper.CreateGuidV7(),
                     Text = a
                 })
                 .ToList()
