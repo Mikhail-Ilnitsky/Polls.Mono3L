@@ -1,5 +1,4 @@
 using Ilnitsky.Polls;
-using Ilnitsky.Polls.BusinessLogic;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.DataAccess;
 using Microsoft.AspNetCore.Builder;
@@ -34,37 +33,8 @@ builder.Services.AddTransient<GetPollsHandler>();
 
 var app = builder.Build();
 
-app.Use(async (httpContext, next) =>
-{
-    if (httpContext.Request.Cookies.TryGetValue("RespondentId", out var respondentId))
-    {
-        httpContext.Response.Cookies.Append(
-            "RespondentId",
-            respondentId,
-            new Microsoft.AspNetCore.Http.CookieOptions
-            {
-                MaxAge = TimeSpan.FromDays(400),
-                HttpOnly = true,
-                Secure = true,
-                IsEssential = true,
-            });
-    }
-    else
-    {
-        httpContext.Response.Cookies.Append(
-            "RespondentId",
-            GuidHelper.CreateGuidV7().ToString(),
-            new Microsoft.AspNetCore.Http.CookieOptions
-            {
-                MaxAge = TimeSpan.FromDays(400),
-                HttpOnly = true,
-                Secure = true,
-                IsEssential = true,
-            });
-    }
-
-    await next.Invoke();
-});
+// Проверяем наличие у респондента respondentId, и создаём его, либо обновляем
+app.UseMiddleware<RespondentIdMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
