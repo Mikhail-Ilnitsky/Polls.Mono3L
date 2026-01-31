@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ilnitsky.Polls.Contracts.Answers;
+namespace Ilnitsky.Polls.Contracts.Dtos.Answers;
 
-public record RespondentAnswerDto(
+public record CreateRespondentAnswerDto(
     Guid PollId,
     Guid QuestionId,
     List<string> Answers)

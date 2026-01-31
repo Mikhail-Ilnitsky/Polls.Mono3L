@@ -1,6 +1,9 @@
-using Ilnitsky.Polls.Contracts.Answers;
+using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
+using Ilnitsky.Polls.Contracts.Dtos.Answers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using System;
+using System.Threading.Tasks;
 
 namespace Ilnitsky.Polls.Controllers
 {
@@ -9,13 +12,28 @@ namespace Ilnitsky.Polls.Controllers
     public class AnswersController : ControllerBase
     {
         [HttpPost]
-        public IActionResult Post([FromBody] RespondentAnswerDto answer)
+        public async Task<IActionResult> Post(
+            [FromBody] CreateRespondentAnswerDto answerDto,
+            [FromServices] CreateRespondentAnswerHandler handler)
         {
-            Trace.WriteLine("");
-            Trace.WriteLine("Trace Answers POST:");
-            Trace.WriteLine(answer);
-            Trace.WriteLine("");
-            return Ok();
+            var respondentIdString = HttpContext.Session.GetString("RespondentId");
+            var respondentSessionIdString = HttpContext.Session.GetString("RespondentSessionId");
+
+            if (respondentIdString is null)
+            {
+                return BadRequest("Не передан id респондента!");
+            }
+            if (respondentSessionIdString is null)
+            {
+                return BadRequest("Не передан id сессии респондента!");
+            }
+
+            var respondentId = Guid.Parse(respondentIdString);
+            var respondentSessionId = Guid.Parse(respondentSessionIdString);
+
+            await handler.HandleAsync(answerDto, respondentSessionId, respondentId);
+
+            return Ok("Ответ принят!");
         }
     }
 }

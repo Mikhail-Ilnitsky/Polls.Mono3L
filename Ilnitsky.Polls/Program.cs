@@ -1,4 +1,5 @@
 using Ilnitsky.Polls;
+using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.DataAccess;
 using Microsoft.AspNetCore.Builder;
@@ -29,7 +30,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         .UseMySql(dbConnectionString, ServerVersion.AutoDetect(dbConnectionString)));
 builder.Services.AddTransient<DbInitializer>();
 
+// Хэндлеры
 builder.Services.AddTransient<GetPollsHandler>();
+builder.Services.AddTransient<CreateRespondentAnswerHandler>();
 
 builder.Services.AddDistributedMemoryCache();       // Добавляем IDistributedMemoryCache для хранения данных сессий
 builder.Services.AddSession();                      // Добавляем сервисы сессии
