@@ -6,6 +6,8 @@ namespace Ilnitsky.Polls.DataAccess.Entities.Answers;
 public class RespondentSession : IEntity
 {
     public Guid Id { get; set; }
+    public Guid RespondentId { get; set; }
+
     public DateTime DateTime { get; set; }
     public bool IsMobile { get; set; }
     public string? RemoteIpAddress { get; set; }
@@ -14,7 +16,6 @@ public class RespondentSession : IEntity
     public string? Platform { get; set; }
     public string? Brand { get; set; }
 
-    public Guid RespondentId { get; set; }
     public virtual Respondent? Respondent { get; set; }
 
     public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = new List<RespondentAnswer>();

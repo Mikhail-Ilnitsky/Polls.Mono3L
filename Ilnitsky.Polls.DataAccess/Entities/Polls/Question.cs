@@ -7,6 +7,8 @@ namespace Ilnitsky.Polls.DataAccess.Entities.Polls;
 public class Question : IEntity
 {
     public Guid Id { get; set; }
+    public Guid PollId { get; set; }
+
     public string? Text { get; set; }
     public bool AllowCustomAnswer { get; set; }
     public bool AllowMultipleChoice { get; set; }
@@ -15,7 +17,6 @@ public class Question : IEntity
     public int? MatchNextNumber { get; set; }
     public int? DefaultNextNumber { get; set; }
 
-    public Guid PollId { get; set; }
     public virtual Poll? Poll { get; set; }
 
     public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
