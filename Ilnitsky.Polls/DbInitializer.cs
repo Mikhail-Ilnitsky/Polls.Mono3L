@@ -55,6 +55,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Марки китайских автомобилей",
                 Html = "<img class=\"mb-1 w-100\" src=\"https://infotables.ru/images/avto/logo_auto/logo_china_auto.png\">",
                 IsActive = true,
@@ -81,6 +82,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Чем заправлять оливье",
                 Html = "<img class=\"mb-1 w-100\" src=\"https://avatars.mds.yandex.net/i?id=bc05f1be7ca98bc42e73968391df00edd8ce8846-11408895-images-thumbs&n=13\">",
                 IsActive = true,
@@ -104,6 +106,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Варка картошки",
                 Html = "<img class=\"mb-1 w-100\" src=\"https://img.freepik.com/premium-photo/fresh-peeled-potatoes-wooden-table_220925-51555.jpg?semt=ais_hybrid&w=740&q=80\">",
                 IsActive = true,
@@ -126,6 +129,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Брак и семья",
                 Html = "<img class=\"mb-1 w-100\" src=\"https://st.depositphotos.com/1075946/3664/i/950/depositphotos_36646171-stock-photo-parents-with-children.jpg\">",
                 IsActive = true,
@@ -294,6 +298,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Обеспеченность машинами",
                 Html = null,
                 IsActive = true,
@@ -342,6 +347,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Футбольные команды",
                 Html = null,
                 IsActive = true,
@@ -366,6 +372,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Питание в школе",
                 Html = null,
                 IsActive = true,
@@ -388,6 +395,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Хобби",
                 Html = null,
                 IsActive = true,
@@ -415,6 +423,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Отпуск",
                 Html = null,
                 IsActive = true,
@@ -444,6 +453,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Заработки",
                 Html = null,
                 IsActive = true,
@@ -477,6 +487,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Работа",
                 Html = null,
                 IsActive = true,
@@ -513,6 +524,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Места жительства",
                 Html = null,
                 IsActive = true,
@@ -544,6 +556,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Образование",
                 Html = null,
                 IsActive = true,
@@ -577,6 +590,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
             new Poll
             {
                 Id = CreateGuidV7(),
+                DateTime = DateTime.UtcNow,
                 Name = "Религия",
                 Html = null,
                 IsActive = true,

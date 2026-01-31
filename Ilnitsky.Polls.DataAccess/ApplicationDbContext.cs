@@ -1,3 +1,4 @@
+using Ilnitsky.Polls.DataAccess.Entities.Answers;
 using Ilnitsky.Polls.DataAccess.Entities.Polls;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Answer> Answers { get; set; }
     public DbSet<Question> Questions { get; set; }
     public DbSet<Poll> Polls { get; set; }
+
+    public DbSet<Respondent> Respondents { get; set; }
+    public DbSet<RespondentSession> RespondentSessions { get; set; }
+    public DbSet<RespondentAnswer> RespondentAnswers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,6 +32,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             b.HasMany(p => p.Questions)
                 .WithOne(q => q.Poll)
                 .HasForeignKey(q => q.PollId)
+                .IsRequired();
+            b.HasMany(p => p.RespondentAnswers)
+                .WithOne(a => a.Poll)
+                .HasForeignKey(a => a.PollId)
                 .IsRequired();
         });
 
@@ -48,13 +57,52 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 .WithOne(a => a.Question)
                 .HasForeignKey(a => a.QuestionId)
                 .IsRequired();
+            b.HasMany(q => q.RespondentAnswers)
+                .WithOne(a => a.Question)
+                .HasForeignKey(a => a.QuestionId)
+                .IsRequired();
         });
 
         modelBuilder.Entity<Answer>(b =>
         {
-            b.Property(p => p.Id)
+            b.Property(e => e.Id)
                 .HasColumnType("UUID");
-            b.Property(q => q.Text)
+            b.Property(e => e.Text)
+                .HasMaxLength(100)
+                .IsRequired();
+        });
+
+        modelBuilder.Entity<Respondent>(b =>
+        {
+            b.Property(e => e.Id)
+                .HasColumnType("UUID");
+
+            b.HasMany(r => r.RespondentSessions)
+                .WithOne(s => s.Respondent)
+                .HasForeignKey(s => s.RespondentId)
+                .IsRequired();
+            b.HasMany(r => r.RespondentAnswers)
+                .WithOne(a => a.Respondent)
+                .HasForeignKey(a => a.RespondentId)
+                .IsRequired();
+        });
+
+        modelBuilder.Entity<RespondentSession>(b =>
+        {
+            b.Property(e => e.Id)
+                .HasColumnType("UUID");
+
+            b.HasMany(s => s.RespondentAnswers)
+                .WithOne(a => a.RespondentSession)
+                .HasForeignKey(a => a.RespondentSessionId)
+                .IsRequired();
+        });
+
+        modelBuilder.Entity<RespondentAnswer>(b =>
+        {
+            b.Property(e => e.Id)
+                .HasColumnType("UUID");
+            b.Property(e => e.Text)
                 .HasMaxLength(100)
                 .IsRequired();
         });

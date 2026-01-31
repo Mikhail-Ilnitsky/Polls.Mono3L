@@ -10,6 +10,7 @@ public static class MappingExtensions
     public static PollDto ToDto(this Poll entity)
         => new PollDto(
             entity.Id,
+            entity.DateTime,
             entity.Name ?? "?",
             entity.Html,
             entity.IsActive,
@@ -21,6 +22,7 @@ public static class MappingExtensions
         => new Poll
         {
             Id = !createId ? dto.PollId : GuidHelper.CreateGuidV7(),
+            DateTime = !createId ? dto.DateTime : DateTime.UtcNow,
             Name = dto.Name,
             Html = dto.Html,
             IsActive = dto.IsActive,

@@ -1,3 +1,4 @@
+using Ilnitsky.Polls.DataAccess.Entities.Answers;
 using System;
 using System.Collections.Generic;
 
@@ -16,5 +17,7 @@ public class Question : IEntity
 
     public Guid PollId { get; set; }
     public virtual Poll? Poll { get; set; }
+
     public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
+    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = new List<RespondentAnswer>();
 }

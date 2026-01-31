@@ -31,12 +31,16 @@ builder.Services.AddTransient<DbInitializer>();
 
 builder.Services.AddTransient<GetPollsHandler>();
 
+builder.Services.AddDistributedMemoryCache();       // Добавляем IDistributedMemoryCache для хранения данных сессий
+builder.Services.AddSession();                      // Добавляем сервисы сессии
+
 var app = builder.Build();
 
-// Проверяем наличие у респондента respondentId, и создаём его, либо обновляем
-app.UseMiddleware<RespondentIdMiddleware>();
+app.UseSession();                                   // Добавляем middleware для работы с сессиями
 
-// Configure the HTTP request pipeline.
+app.UseMiddleware<RespondentMiddleware>();          // Проверяем наличие у респондента respondentId, и создаём его, либо обновляем
+app.UseMiddleware<RespondentSessionMiddleware>();   // Проверяем наличие у респондента respondentSessionId, и создаём его, если его нет
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -45,8 +49,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseDefaultFiles();  // добавляем поддержку страниц html по умолчанию
-app.UseStaticFiles();   // добавляем поддержку статических файлов
+app.UseDefaultFiles();                              // Добавляем поддержку страниц html по умолчанию
+app.UseStaticFiles();                               // Добавляем поддержку статических файлов
 
 app.UseAuthorization();
 
