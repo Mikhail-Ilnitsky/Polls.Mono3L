@@ -8,9 +8,18 @@
             :key="poll.id"
           >
             <v-icon class="mr-2 text-primary">mdi-help-circle-outline</v-icon>
-            <router-link color="red" :to="{ name: 'PollPage', params: { pollId: poll.pollId} }">{{ poll.name }}</router-link>
+            <router-link :to="{ name: 'PollPage', params: { pollId: poll.pollId} }">{{ poll.name }}</router-link>
           </v-list-item>
         </v-list>
+        <v-card-actions class="mt-n2">
+          <v-btn
+            class="w-100"
+            color="primary"
+            variant="elevated"
+            @click="loadMore"
+            text="Загрузить ещё"
+          />
+        </v-card-actions>
       </v-card>
     </CommonGrid>
   </div>
@@ -25,7 +34,9 @@
     props: {},
 
     data() {
-      return {};
+      return {
+        pageSize: 5,
+      };
     },
 
     computed: {
@@ -33,10 +44,19 @@
     },
 
     created() {
-      this.$store.dispatch('loadPolls');
+      this.$store.dispatch('loadPolls', { offset: 0, limit: this.pageSize });
     },
 
-    methods: {},
+    methods: {
+      loadMore() {
+        const params = {
+          offset: this.polls.length,
+          limit: this.pageSize,
+        };
+
+        this.$store.dispatch('loadMorePolls', params);
+      },
+    },
 
   };
 </script>

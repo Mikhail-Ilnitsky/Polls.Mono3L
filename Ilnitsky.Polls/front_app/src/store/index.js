@@ -57,13 +57,26 @@ export default createStore({
     setPolls(state, newValue) {
       state.polls = newValue;
     },
+
+    addPolls(state, addedPolls) {
+      state.polls.push(...addedPolls);
+    },
   },
 
   actions: {
-    loadPolls({ state, commit }, params) {
-      state.pollsService.getPolls(params)
+    loadPolls({ state, commit }, queryParams) {
+      state.pollsService.getPolls(queryParams)
         .then(response => {
           commit('setPolls', response.data);
+        });
+    },
+
+    loadMorePolls({ state, commit }, queryParams) {
+      state.pollsService.getPolls(queryParams)
+        .then(response => {
+          if (response.data.length > 0) {
+            commit('addPolls', response.data);
+          }
         });
     },
 
