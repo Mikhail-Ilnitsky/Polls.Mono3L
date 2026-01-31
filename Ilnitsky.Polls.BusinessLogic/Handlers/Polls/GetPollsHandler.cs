@@ -12,10 +12,13 @@ public class GetPollsHandler(ApplicationDbContext dbContext)
 {
     private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
-    public async Task<List<PollDto>> HandleAsync()
+    public async Task<List<PollDto>> HandleAsync(int offset, int limit)
     {
         var polls = (await _dbContext.Polls
                 .Where(p => p.IsActive)
+                .OrderByDescending(p => p.DateTime)
+                .Skip(offset)
+                .Take(limit)
                 .ToArrayAsync())
                 .Select(p => p.ToDto())
                 .ToList();

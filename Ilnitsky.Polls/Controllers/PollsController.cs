@@ -18,9 +18,14 @@ public class PollsController : ControllerBase
     ];
 
     [HttpGet]
-    public async Task<IEnumerable<PollDto>> Get([FromServices] GetPollsHandler handler)
+    public async Task<IEnumerable<PollDto>> Get(
+        [FromServices] GetPollsHandler handler,
+        [FromQuery] int? offset,
+        [FromQuery] int? limit)
     {
-        return await handler.HandleAsync();
+        offset ??= 0;
+        limit ??= 5;
+        return await handler.HandleAsync(offset.Value, limit.Value);
     }
 
     [HttpGet("{id}")]
