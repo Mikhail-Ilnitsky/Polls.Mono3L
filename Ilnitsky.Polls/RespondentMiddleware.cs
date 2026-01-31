@@ -22,7 +22,7 @@ public class RespondentMiddleware(RequestDelegate _next)
 
             if (!httpContext.Session.Keys.Contains("RespondentSessionId"))
             {
-                httpContext.Session.SetString("RespondentId", respondentIdString);
+                SaveInSession(httpContext, respondentIdString);
             }
         }
         else
@@ -30,19 +30,17 @@ public class RespondentMiddleware(RequestDelegate _next)
             respondentId = GuidHelper.CreateGuidV7();
             respondentIdString = respondentId.ToString();
 
-            var dbContext = httpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
-
-            dbContext.Respondents.Add(new Respondent
-            {
-                Id = respondentId,
-                DateTime = DateTime.UtcNow,
-            });
-
-            await dbContext.SaveChangesAsync();
-
-            httpContext.Session.SetString("RespondentId", respondentIdString);
+            await SaveInDatabaseAsync(httpContext, respondentId);
+            SaveInSession(httpContext, respondentIdString);
         }
 
+        SaveInCookies(httpContext, respondentIdString);
+
+        await _next.Invoke(httpContext);
+    }
+
+    private static void SaveInCookies(HttpContext httpContext, string respondentIdString)
+    {
         httpContext.Response.Cookies.Append(
             "RespondentId",
             respondentIdString,
@@ -53,7 +51,23 @@ public class RespondentMiddleware(RequestDelegate _next)
                 Secure = true,
                 IsEssential = true,
             });
+    }
 
-        await _next.Invoke(httpContext);
+    private static void SaveInSession(HttpContext httpContext, string respondentIdString)
+    {
+        httpContext.Session.SetString("RespondentId", respondentIdString);
+    }
+
+    private static async Task SaveInDatabaseAsync(HttpContext httpContext, Guid respondentId)
+    {
+        var dbContext = httpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+
+        dbContext.Respondents.Add(new Respondent
+        {
+            Id = respondentId,
+            DateTime = DateTime.UtcNow,
+        });
+
+        await dbContext.SaveChangesAsync();
     }
 }
