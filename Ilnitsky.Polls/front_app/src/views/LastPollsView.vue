@@ -44,7 +44,9 @@
     },
 
     created() {
-      this.$store.dispatch('loadPolls', { offset: 0, limit: this.pageSize });
+      if (!this.polls || this.polls.length === 0) {
+        this.$store.dispatch('loadPolls', { offset: 0, limit: this.pageSize });
+      }
     },
 
     methods: {
