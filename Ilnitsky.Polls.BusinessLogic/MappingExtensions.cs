@@ -7,6 +7,12 @@ namespace Ilnitsky.Polls.BusinessLogic;
 
 public static class MappingExtensions
 {
+    public static PollLinkDto ToLinkDto(this Poll entity)
+        => new PollLinkDto(
+            entity.Id,
+            entity.Name ?? "?",
+            entity.Questions.Count);
+
     public static PollDto ToDto(this Poll entity)
         => new PollDto(
             entity.Id,

@@ -12,10 +12,10 @@ namespace Ilnitsky.Polls.Controllers;
 public class PollsController : ControllerBase
 {
     [HttpGet]
-    public async Task<IEnumerable<PollDto>> Get(
+    public async Task<IEnumerable<PollLinkDto>> Get(
         [FromQuery] int? offset,
         [FromQuery] int? limit,
-        [FromServices] GetPollsHandler handler)
+        [FromServices] GetPollLinksHandler handler)
     {
         offset ??= 0;
         limit ??= 5;

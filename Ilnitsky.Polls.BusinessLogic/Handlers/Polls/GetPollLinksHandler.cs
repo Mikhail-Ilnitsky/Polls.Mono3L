@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 
-public class GetPollsHandler(ApplicationDbContext dbContext)
+public class GetPollLinksHandler(ApplicationDbContext dbContext)
 {
     private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
-    public async Task<List<PollDto>> HandleAsync(int offset, int limit)
+    public async Task<List<PollLinkDto>> HandleAsync(int offset, int limit)
     {
         var polls = (await _dbContext.Polls
                 .Where(p => p.IsActive)
@@ -20,7 +20,7 @@ public class GetPollsHandler(ApplicationDbContext dbContext)
                 .Skip(offset)
                 .Take(limit)
                 .ToArrayAsync())
-                .Select(p => p.ToDto())
+                .Select(p => p.ToLinkDto())
                 .ToList();
 
         return polls;

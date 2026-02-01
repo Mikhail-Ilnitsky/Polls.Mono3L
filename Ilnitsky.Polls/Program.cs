@@ -31,7 +31,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 builder.Services.AddTransient<DbInitializer>();
 
 // Хэндлеры
-builder.Services.AddTransient<GetPollsHandler>();
+builder.Services.AddTransient<GetPollLinksHandler>();
 builder.Services.AddTransient<GetPollByIdHandler>();
 builder.Services.AddTransient<CreateRespondentAnswerHandler>();
 
