@@ -48,6 +48,12 @@ namespace Ilnitsky.Polls.DataAccess.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("MultipleAnswersCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("MultipleAnswersId")
+                        .HasColumnType("UUID");
+
                     b.Property<Guid>("PollId")
                         .HasColumnType("UUID(36)");
 

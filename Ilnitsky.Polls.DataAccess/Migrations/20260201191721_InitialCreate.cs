@@ -136,7 +136,9 @@ namespace Ilnitsky.Polls.DataAccess.Migrations
                     RespondentId = table.Column<Guid>(type: "UUID(36)", nullable: false, collation: "ascii_general_ci"),
                     DateTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Text = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MultipleAnswersId = table.Column<Guid>(type: "UUID(36)", nullable: true, collation: "ascii_general_ci"),
+                    MultipleAnswersCount = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {

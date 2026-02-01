@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ilnitsky.Polls.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260131165955_InitialCreate")]
+    [Migration("20260201191721_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -50,6 +50,12 @@ namespace Ilnitsky.Polls.DataAccess.Migrations
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("MultipleAnswersCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("MultipleAnswersId")
+                        .HasColumnType("UUID");
 
                     b.Property<Guid>("PollId")
                         .HasColumnType("UUID(36)");
