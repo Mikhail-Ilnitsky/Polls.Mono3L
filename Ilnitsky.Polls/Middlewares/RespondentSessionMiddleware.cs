@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ilnitsky.Polls;
+namespace Ilnitsky.Polls.Middlewares;
 
 public class RespondentSessionMiddleware(RequestDelegate _next)
 {

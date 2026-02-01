@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ilnitsky.Polls;
+namespace Ilnitsky.Polls.DbInitialization;
 
 public interface IDbInitializer : IDisposable
 {

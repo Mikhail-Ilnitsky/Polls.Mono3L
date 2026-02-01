@@ -1,7 +1,8 @@
-using Ilnitsky.Polls;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.DataAccess;
+using Ilnitsky.Polls.DbInitialization;
+using Ilnitsky.Polls.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
