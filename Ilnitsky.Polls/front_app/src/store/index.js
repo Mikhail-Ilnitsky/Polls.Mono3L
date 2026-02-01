@@ -35,6 +35,7 @@ export default createStore({
     ],
 
     polls: [],
+    currentPoll: null,
   },
 
   getters: {
@@ -61,6 +62,10 @@ export default createStore({
     addPolls(state, addedPolls) {
       state.polls.push(...addedPolls);
     },
+
+    setCurrentPoll(state, newValue) {
+      state.currentPoll = newValue;
+    },
   },
 
   actions: {
@@ -77,6 +82,13 @@ export default createStore({
           if (response.data.length > 0) {
             commit('addPolls', response.data);
           }
+        });
+    },
+
+    loadPollById({ state, commit }, pollId) {
+      state.pollsService.getPollById(pollId)
+        .then(response => {
+          commit('setCurrentPoll', response.data);
         });
     },
 

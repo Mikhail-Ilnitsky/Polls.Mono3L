@@ -2,8 +2,14 @@
   <div class="poll-view">
     <CommonGrid>
       <PollCard
-        :poll="poll"
+        v-if="currentPoll"
+        :poll="currentPoll"
         @select-answer="saveAnswer"
+      />
+      <ErrorCard
+        v-else
+        title="Ошибка 404"
+        message="Упс... извините, мы не смогли найти страницу"
       />
     </CommonGrid>
   </div>
@@ -27,11 +33,11 @@
     },
 
     computed: {
-      ...mapState(['polls']),
+      ...mapState(['currentPoll']),
+    },
 
-      poll() {
-        return this.polls.find(p => p.pollId === this.pollId);
-      },
+    mounted() {
+      this.$store.dispatch('loadPollById', this.pollId);
     },
 
     methods: {

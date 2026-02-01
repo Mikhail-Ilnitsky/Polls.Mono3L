@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     CommonGrid: typeof import('./src/components/CommonGrid.vue')['default']
+    ErrorCard: typeof import('./src/components/ErrorCard.vue')['default']
     PollCard: typeof import('./src/components/PollCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

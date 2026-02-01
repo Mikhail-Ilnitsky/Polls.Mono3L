@@ -7,7 +7,7 @@ export default class PollsService {
     return axios.get(this._url, { params });
   }
 
-  getPoll(pollId) {
+  getPollById(pollId) {
     return axios.get(this._url + pollId);
   }
 
