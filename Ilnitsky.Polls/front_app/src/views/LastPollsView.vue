@@ -8,7 +8,9 @@
             :key="poll.pollId"
           >
             <v-icon class="mr-2 text-primary">mdi-help-circle-outline</v-icon>
-            <router-link :to="{ name: 'PollPage', params: { pollId: poll.pollId} }">{{ poll.name }}</router-link>
+            <router-link :to="{ name: 'PollPage', params: { pollId: poll.pollId} }">
+              {{ poll.name }} ({{ poll.questionsCount }} {{ questionWord(poll.questionsCount) }})
+            </router-link>
           </v-list-item>
         </v-list>
         <v-card-actions class="mt-n2">
@@ -53,6 +55,21 @@
         };
 
         this.$store.dispatch('loadMorePolls', params);
+      },
+      questionWord(questionsCount) {
+        const twoLastDigits = questionsCount % 100;
+        const lastDigit = questionsCount % 10;
+
+        if (twoLastDigits >= 5 && twoLastDigits <= 20) {
+          return 'вопросов';
+        }
+        if (lastDigit >= 2 && twoLastDigits <= 4) {
+          return 'вопроса';
+        }
+        if (lastDigit === 1) {
+          return 'вопрос';
+        }
+        return 'вопросов';
       },
     },
   };
