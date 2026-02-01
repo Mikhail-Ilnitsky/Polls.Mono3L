@@ -19,8 +19,6 @@
   import { mapState } from 'vuex';
 
   export default {
-    components: {},
-
     props: {
       pollId: {
         typeof: String,
@@ -47,7 +45,3 @@
     },
   };
 </script>
-
-<styles>
-
-</styles>

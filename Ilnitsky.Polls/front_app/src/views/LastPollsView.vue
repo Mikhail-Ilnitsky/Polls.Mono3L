@@ -5,7 +5,7 @@
         <v-list class="mt-n2">
           <v-list-item
             v-for="poll in polls"
-            :key="poll.id"
+            :key="poll.pollId"
           >
             <v-icon class="mr-2 text-primary">mdi-help-circle-outline</v-icon>
             <router-link :to="{ name: 'PollPage', params: { pollId: poll.pollId} }">{{ poll.name }}</router-link>
@@ -29,10 +29,6 @@
   import { mapState } from 'vuex';
 
   export default {
-    components: {},
-
-    props: {},
-
     data() {
       return {
         pageSize: 5,
@@ -59,9 +55,5 @@
         this.$store.dispatch('loadMorePolls', params);
       },
     },
-
   };
 </script>
-
-<style lang="scss">
-</style>

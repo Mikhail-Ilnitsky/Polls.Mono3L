@@ -38,7 +38,3 @@
     },
   };
 </script>
-
-<styles>
-
-</styles>

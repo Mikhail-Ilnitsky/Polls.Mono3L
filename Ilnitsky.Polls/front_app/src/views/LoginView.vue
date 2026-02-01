@@ -63,8 +63,6 @@
       },
     },
 
-    watch: {},
-
     methods: {
       clear() {
         this.username = null;
@@ -85,6 +83,3 @@
     },
   };
 </script>
-
-<styles>
-</styles>

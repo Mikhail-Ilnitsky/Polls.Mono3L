@@ -61,8 +61,6 @@
 
 <script>
   export default {
-    components: {},
-
     props: {
       poll: {
         typeof: Object,
@@ -151,7 +149,3 @@
     },
   };
 </script>
-
-<styles>
-
-</styles>
