@@ -13,24 +13,29 @@ public class RespondentMiddleware(RequestDelegate _next)
 {
     public async Task InvokeAsync(HttpContext httpContext)
     {
-        Guid respondentId;
-        string respondentIdString;
+        string? respondentIdString = null;
 
-        if (httpContext.Request.Cookies.TryGetValue("RespondentId", out var id))
+        if (httpContext.Session.Keys.Contains("RespondentId"))
         {
-            respondentIdString = id;
-
-            if (!httpContext.Session.Keys.Contains("RespondentSessionId"))
-            {
-                SaveInSession(httpContext, respondentIdString);
-            }
+            respondentIdString = httpContext.Session.GetString("RespondentId")!;
         }
         else
         {
-            respondentId = GuidHelper.CreateGuidV7();
-            respondentIdString = respondentId.ToString();
+            if (httpContext.Request.Cookies.TryGetValue("RespondentId", out var idString))
+            {
+                if (Guid.TryParse(idString, out var idGuid))
+                {
+                    var dbContext = httpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
 
-            await SaveInDatabaseAsync(httpContext, respondentId);
+                    if (dbContext.Respondents.Any(r => r.Id == idGuid))
+                    {
+                        respondentIdString = idString;
+                    }
+                }
+            }
+
+            respondentIdString ??= await CreateIdAndSaveInDatabaseAsync(httpContext);
+
             SaveInSession(httpContext, respondentIdString);
         }
 
@@ -69,5 +74,14 @@ public class RespondentMiddleware(RequestDelegate _next)
         });
 
         await dbContext.SaveChangesAsync();
+    }
+
+    private static async Task<string> CreateIdAndSaveInDatabaseAsync(HttpContext httpContext)
+    {
+        Guid respondentId = GuidHelper.CreateGuidV7();
+
+        await SaveInDatabaseAsync(httpContext, respondentId);
+
+        return respondentId.ToString();
     }
 }
