@@ -32,6 +32,7 @@ builder.Services.AddTransient<DbInitializer>();
 
 // Хэндлеры
 builder.Services.AddTransient<GetPollsHandler>();
+builder.Services.AddTransient<GetPollByIdHandler>();
 builder.Services.AddTransient<CreateRespondentAnswerHandler>();
 
 builder.Services.AddDistributedMemoryCache();       // Добавляем IDistributedMemoryCache для хранения данных сессий

@@ -3,7 +3,6 @@ using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ilnitsky.Polls.Controllers;
@@ -12,16 +11,11 @@ namespace Ilnitsky.Polls.Controllers;
 [ApiController]
 public class PollsController : ControllerBase
 {
-    private static readonly List<PollDto> _polls =
-    [
-
-    ];
-
     [HttpGet]
     public async Task<IEnumerable<PollDto>> Get(
-        [FromServices] GetPollsHandler handler,
         [FromQuery] int? offset,
-        [FromQuery] int? limit)
+        [FromQuery] int? limit,
+        [FromServices] GetPollsHandler handler)
     {
         offset ??= 0;
         limit ??= 5;
@@ -29,30 +23,14 @@ public class PollsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public PollDto Get(Guid id)
+    public async Task<ActionResult<PollDto>> Get(
+        [FromRoute] Guid id,
+        [FromServices] GetPollByIdHandler handler)
     {
-        return _polls.First(p => p.PollId == id);
-    }
+        var poll = await handler.HandleAsync(id);
 
-    [HttpPost]
-    public IActionResult Post([FromBody] PollDto poll)
-    {
-        _polls.Add(poll);
-        return Ok();
-    }
-
-    [HttpPut("{id}")]
-    public IActionResult Put(Guid id, [FromBody] PollDto poll)
-    {
-        _polls.RemoveAll(p => p.PollId == id);
-        _polls.Add(poll);
-        return Ok();
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult Delete(Guid id)
-    {
-        _polls.RemoveAll(p => p.PollId == id);
-        return Ok();
+        return poll is null
+            ? NotFound()
+            : Ok(poll);
     }
 }
