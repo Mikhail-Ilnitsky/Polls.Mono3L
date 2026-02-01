@@ -13,6 +13,8 @@ public class RespondentAnswer : IEntity
 
     public DateTime DateTime { get; set; }
     public string? Text { get; set; }
+    public Guid? MultipleAnswersId { get; set; }
+    public int? MultipleAnswersCount { get; set; }
 
     public virtual Question? Question { get; set; }
     public virtual Poll? Poll { get; set; }

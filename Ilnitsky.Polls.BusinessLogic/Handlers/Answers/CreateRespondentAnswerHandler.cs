@@ -16,6 +16,13 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
         Guid RespondentSessionId,
         Guid RespondentId)
     {
+        Guid? multipleAnswersId = answerDto.Answers.Count > 1
+            ? GuidHelper.CreateGuidV7()
+            : null;
+        int? multipleAnswersCount = answerDto.Answers.Count > 1
+            ? answerDto.Answers.Count
+            : null;
+
         var answers = answerDto
             .Answers
             .Select(a => new RespondentAnswer
@@ -27,6 +34,8 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
                 RespondentId = RespondentId,
                 Text = a,
                 DateTime = DateTime.UtcNow,
+                MultipleAnswersId = multipleAnswersId,
+                MultipleAnswersCount = multipleAnswersCount,
             });
 
         _dbContext.RespondentAnswers.AddRange(answers);

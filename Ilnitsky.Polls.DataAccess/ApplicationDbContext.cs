@@ -102,6 +102,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         {
             b.Property(e => e.Id)
                 .HasColumnType("UUID");
+            b.Property(e => e.MultipleAnswersId)
+                .HasColumnType("UUID")
+                .IsRequired(false);
             b.Property(e => e.Text)
                 .HasMaxLength(100)
                 .IsRequired();
