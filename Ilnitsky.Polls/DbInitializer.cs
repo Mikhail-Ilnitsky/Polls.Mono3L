@@ -606,7 +606,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
                         DefaultNextNumber = null,
                         Answers = CreateAnswers([
                             "Атеист, не верю в сверхъестественное",
-                            "Не верю в религии но верю в магию",
+                            "Не верю в религии, но верю в магию",
                             "Православный",
                             "Католик",
                             "Иудей",
