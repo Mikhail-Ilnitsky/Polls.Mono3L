@@ -9,6 +9,9 @@ export default createStore({
     pollsService: new PollsService(),
     answersService: new AnswersService(),
 
+    // Infrastructure:
+    loadingsCount: 0,
+
     // User:
     userId: null,
     userName: null,
@@ -34,17 +37,26 @@ export default createStore({
       },
     ],
 
+    // Polls:
     polls: [],
     currentPoll: null,
   },
 
   getters: {
-    isAuthorized: state => {
-      return state.userId !== null;
-    },
+    isAuthorized: state => state.userId !== null,
+
+    isLoading: state => state.loadingsCount > 0,
   },
 
   mutations: {
+    startLoading(state) {
+      state.loadingsCount++;
+    },
+
+    stopLoading(state) {
+      state.loadingsCount = Math.max(state.loadingsCount - 1, 0);
+    },
+
     loginUser(state, user) {
       state.userId = user.id;
       state.userName = user.name;
@@ -70,26 +82,32 @@ export default createStore({
 
   actions: {
     loadPolls({ state, commit }, queryParams) {
+      commit('startLoading');
       state.pollsService.getPolls(queryParams)
         .then(response => {
           commit('setPolls', response.data);
-        });
+        })
+        .finally(() => commit('stopLoading'));
     },
 
     loadMorePolls({ state, commit }, queryParams) {
+      commit('startLoading');
       state.pollsService.getPolls(queryParams)
         .then(response => {
           if (response.data.length > 0) {
             commit('addPolls', response.data);
           }
-        });
+        })
+        .finally(() => commit('stopLoading'));
     },
 
     loadPollById({ state, commit }, pollId) {
+      commit('startLoading');
       state.pollsService.getPollById(pollId)
         .then(response => {
           commit('setCurrentPoll', response.data);
-        });
+        })
+        .finally(() => commit('stopLoading'));
     },
 
     uploadAnswer({ state }, response) {

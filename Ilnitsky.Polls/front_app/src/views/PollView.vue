@@ -2,12 +2,12 @@
   <div class="poll-view">
     <CommonGrid>
       <PollCard
-        v-if="currentPoll"
+        v-if="currentPoll && !isLoading"
         :poll="currentPoll"
         @select-answer="saveAnswer"
       />
       <ErrorCard
-        v-else
+        v-else-if="!isLoading"
         title="Ошибка 404"
         message="Упс... извините, мы не смогли найти страницу"
       />
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+  import { mapGetters, mapState } from 'vuex';
 
   export default {
     props: {
@@ -31,10 +31,12 @@
     },
 
     computed: {
+      ...mapGetters(['isLoading']),
       ...mapState(['currentPoll']),
     },
 
     mounted() {
+      this.$store.commit('setCurrentPoll', null);
       this.$store.dispatch('loadPollById', this.pollId);
     },
 

@@ -68,6 +68,19 @@
       <router-view />
     </v-main>
   </v-app>
+
+  <v-overlay
+    v-model="isLoading"
+    class="align-center justify-center"
+  >
+    <v-progress-circular
+      indeterminate
+      color="primary"
+      size="128"
+      width="12"
+    />
+  </v-overlay>
+
 </template>
 
 <script>
@@ -79,7 +92,7 @@
     data: () => ({}),
 
     computed: {
-      ...mapGetters(['isAuthorized']),
+      ...mapGetters(['isAuthorized', 'isLoading']),
       ...mapState(['userName']),
 
       gridName() {
