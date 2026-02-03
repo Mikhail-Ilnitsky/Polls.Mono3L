@@ -104,6 +104,7 @@ export default createStore({
     },
 
     axiosError(state, error) {
+      // console.log(error.toJSON());
       addToast(state, error.message, 'error');
     },
 
