@@ -62,6 +62,11 @@ export function createRouterWithStore(store) {
       next('/login');
     } else if (store.getters.isAuthorized && to.path === '/login') {
       next('/account');
+    } else if (to.path !== '/'
+      && to.path !== '/login'
+      && !to.path.startsWith('/account')
+      && !to.path.startsWith('/poll')) {
+      next('/');
     } else {
       next();
     }
