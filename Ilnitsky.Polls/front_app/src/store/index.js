@@ -3,6 +3,33 @@ import { createStore } from 'vuex';
 import AnswersService from '@/services/answersService';
 import PollsService from '@/services/pollsService';
 
+function addToast(state, message, type) {
+  let timeout;
+
+  switch (type) {
+    case 'error':
+    case 'warning': {
+      timeout = 9000;
+      break;
+    }
+    case 'success': {
+      timeout = 2000;
+      break;
+    }
+    default: {
+      return;
+    }
+  }
+
+  state.toasts.push({
+    message,
+    type,
+    timeout,
+  });
+
+  state.toasts = state.toasts.slice();
+}
+
 export default createStore({
   state: {
     // Services:
@@ -11,6 +38,7 @@ export default createStore({
 
     // Infrastructure:
     loadingsCount: 0,
+    toasts: [],
 
     // User:
     userId: null,
@@ -49,6 +77,8 @@ export default createStore({
   },
 
   mutations: {
+    // Infrastructure:
+
     startLoading(state) {
       state.loadingsCount++;
     },
@@ -56,6 +86,29 @@ export default createStore({
     stopLoading(state) {
       state.loadingsCount = Math.max(state.loadingsCount - 1, 0);
     },
+
+    clearToasts(state) {
+      state.toasts = [];
+    },
+
+    success(state, message) {
+      addToast(state, message, 'success');
+    },
+
+    warning(state, message) {
+      addToast(state, message, 'warning');
+    },
+
+    error(state, message) {
+      addToast(state, message, 'error');
+    },
+
+    axiosError(state, error) {
+      const variant = error.status >= 500 ? 'error' : 'warning';
+      addToast(state, error.message, variant);
+    },
+
+    // User:
 
     loginUser(state, user) {
       state.userId = user.id;
@@ -66,6 +119,8 @@ export default createStore({
       state.userId = null;
       state.userName = null;
     },
+
+    // Polls:
 
     setPolls(state, newValue) {
       state.polls = newValue;
@@ -81,12 +136,15 @@ export default createStore({
   },
 
   actions: {
+    // Polls:
+
     loadPolls({ state, commit }, queryParams) {
       commit('startLoading');
       state.pollsService.getPolls(queryParams)
         .then(response => {
           commit('setPolls', response.data);
         })
+        .catch(error => commit('axiosError', error))
         .finally(() => commit('stopLoading'));
     },
 
@@ -98,6 +156,7 @@ export default createStore({
             commit('addPolls', response.data);
           }
         })
+        .catch(error => commit('axiosError', error))
         .finally(() => commit('stopLoading'));
     },
 
@@ -107,8 +166,11 @@ export default createStore({
         .then(response => {
           commit('setCurrentPoll', response.data);
         })
+        .catch(error => commit('axiosError', error))
         .finally(() => commit('stopLoading'));
     },
+
+    // Answers:
 
     uploadAnswer({ state }, response) {
       state.answersService.postAnswer(response);

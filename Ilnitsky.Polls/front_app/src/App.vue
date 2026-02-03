@@ -84,7 +84,10 @@
 </template>
 
 <script>
+  import { toast } from 'vue3-toastify';
   import { mapGetters, mapState } from 'vuex';
+
+  import 'vue3-toastify/dist/index.css';
 
   export default {
     name: 'App',
@@ -93,7 +96,7 @@
 
     computed: {
       ...mapGetters(['isAuthorized', 'isLoading']),
-      ...mapState(['userName']),
+      ...mapState(['toasts', 'userName']),
 
       gridName() {
         return this.$vuetify.display.name;
@@ -117,6 +120,25 @@
 
       isPollPage() {
         return this.pageName === 'PollPage';
+      },
+    },
+
+    watch: {
+      toasts(newToasts) {
+        if (newToasts && newToasts.length > 0) {
+          for (const data of newToasts) {
+            toast(
+              data.message,
+              {
+                theme: 'colored',
+                type: data.type,
+                autoClose: data.timeout,
+                position: toast.POSITION.BOTTOM_RIGHT,
+              });
+          }
+
+          this.$store.commit('clearToasts');
+        }
       },
     },
   };
