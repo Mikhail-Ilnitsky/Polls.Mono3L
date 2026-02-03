@@ -104,8 +104,7 @@ export default createStore({
     },
 
     axiosError(state, error) {
-      const variant = error.status >= 500 ? 'error' : 'warning';
-      addToast(state, error.message, variant);
+      addToast(state, error.message, 'error');
     },
 
     // User:

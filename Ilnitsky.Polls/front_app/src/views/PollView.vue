@@ -8,8 +8,7 @@
       />
       <ErrorCard
         v-else-if="!isLoading"
-        title="Ошибка 404"
-        message="Упс... извините, мы не смогли найти страницу"
+        title="Упс... извините, мы не смогли найти страницу"
       />
     </CommonGrid>
   </div>
