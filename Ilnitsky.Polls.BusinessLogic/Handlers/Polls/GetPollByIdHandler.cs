@@ -18,7 +18,7 @@ public class GetPollByIdHandler(ApplicationDbContext dbContext)
 
         if (pollEntity is null)
         {
-            return Response<PollDto>.EntityNotFound("Запрошенный опрос не найден!");
+            return Response<PollDto>.EntityNotFound("Опрос не найден!");
         }
 
         return Response<PollDto>.Success(pollEntity.ToDto());

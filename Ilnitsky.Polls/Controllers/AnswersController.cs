@@ -19,21 +19,21 @@ namespace Ilnitsky.Polls.Controllers
             var respondentIdString = HttpContext.Session.GetString("RespondentId");
             var respondentSessionIdString = HttpContext.Session.GetString("RespondentSessionId");
 
-            if (respondentIdString is null)
+            if (respondentIdString is null || !Guid.TryParse(respondentIdString, out var _))
             {
-                return BadRequest("Не передан id респондента!");
+                return BadRequest("Некорректный идентификатор респондента!");
             }
-            if (respondentSessionIdString is null)
+            if (respondentSessionIdString is null || !Guid.TryParse(respondentIdString, out var _))
             {
-                return BadRequest("Не передан id сессии респондента!");
+                return BadRequest("Некорректный идентификатор сессии респондента!");
             }
 
             var respondentId = Guid.Parse(respondentIdString);
             var respondentSessionId = Guid.Parse(respondentSessionIdString);
 
-            await handler.HandleAsync(answerDto, respondentSessionId, respondentId);
+            var response = await handler.HandleAsync(answerDto, respondentSessionId, respondentId);
 
-            return Ok("Ответ принят!");
+            return response.GetActionResult();
         }
     }
 }

@@ -17,6 +17,9 @@ public record BaseResponse(
     public static BaseResponse IncorrectValue(string message)
         => new(false, message, ErrorType.IncorrectValue);
 
+    public static BaseResponse IncorrectFormat(string message)
+        => new(false, message, ErrorType.IncorrectFormat);
+
     public static BaseResponse Error(string message)
         => new(false, message, ErrorType.IncorrectValue);
 }

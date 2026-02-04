@@ -15,6 +15,9 @@ public record Response<TValue>(
     public static Response<TValue> IncorrectValue(string message)
         => new(default, false, message, ErrorType.IncorrectValue);
 
+    public static Response<TValue> IncorrectFormat(string message)
+        => new(default, false, message, ErrorType.IncorrectFormat);
+
     public static Response<TValue> Error(string message)
         => new(default, false, message, ErrorType.Error);
 }

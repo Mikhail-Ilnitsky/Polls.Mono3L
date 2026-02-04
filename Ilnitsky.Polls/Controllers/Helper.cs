@@ -12,6 +12,8 @@ public static class Helper
                 ? new NotFoundObjectResult(response.Message)
             : response.ErrorType == ErrorType.IncorrectValue
                 ? new UnprocessableEntityObjectResult(response.Message)
+            : response.ErrorType == ErrorType.IncorrectFormat
+                ? new BadRequestObjectResult(response.Message)
                 : new BadRequestObjectResult(response.Message);
 
     public static IActionResult GetActionResult(this BaseResponse response)
@@ -21,5 +23,7 @@ public static class Helper
                 ? new NotFoundObjectResult(response.Message)
             : response.ErrorType == ErrorType.IncorrectValue
                 ? new UnprocessableEntityObjectResult(response.Message)
+            : response.ErrorType == ErrorType.IncorrectFormat
+                ? new BadRequestObjectResult(response.Message)
                 : new BadRequestObjectResult(response.Message);
 }

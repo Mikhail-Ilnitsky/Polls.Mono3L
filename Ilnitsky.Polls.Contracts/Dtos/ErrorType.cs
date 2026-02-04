@@ -6,6 +6,7 @@ public enum ErrorType
 
     EntityNotFound = 1,
     IncorrectValue = 2,
+    IncorrectFormat = 3,
 
     Error = 255,
 }
