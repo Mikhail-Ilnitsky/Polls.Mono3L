@@ -104,7 +104,40 @@ export default createStore({
     },
 
     axiosError(state, error) {
-      // console.log(error.toJSON());
+      // console.log('JSON:', error.toJSON());
+      // console.log('error:', error);
+      // console.log('error?.response:', error?.response);
+      // console.log('error?.response?.data:', error?.response?.data);
+
+      const response = error?.response;
+      const data = error?.response?.data;
+
+      if (response && data && data.errors && typeof data.errors === 'object') {
+        const messages = [];
+
+        for (const key in data.errors) {
+          for (const message of data.errors[key]) {
+            messages.push(message);
+          }
+        }
+
+        for (const msg of messages) {
+          addToast(state, `[${response.status}] ${msg}`, 'error');
+        }
+
+        return;
+      }
+
+      if (response && data && typeof data === 'string') {
+        addToast(state, `[${response.status}] ${data}`, 'error');
+        return;
+      }
+
+      if (response) {
+        addToast(state, `[${response.status}] ${response.statusText}`, 'error');
+        return;
+      }
+
       addToast(state, error.message, 'error');
     },
 
@@ -172,8 +205,10 @@ export default createStore({
 
     // Answers:
 
-    uploadAnswer({ state }, response) {
-      state.answersService.postAnswer(response);
+    uploadAnswer({ state, commit }, response) {
+      state.answersService.postAnswer(response)
+        .then(response => commit('success', response.data))
+        .catch(error => commit('axiosError', error));
     },
   },
 });
