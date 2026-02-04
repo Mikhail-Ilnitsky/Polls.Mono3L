@@ -21,6 +21,10 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
         {
             return BaseResponse.IncorrectValue("Не задан ответ!");
         }
+        if (answerDto.Answers.Any(string.IsNullOrWhiteSpace))
+        {
+            return BaseResponse.IncorrectValue("Не должно быть пустых ответов!");
+        }
         if (!_dbContext.Respondents.Any(r => r.Id == respondentId))
         {
             return BaseResponse.EntityNotFound("Не найден респондент!");
