@@ -113,18 +113,11 @@ export default createStore({
       const data = error?.response?.data;
 
       if (response && data && data.errors && typeof data.errors === 'object') {
-        const messages = [];
-
         for (const key in data.errors) {
           for (const message of data.errors[key]) {
-            messages.push(message);
+            addToast(state, `[${response.status}] ${message}`, 'error');
           }
         }
-
-        for (const msg of messages) {
-          addToast(state, `[${response.status}] ${msg}`, 'error');
-        }
-
         return;
       }
 
