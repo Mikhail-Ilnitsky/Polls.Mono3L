@@ -21,10 +21,12 @@ namespace Ilnitsky.Polls.Controllers
 
             if (respondentIdString is null || !Guid.TryParse(respondentIdString, out var _))
             {
+                HttpContext.Items["ErrorDetails"] = $"Некорректное значение respondentId = '{respondentIdString}'";
                 return BadRequest("Некорректный идентификатор респондента!");
             }
-            if (respondentSessionIdString is null || !Guid.TryParse(respondentIdString, out var _))
+            if (respondentSessionIdString is null || !Guid.TryParse(respondentSessionIdString, out var _))
             {
+                HttpContext.Items["ErrorDetails"] = $"Некорректное значение respondentSessionId = '{respondentSessionIdString}'";
                 return BadRequest("Некорректный идентификатор сессии респондента!");
             }
 
@@ -33,7 +35,7 @@ namespace Ilnitsky.Polls.Controllers
 
             var response = await handler.HandleAsync(answerDto, respondentSessionId, respondentId);
 
-            return response.GetActionResult();
+            return response.GetActionResult(HttpContext);
         }
     }
 }

@@ -3,23 +3,24 @@ namespace Ilnitsky.Polls.Contracts.Dtos;
 public record BaseResponse(
     bool IsSuccess,
     string? Message,
-    ErrorType ErrorType)
+    string? ErrorDetails,
+    ErrorType ErrorType) : IErrorInfo
 {
     public static BaseResponse Success()
-        => new(true, null, ErrorType.None);
+        => new(true, null, null, ErrorType.None);
 
     public static BaseResponse Success(string message)
-        => new(true, message, ErrorType.None);
+        => new(true, message, null, ErrorType.None);
 
-    public static BaseResponse EntityNotFound(string message)
-        => new(false, message, ErrorType.EntityNotFound);
+    public static BaseResponse EntityNotFound(string message, string details)
+        => new(false, message, details, ErrorType.EntityNotFound);
 
-    public static BaseResponse IncorrectValue(string message)
-        => new(false, message, ErrorType.IncorrectValue);
+    public static BaseResponse IncorrectValue(string message, string details)
+        => new(false, message, details, ErrorType.IncorrectValue);
 
-    public static BaseResponse IncorrectFormat(string message)
-        => new(false, message, ErrorType.IncorrectFormat);
+    public static BaseResponse IncorrectFormat(string message, string details)
+        => new(false, message, details, ErrorType.IncorrectFormat);
 
-    public static BaseResponse Error(string message)
-        => new(false, message, ErrorType.IncorrectValue);
+    public static BaseResponse Error(string message, string details)
+        => new(false, message, details, ErrorType.IncorrectValue);
 }

@@ -19,38 +19,38 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
     {
         if (answerDto.Answers.Count == 0)
         {
-            return BaseResponse.IncorrectValue("Не задан ответ!");
+            return BaseResponse.IncorrectValue("Не задан ответ!", "Количество ответов равно 0");
         }
         if (answerDto.Answers.Any(string.IsNullOrWhiteSpace))
         {
-            return BaseResponse.IncorrectValue("Не должно быть пустых ответов!");
+            return BaseResponse.IncorrectValue("Не должно быть пустых ответов!", "В качестве ответа передана пустая строка или строка пробелов");
         }
         if (!_dbContext.Respondents.Any(r => r.Id == respondentId))
         {
-            return BaseResponse.EntityNotFound("Не найден респондент!");
+            return BaseResponse.EntityNotFound("Не найден респондент!", $"Нет респондента с Id = {respondentId}");
         }
         if (!_dbContext.RespondentSessions.Any(r => r.Id == respondentSessionId))
         {
-            return BaseResponse.EntityNotFound("Не найдена сессия респондента!");
+            return BaseResponse.EntityNotFound("Не найдена сессия респондента!", $"Нет сессии с Id = {respondentSessionId}");
         }
         if (!_dbContext.Polls.Any(r => r.Id == answerDto.PollId))
         {
-            return BaseResponse.EntityNotFound("Не найден опрос!");
+            return BaseResponse.EntityNotFound("Не найден опрос!", $"Нет опроса с Id = {answerDto.PollId}");
         }
 
         var question = _dbContext.Questions.FirstOrDefault(r => r.Id == answerDto.QuestionId);
 
         if (question is null)
         {
-            return BaseResponse.EntityNotFound("Не найден вопрос!");
+            return BaseResponse.EntityNotFound("Не найден вопрос!", $"Нет вопроса с Id = {answerDto.QuestionId}");
         }
         if (!question.AllowMultipleChoice && answerDto.Answers.Count > 1)
         {
-            return BaseResponse.IncorrectValue("На этот вопрос не должно быть больше одного ответа!");
+            return BaseResponse.IncorrectValue("На этот вопрос не должно быть больше одного ответа!", $"Вопрос позволяет только один ответ, но количество ответов равно {answerDto.Answers.Count}");
         }
         if (!question.AllowCustomAnswer && !question.Answers.Any(a => a.Text == answerDto.Answers[0]))
         {
-            return BaseResponse.IncorrectValue("На этот вопрос не должно быть произвольного ответа!");
+            return BaseResponse.IncorrectValue("На этот вопрос не должно быть произвольного ответа!", $"Передан непредусмотренный ответ '{answerDto.Answers[0]}'");
         }
 
         Guid? multipleAnswersId = answerDto.Answers.Count > 1

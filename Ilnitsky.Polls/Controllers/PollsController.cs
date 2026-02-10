@@ -29,6 +29,6 @@ public class PollsController : ControllerBase
     {
         var poll = await handler.HandleAsync(id);
 
-        return poll.GetActionResult();
+        return poll.GetActionResult(HttpContext);
     }
 }
