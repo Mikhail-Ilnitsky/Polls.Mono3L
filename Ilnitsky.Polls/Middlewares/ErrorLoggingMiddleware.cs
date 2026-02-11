@@ -13,33 +13,50 @@ public class ErrorLoggingMiddleware(
     private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
     private readonly ILogger<ErrorLoggingMiddleware> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext httpContext)
     {
         try
         {
-            await _next(context);
+            await _next(httpContext);
 
-            var statusCode = context.Response.StatusCode;
-            if (statusCode >= 400)
+            if (httpContext.Items.TryGetValue("ErrorDetails", out var errorDetails))
             {
                 _logger.LogWarning(
                     "Ошибка {0} для {1} {2}: {3}",
-                    statusCode,
-                    context.Request.Method,
-                    context.Request.Path,
-                    context.Items["ErrorDetails"]);
+                    httpContext.Response.StatusCode,
+                    httpContext.Request.Method,
+                    httpContext.Request.Path,
+                    errorDetails);
+            }
+            else if (httpContext.Items.TryGetValue("ModelErrors", out var modelErrors))
+            {
+                _logger.LogWarning(
+                    "Ошибка {0} для {1} {2}: {3}",
+                    httpContext.Response.StatusCode,
+                    httpContext.Request.Method,
+                    httpContext.Request.Path,
+                    modelErrors);
+            }
+            else if (httpContext.Items.TryGetValue("BadResult", out var badResult))
+            {
+                _logger.LogWarning(
+                    "Ошибка {0} для {1} {2}: {3}",
+                    httpContext.Response.StatusCode,
+                    httpContext.Request.Method,
+                    httpContext.Request.Path,
+                    badResult);
             }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,
                 "Исключение для {0} {1}: {2}",
-                context.Request.Method,
-                context.Request.Path,
+                httpContext.Request.Method,
+                httpContext.Request.Path,
                 ex.Message);
 
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            await context.Response.WriteAsync("Внутренняя ошибка сервера");
+            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            await httpContext.Response.WriteAsync("Внутренняя ошибка сервера");
         }
     }
 }

@@ -2,6 +2,7 @@ using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DbInitialization;
+using Ilnitsky.Polls.Filters;
 using Ilnitsky.Polls.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +13,9 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddControllers(
+    options => options.Filters.Add<ErrorResultFilter>());       // Добавляем фильтр для сохранения информации об ошибках
 
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
