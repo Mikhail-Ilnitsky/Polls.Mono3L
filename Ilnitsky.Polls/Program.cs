@@ -1,3 +1,4 @@
+using Ilnitsky.Polls;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.DataAccess;
@@ -14,9 +15,12 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+AppContext.SetSwitch("Serilog.UseUtcTimestamps", true);
+
 builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
     .ReadFrom.Configuration(context.Configuration)
-    .ReadFrom.Services(services)
+    .Enrich.With<CustomUtcDateTimeEnricher>()
+    .Enrich.With<CustomUtcTimestampEnricher>()
     .Enrich.FromLogContext());
 
 builder.Services.AddControllers(
