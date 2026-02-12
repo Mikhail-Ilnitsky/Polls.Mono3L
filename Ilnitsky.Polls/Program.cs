@@ -15,8 +15,6 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-AppContext.SetSwitch("Serilog.UseUtcTimestamps", true);
-
 builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
     .ReadFrom.Configuration(context.Configuration)
     .Enrich.With<CustomUtcDateTimeEnricher>()
