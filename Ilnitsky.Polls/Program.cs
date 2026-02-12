@@ -9,9 +9,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext());
 
 builder.Services.AddControllers(
     options => options.Filters.Add<ErrorResultFilter>());       // Добавляем фильтр для сохранения информации об ошибках
