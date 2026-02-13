@@ -27,6 +27,12 @@ public class PollsController : ControllerBase
         [FromRoute] Guid id,
         [FromServices] GetPollByIdHandler handler)
     {
+        // HACK: тестовое исключение для несуществующего id
+        if (id == Guid.Parse("019c1aa8-9bf0-750d-9e6d-832de94b1c13"))
+        {
+            throw new Exception("Тестовое исключение!");
+        }
+
         var poll = await handler.HandleAsync(id);
 
         return poll.GetActionResult(HttpContext);
