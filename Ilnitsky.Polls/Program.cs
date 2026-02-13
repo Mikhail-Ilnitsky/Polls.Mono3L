@@ -19,7 +19,10 @@ builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfig
     .ReadFrom.Configuration(context.Configuration)
     .Enrich.With<CustomUtcDateTimeEnricher>()
     .Enrich.With<CustomUtcTimestampEnricher>()
-    .Enrich.FromLogContext());
+    .Enrich.FromLogContext()
+    .Enrich.WithThreadId()
+    .Enrich.WithEnvironmentName()
+    .Enrich.WithMachineName());
 
 builder.Services.AddControllers(
     options => options.Filters.Add<ErrorResultFilter>());       // Добавляем фильтр для сохранения информации об ошибках
