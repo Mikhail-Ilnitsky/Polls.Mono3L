@@ -1,3 +1,4 @@
+using HealthChecks.Prometheus.Metrics;
 using Ilnitsky.Polls;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
@@ -91,14 +92,19 @@ app.UseHttpMetrics();                               // Собираем метр
 
 app.MapControllers();                               // Региструем контроллеры API
 
-app.MapHealthChecks("/health");                     // Базовая проверка состояния для Kubernetes/DockerSwarm
-app.MapHealthChecks("/health/live", new HealthCheckOptions
+app.MapHealthChecks("/health");                                     // Базовая проверка состояния для Kubernetes/DockerSwarm
+app.MapHealthChecks("/health/live", new HealthCheckOptions          // Только проверка "self"
 {
-    Predicate = _ => false                                  // только базовая проверка "self"
+    Predicate = _ => false
 });
-app.MapHealthChecks("/health/ready", new HealthCheckOptions
+app.MapHealthChecks("/health/ready", new HealthCheckOptions         // Проверка состояния включающая доступность БД
 {
-    Predicate = (check) => check.Tags.Contains("ready")     // с проверкой БД
+    Predicate = (check) => check.Tags.Contains("ready")
+});
+app.MapHealthChecks("/health/metrics", new HealthCheckOptions       // Метрики состояния для Prometheus
+{
+    Predicate = _ => true,
+    ResponseWriter = PrometheusResponseWriter.WritePrometheusResultText
 });
 
 app.MapMetrics();                                   // Отдаём метрики по адресу /metrics (по умолчанию)
