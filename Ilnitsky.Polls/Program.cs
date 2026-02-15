@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
 using Serilog;
 using System;
 
@@ -43,7 +44,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
         .UseMySql(dbConnectionString, ServerVersion.AutoDetect(dbConnectionString)));
 builder.Services.AddTransient<DbInitializer>();
 
-// Хэндлеры
+// Добавляем хэндлеры
 builder.Services.AddTransient<GetPollLinksHandler>();
 builder.Services.AddTransient<GetPollByIdHandler>();
 builder.Services.AddTransient<CreateRespondentAnswerHandler>();
@@ -51,7 +52,11 @@ builder.Services.AddTransient<CreateRespondentAnswerHandler>();
 builder.Services.AddDistributedMemoryCache();       // Добавляем IDistributedMemoryCache для хранения данных сессий
 builder.Services.AddSession();                      // Добавляем сервисы сессии
 
+//=================================================================================================================//
+
 var app = builder.Build();
+
+app.UseHttpsRedirection();                          // Перенаправляем HTTP-запросы на HTTPS                                 // Определяем маршруты для обработчиков запросов
 
 app.UseSession();                                   // Добавляем middleware для работы с сессиями
 
@@ -65,15 +70,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseDefaultFiles();                              // Добавляем поддержку страниц html по умолчанию
 app.UseStaticFiles();                               // Добавляем поддержку статических файлов
 
-app.UseAuthorization();
+app.UseRouting();                                   // Определяем конечные маршруты
 
-app.MapControllers();
-app.MapFallbackToFile("index.html");
+app.UseHttpMetrics();                               // Собираем метрики с информацией о маршруте
+
+//app.UseAuthorization();
+
+app.MapControllers();                               // Региструем контроллеры API
+app.MapMetrics();                                   // Отдаём метрики по умолчанию на /metrics
+app.MapFallbackToFile("index.html");                // Перенаправляем на index.html
 
 await app.MigrateAsync<ApplicationDbContext>();
 await app.InitAsync<DbInitializer>();
