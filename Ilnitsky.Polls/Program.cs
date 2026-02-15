@@ -6,9 +6,11 @@ using Ilnitsky.Polls.DbInitialization;
 using Ilnitsky.Polls.Filters;
 using Ilnitsky.Polls.Middlewares;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Prometheus;
 using Serilog;
@@ -38,6 +40,14 @@ if (string.IsNullOrWhiteSpace(dbConnectionString))
     throw new InvalidOperationException("Connection string for ApplicationDbContext is not configured.");
 }
 
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy())    // Простая проверка
+    .AddSqlServer(                                          // Проверка доступности БД
+        connectionString: dbConnectionString,
+        name: "sql_server",
+        failureStatus: HealthStatus.Degraded,
+        tags: ["ready"]);
+
 builder.Services.AddDbContext<ApplicationDbContext>(
     optionsBuilder => optionsBuilder
         .UseLazyLoadingProxies()
@@ -56,7 +66,7 @@ builder.Services.AddSession();                      // Добавляем сер
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();                          // Перенаправляем HTTP-запросы на HTTPS                                 // Определяем маршруты для обработчиков запросов
+app.UseHttpsRedirection();                          // Перенаправляем HTTP-запросы на HTTPS
 
 app.UseSession();                                   // Добавляем middleware для работы с сессиями
 
@@ -80,7 +90,18 @@ app.UseHttpMetrics();                               // Собираем метр
 //app.UseAuthorization();
 
 app.MapControllers();                               // Региструем контроллеры API
-app.MapMetrics();                                   // Отдаём метрики по умолчанию на /metrics
+
+app.MapHealthChecks("/health");                     // Базовая проверка состояния для Kubernetes/DockerSwarm
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = _ => false                                  // только базовая проверка "self"
+});
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = (check) => check.Tags.Contains("ready")     // с проверкой БД
+});
+
+app.MapMetrics();                                   // Отдаём метрики по адресу /metrics (по умолчанию)
 app.MapFallbackToFile("index.html");                // Перенаправляем на index.html
 
 await app.MigrateAsync<ApplicationDbContext>();
