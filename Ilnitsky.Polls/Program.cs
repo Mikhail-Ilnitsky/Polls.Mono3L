@@ -1,4 +1,3 @@
-using HealthChecks.Prometheus.Metrics;
 using Ilnitsky.Polls;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
@@ -40,7 +39,8 @@ builder.Services.AddHealthChecks()
         connectionString: dbConnectionString,
         name: "sql_server",
         failureStatus: HealthStatus.Degraded,
-        tags: ["ready"]);
+        tags: ["ready"])
+    .ForwardToPrometheus();
 
 builder.Services.AddControllers(
     options => options.Filters.Add<ErrorResultFilter>());   // Добавляем фильтр для сохранения информации об ошибках
@@ -104,11 +104,6 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions          // Толь�
 app.MapHealthChecks("/health/ready", new HealthCheckOptions         // Проверка состояния включающая доступность БД
 {
     Predicate = (check) => check.Tags.Contains("ready")
-});
-app.MapHealthChecks("/health/metrics", new HealthCheckOptions       // Метрики состояния для Prometheus
-{
-    Predicate = _ => true,
-    ResponseWriter = PrometheusResponseWriter.WritePrometheusResultText
 });
 
 app.MapMetrics();                                   // Отдаём метрики по адресу /metrics (по умолчанию)
