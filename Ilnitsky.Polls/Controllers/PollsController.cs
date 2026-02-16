@@ -1,5 +1,6 @@
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace Ilnitsky.Polls.Controllers;
 public class PollsController : ControllerBase
 {
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<PollLinkDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IEnumerable<PollLinkDto>> Get(
         [FromQuery] int? offset,
         [FromQuery] int? limit,
@@ -23,6 +26,11 @@ public class PollsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(typeof(PollDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PollDto>> Get(
         [FromRoute] Guid id,
         [FromServices] GetPollByIdHandler handler)
