@@ -18,6 +18,7 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Подключаем Serilog как основной провайдер логов для хоста
 builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
     .ReadFrom.Configuration(context.Configuration)
     .Enrich.With<CustomUtcDateTimeEnricher>()
@@ -33,43 +34,44 @@ if (string.IsNullOrWhiteSpace(dbConnectionString))
     throw new InvalidOperationException("Connection string for ApplicationDbContext is not configured.");
 }
 
-builder.Services.AddHealthChecks()
+builder.Services.AddHealthChecks()                          // Регистрируем сервисы мониторинга состояния
     .AddCheck("self", () => HealthCheckResult.Healthy())    // Простая проверка
     .AddSqlServer(                                          // Проверка доступности БД
         connectionString: dbConnectionString,
         name: "sql_server",
         failureStatus: HealthStatus.Degraded,
         tags: ["ready"])
-    .ForwardToPrometheus();
+    .ForwardToPrometheus();                                 // Добавляем в метрики aspnetcore_healthcheck_status
 
-builder.Services.AddControllers(
-    options => options.Filters.Add<ErrorResultFilter>());   // Добавляем фильтр для сохранения информации об ошибках
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<ApplicationDbContext>(
+builder.Services.AddDbContext<ApplicationDbContext>(        // Регистрируем контекст базы данных и настраиваем подключение
     optionsBuilder => optionsBuilder
         .UseLazyLoadingProxies()
         .UseMySql(dbConnectionString, ServerVersion.AutoDetect(dbConnectionString)));
-builder.Services.AddTransient<DbInitializer>();
 
-// Добавляем хэндлеры
+builder.Services.AddTransient<DbInitializer>();             // Регистрируем инициализатор базы данных
+
+builder.Services.AddControllers(                            // Регистрируем сервисы контроллеров
+    options => options.Filters.Add<ErrorResultFilter>());   // Регистрируем фильтр для сохранения информации об ошибках
+
+// Learn more at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();                 // Регистрируем обнаружитель конечных точек для minimalAPI
+builder.Services.AddSwaggerGen();                           // Регистрируем генератор документации API
+
+builder.Services.AddDistributedMemoryCache();               // Регистрируем IDistributedMemoryCache для хранения данных сессий
+builder.Services.AddSession();                              // Регистрируем сервисы сессии
+
+// Регистрируем хэндлеры
 builder.Services.AddTransient<GetPollLinksHandler>();
 builder.Services.AddTransient<GetPollByIdHandler>();
 builder.Services.AddTransient<CreateRespondentAnswerHandler>();
-
-builder.Services.AddDistributedMemoryCache();       // Добавляем IDistributedMemoryCache для хранения данных сессий
-builder.Services.AddSession();                      // Добавляем сервисы сессии
 
 //=================================================================================================================//
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();                          // Перенаправляем HTTP-запросы на HTTPS
+app.UseHttpsRedirection();                          // Подключаем перенаправление HTTP-запросов на HTTPS
 
-app.UseSession();                                   // Добавляем middleware для работы с сессиями
+app.UseSession();                                   // Подключаем использование сессий
 
 app.UseMiddleware<ErrorLoggingMiddleware>();        // Логируем явные ошибки и обрабатываем (и логируем) необработанные исключения
 app.UseMiddleware<RespondentMiddleware>();          // Проверяем наличие у респондента respondentId, и создаём его, либо обновляем
@@ -77,14 +79,14 @@ app.UseMiddleware<RespondentSessionMiddleware>();   // Проверяем нал
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger();                               // Подключаем создание документации API
+    app.UseSwaggerUI();                             // Подключаем отображение страницы Swagger
 }
 
-app.UseDefaultFiles();                              // Добавляем поддержку страниц html по умолчанию
-app.UseStaticFiles();                               // Добавляем поддержку статических файлов
+app.UseDefaultFiles();                              // Подключаем поддержку страниц html по умолчанию
+app.UseStaticFiles();                               // Подключаем поддержку статических файлов
 
-app.UseRouting();                                   // Определяем конечные маршруты
+app.UseRouting();                                   // Подключаем определение конечных точек
 
 app.UseWhen(                                        // Не собираем метрики если путь начинается с /metrics или /health
     context =>
@@ -94,22 +96,24 @@ app.UseWhen(                                        // Не собираем м�
 
 //app.UseAuthorization();
 
-app.MapControllers();                               // Региструем контроллеры API
+app.MapControllers();                               // Подключаем контроллеры API
 
-app.MapHealthChecks("/health");                                     // Базовая проверка состояния для Kubernetes/DockerSwarm
-app.MapHealthChecks("/health/live", new HealthCheckOptions          // Только проверка "self"
-{
-    Predicate = _ => false
-});
-app.MapHealthChecks("/health/ready", new HealthCheckOptions         // Проверка состояния включающая доступность БД
-{
-    Predicate = (check) => check.Tags.Contains("ready")
-});
+app.MapHealthChecks("/health");                     // Базовая проверка состояния для Kubernetes/DockerSwarm
+app.MapHealthChecks("/health/live",                 // Только проверка "self"
+    new HealthCheckOptions
+    {
+        Predicate = _ => false
+    });
+app.MapHealthChecks("/health/ready",                // Проверка состояния включающая доступность БД
+    new HealthCheckOptions
+    {
+        Predicate = (check) => check.Tags.Contains("ready")
+    });
 
 app.MapMetrics();                                   // Отдаём метрики по адресу /metrics (по умолчанию)
 app.MapFallbackToFile("index.html");                // Перенаправляем на index.html
 
-await app.MigrateAsync<ApplicationDbContext>();
-await app.InitAsync<DbInitializer>();
+await app.MigrateAsync<ApplicationDbContext>();     // Выполняем миграцию БД
+await app.InitAsync<DbInitializer>();               // Выполняем инициализацию БД
 
 app.Run();
