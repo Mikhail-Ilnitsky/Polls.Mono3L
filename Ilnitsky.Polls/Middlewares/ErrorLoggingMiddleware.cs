@@ -58,7 +58,7 @@ public class ErrorLoggingMiddleware(
 
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             await httpContext.Response
-                .WriteAsJsonAsync(Helper.GetProblemDetails(httpContext.Response.StatusCode, "Внутренняя ошибка сервера"));
+                .WriteAsJsonAsync(ActionHelper.GetProblemDetails(httpContext.Response.StatusCode, "Внутренняя ошибка сервера"));
         }
     }
 }

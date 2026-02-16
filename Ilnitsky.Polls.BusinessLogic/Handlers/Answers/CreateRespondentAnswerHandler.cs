@@ -79,6 +79,6 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
 
         await _dbContext.SaveChangesAsync();
 
-        return BaseResponse.Success("Ответ принят!");
+        return BaseResponse.Created("Ответ принят!");
     }
 }

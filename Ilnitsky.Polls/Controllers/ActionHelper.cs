@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ilnitsky.Polls.Controllers;
 
-public static class Helper
+public static class ActionHelper
 {
     public static ActionResult<TValue> GetActionResult<TValue>(this Response<TValue> response, HttpContext httpContext)
     {
@@ -18,6 +18,10 @@ public static class Helper
 
     public static IActionResult GetActionResult(this BaseResponse response, HttpContext httpContext)
     {
+        if (response.IsSuccess && response.IsCreated)
+        {
+            return new CreatedResult("", response.Message);
+        }
         if (response.IsSuccess)
         {
             return new OkObjectResult(response.Message);
