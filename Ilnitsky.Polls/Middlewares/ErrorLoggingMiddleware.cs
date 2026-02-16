@@ -1,3 +1,4 @@
+using Ilnitsky.Polls.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -56,7 +57,8 @@ public class ErrorLoggingMiddleware(
                 ex.Message);
 
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            await httpContext.Response.WriteAsync("Внутренняя ошибка сервера");
+            await httpContext.Response
+                .WriteAsJsonAsync(Helper.GetProblemDetails(httpContext.Response.StatusCode, "Внутренняя ошибка сервера"));
         }
     }
 }

@@ -121,6 +121,16 @@ export default createStore({
         return;
       }
 
+      if (response && data && data.detail && typeof data.detail === 'string') {
+        addToast(state, `[${response.status}] ${data.detail}`, 'error');
+        return;
+      }
+
+      if (response && data && data.title && typeof data.title === 'string') {
+        addToast(state, `[${response.status}] ${data.title}`, 'error');
+        return;
+      }
+
       if (response && data && typeof data === 'string') {
         addToast(state, `[${response.status}] ${data}`, 'error');
         return;

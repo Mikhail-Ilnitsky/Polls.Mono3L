@@ -32,10 +32,18 @@ public static class Helper
 
         return response.ErrorType switch
         {
-            ErrorType.EntityNotFound => new NotFoundObjectResult(response.Message),
-            ErrorType.IncorrectValue => new UnprocessableEntityObjectResult(response.Message),
-            ErrorType.IncorrectFormat => new BadRequestObjectResult(response.Message),
-            _ => new BadRequestObjectResult(response.Message)
+            ErrorType.EntityNotFound => new NotFoundObjectResult(GetProblemDetails(404, response.Message)),
+            ErrorType.IncorrectValue => new UnprocessableEntityObjectResult(GetProblemDetails(422, response.Message)),
+            ErrorType.IncorrectFormat => new BadRequestObjectResult(GetProblemDetails(400, response.Message)),
+            _ => new BadRequestObjectResult(GetProblemDetails(400, response.Message))
         };
     }
+
+    public static ProblemDetails GetProblemDetails(int statusCode, string? message)
+        => new ProblemDetails
+        {
+            Status = statusCode,
+            Title = "Ошибка!",
+            Detail = message,
+        };
 }
