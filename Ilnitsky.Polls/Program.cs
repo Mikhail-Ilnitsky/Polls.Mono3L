@@ -28,13 +28,6 @@ builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfig
     .Enrich.WithEnvironmentName()
     .Enrich.WithMachineName());
 
-builder.Services.AddControllers(
-    options => options.Filters.Add<ErrorResultFilter>());       // Добавляем фильтр для сохранения информации об ошибках
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 var dbConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrWhiteSpace(dbConnectionString))
 {
@@ -48,6 +41,13 @@ builder.Services.AddHealthChecks()
         name: "sql_server",
         failureStatus: HealthStatus.Degraded,
         tags: ["ready"]);
+
+builder.Services.AddControllers(
+    options => options.Filters.Add<ErrorResultFilter>());   // Добавляем фильтр для сохранения информации об ошибках
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     optionsBuilder => optionsBuilder
@@ -86,7 +86,11 @@ app.UseStaticFiles();                               // Добавляем под
 
 app.UseRouting();                                   // Определяем конечные маршруты
 
-app.UseHttpMetrics();                               // Собираем метрики с информацией о маршруте
+app.UseWhen(                                        // Не собираем метрики если путь начинается с /metrics или /health
+    context =>
+        !context.Request.Path.StartsWithSegments("/metrics", StringComparison.InvariantCultureIgnoreCase)
+        && !context.Request.Path.StartsWithSegments("/health", StringComparison.InvariantCultureIgnoreCase),
+    appBuilder => appBuilder.UseHttpMetrics());     // Собираем метрики с информацией о маршруте
 
 //app.UseAuthorization();
 
