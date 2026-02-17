@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Ilnitsky.Polls</name>
+    </assembly>
+    <members>
+        <member name="M:Ilnitsky.Polls.Controllers.AnswersController.Post(Ilnitsky.Polls.Contracts.Dtos.Answers.CreateRespondentAnswerDto,Ilnitsky.Polls.BusinessLogic.Handlers.Answers.CreateRespondentAnswerHandler)">
+            <summary>
+            Регистрация ответа респондента
+            </summary>
+            <param name="answerDto">Данные ответа</param>
+            <response code="201">Ответ зарегистрирован</response>
+            <response code="400">Неправильный тип параметра</response>
+            <response code="422">Неправильное значение параметра</response>
+            <response code="404">Не найдены данные опроса</response>
+            <response code="500">Ошибка сервера</response>
+        </member>
+        <member name="M:Ilnitsky.Polls.Controllers.PollsController.Get(System.Nullable{System.Int32},System.Nullable{System.Int32},Ilnitsky.Polls.BusinessLogic.Handlers.Polls.GetPollLinksHandler)">
+            <summary>
+            Получение списка опросов
+            </summary>
+            <param name="offset">Количество пропускаемых опросов</param>
+            <param name="limit">Количество получаемых опросов</param>
+            <response code="200">Получен список опросов</response>
+            <response code="500">Ошибка сервера</response>
+        </member>
+        <member name="M:Ilnitsky.Polls.Controllers.PollsController.Get(System.Guid,Ilnitsky.Polls.BusinessLogic.Handlers.Polls.GetPollByIdHandler)">
+            <summary>
+            Получение опроса
+            </summary>
+            <param name="id">ID опроса</param>
+            <response code="200">Опрос успешно найден</response>
+            <response code="400">Неправильный тип параметра</response>
+            <response code="404">Опрос не найден</response>
+            <response code="500">Ошибка сервера</response>
+        </member>
+    </members>
+</doc>

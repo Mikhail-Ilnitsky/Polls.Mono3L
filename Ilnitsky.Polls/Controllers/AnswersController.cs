@@ -11,6 +11,15 @@ namespace Ilnitsky.Polls.Controllers
     [ApiController]
     public class AnswersController : ControllerBase
     {
+        /// <summary>
+        /// Регистрация ответа респондента
+        /// </summary>
+        /// <param name="answerDto">Данные ответа</param>
+        /// <response code="201">Ответ зарегистрирован</response>
+        /// <response code="400">Неправильный тип параметра</response>
+        /// <response code="422">Неправильное значение параметра</response>
+        /// <response code="404">Не найдены данные опроса</response>
+        /// <response code="500">Ошибка сервера</response>
         [HttpPost]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]

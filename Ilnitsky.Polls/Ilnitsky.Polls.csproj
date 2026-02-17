@@ -6,6 +6,13 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <UserSecretsId>67717e96-b806-4971-ad0b-ef828e7da497</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+
+    <!-- Включаем генерацию XML-файла документации -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Задаём имя и путь к файлу документации (обычно совпадает с названием проекта) -->
+    <DocumentationFile>Api.xml</DocumentationFile>
+    <!-- Подавляем предупреждение об отсутствии комментариев (CS1591) -->
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

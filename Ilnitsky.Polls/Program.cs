@@ -12,9 +12,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Prometheus;
 using Serilog;
 using System;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,7 +57,12 @@ builder.Services.AddControllers(                            // Регистри�
 
 // Learn more at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();                 // Регистрируем обнаружитель конечных точек для minimalAPI
-builder.Services.AddSwaggerGen();                           // Регистрируем генератор документации API
+builder.Services.AddSwaggerGen(options =>                   // Регистрируем генератор документации API
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Ilnitsky.Polls.Mono3L API Опросов", Version = "1.0" });
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, "Api.xml");
+    options.IncludeXmlComments(xmlPath);                    // Подключаем XML-комментарии из проекта
+});
 
 builder.Services.AddDistributedMemoryCache();               // Регистрируем IDistributedMemoryCache для хранения данных сессий
 builder.Services.AddSession();                              // Регистрируем сервисы сессии
