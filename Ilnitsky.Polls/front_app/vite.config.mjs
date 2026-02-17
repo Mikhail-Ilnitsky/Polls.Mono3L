@@ -14,7 +14,8 @@ export default defineConfig({
     assetsDir: 'assets',
     emptyOutDir: true,
     sourcemap: false, // Отключаем sourcemaps для production
-    cssCodeSplit: true,
+    modulePreload: false, // Отключаем генерацию <link rel="modulepreload">
+    cssCodeSplit: false, // Объединяем CSS, чтобы уменьшить количество линков
     rollupOptions: {
       output: {
         manualChunks: undefined,
@@ -66,6 +67,16 @@ export default defineConfig({
         ],
       },
     }),
+    {
+      name: 'cleanup-index-html', // Удаляем <link rel="preload" ...> теги из конечного index.html
+      enforce: 'post',
+      transformIndexHtml: {
+        order: 'post',
+        handler(html) {
+          return html.replace(/\s*<link rel="preload" as="font".*crossorigin="anonymous">\n/g, '');
+        },
+      },
+    },
   ],
   optimizeDeps: {
     exclude: [
