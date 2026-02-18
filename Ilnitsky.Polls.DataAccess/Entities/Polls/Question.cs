@@ -20,6 +20,6 @@ public class Question : IEntity
 
     public virtual Poll? Poll { get; set; }
 
-    public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
-    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = new List<RespondentAnswer>();
+    public virtual ICollection<Answer> Answers { get; set; } = [];
+    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = [];
 }

@@ -14,6 +14,6 @@ public class Poll : IEntity
     public string? Html { get; set; }
     public bool IsActive { get; set; }
 
-    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
-    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = new List<RespondentAnswer>();
+    public virtual ICollection<Question> Questions { get; set; } = [];
+    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = [];
 }

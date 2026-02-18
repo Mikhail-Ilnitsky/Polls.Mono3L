@@ -9,6 +9,6 @@ public class Respondent : IEntity
 
     public DateTime DateTime { get; set; }
 
-    public virtual ICollection<RespondentSession> RespondentSessions { get; set; } = new List<RespondentSession>();
-    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = new List<RespondentAnswer>();
+    public virtual ICollection<RespondentSession> RespondentSessions { get; set; } = [];
+    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = [];
 }

@@ -18,7 +18,7 @@ public class RespondentSessionMiddleware(RequestDelegate _next)
         if (!httpContext.Session.Keys.Contains("RespondentSessionId"))
         {
             var respondentSessionId = GuidHelper.CreateGuidV7();
-            var respondentId = Guid.Parse(httpContext.Session.GetString("RespondentId"));
+            var respondentId = Guid.Parse(httpContext.Session.GetString("RespondentId")!);
 
             await SaveInDatabaseAsync(httpContext, respondentId, respondentSessionId);
             SaveInSession(httpContext, respondentSessionId);

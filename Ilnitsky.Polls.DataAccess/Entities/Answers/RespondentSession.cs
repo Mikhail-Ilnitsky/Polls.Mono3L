@@ -18,5 +18,5 @@ public class RespondentSession : IEntity
 
     public virtual Respondent? Respondent { get; set; }
 
-    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = new List<RespondentAnswer>();
+    public virtual ICollection<RespondentAnswer> RespondentAnswers { get; set; } = [];
 }
