@@ -6,12 +6,15 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <UserSecretsId>67717e96-b806-4971-ad0b-ef828e7da497</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	
+	  <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+	  <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 
     <!-- Включаем генерацию XML-файла документации -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- Задаём имя и путь к файлу документации (обычно совпадает с названием проекта) -->
     <DocumentationFile>Api.xml</DocumentationFile>
-    <!-- Подавляем предупреждение об отсутствии комментариев (CS1591) -->
+    <!-- Подавляем предупреждение об отсутствии XML-комментариев -->
     <NoWarn>$(NoWarn);1573;1591</NoWarn>
   </PropertyGroup>
 
