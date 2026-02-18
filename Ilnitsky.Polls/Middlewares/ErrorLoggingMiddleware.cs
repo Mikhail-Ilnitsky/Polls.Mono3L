@@ -25,7 +25,7 @@ public class ErrorLoggingMiddleware(
             if (httpContext.Items.TryGetValue("ErrorDetails", out var errorDetails))
             {
                 _logger.LogWarning(
-                    "Ошибка {0} для {1} {2}: {3}",
+                    "Ошибка {StatusCode} для {Method} {Path}: {Details}",
                     httpContext.Response.StatusCode,
                     httpContext.Request.Method,
                     httpContext.Request.Path,
@@ -34,7 +34,7 @@ public class ErrorLoggingMiddleware(
             else if (httpContext.Items.TryGetValue("ModelErrors", out var modelErrors))
             {
                 _logger.LogWarning(
-                    "Ошибка {0} для {1} {2}: {3}",
+                    "Ошибка {StatusCode} для {Method} {Path}: {Details}",
                     httpContext.Response.StatusCode,
                     httpContext.Request.Method,
                     httpContext.Request.Path,
@@ -43,7 +43,7 @@ public class ErrorLoggingMiddleware(
             else if (httpContext.Items.TryGetValue("BadResult", out var badResult))
             {
                 _logger.LogWarning(
-                    "Ошибка {0} для {1} {2}: {3}",
+                    "Ошибка {StatusCode} для {Method} {Path}: {Details}",
                     httpContext.Response.StatusCode,
                     httpContext.Request.Method,
                     httpContext.Request.Path,
@@ -53,7 +53,7 @@ public class ErrorLoggingMiddleware(
         catch (Exception ex)
         {
             _logger.LogError(ex,
-                "Исключение для {0} {1}: {2}",
+                "Исключение для {Method} {Path}: {Message}",
                 httpContext.Request.Method,
                 httpContext.Request.Path,
                 ex.Message);

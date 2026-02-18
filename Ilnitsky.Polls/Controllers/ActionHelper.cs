@@ -45,7 +45,7 @@ public static class ActionHelper
     }
 
     public static ProblemDetails GetProblemDetails(int statusCode, string? message)
-        => new ProblemDetails
+        => new()
         {
             Status = statusCode,
             Title = "Ошибка!",
