@@ -1,12 +1,12 @@
-using Ilnitsky.Polls.Contracts.Dtos.Polls;
-using Ilnitsky.Polls.DataAccess;
-
-using Microsoft.EntityFrameworkCore;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Ilnitsky.Polls.Contracts.Dtos.Polls;
+using Ilnitsky.Polls.DataAccess;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 

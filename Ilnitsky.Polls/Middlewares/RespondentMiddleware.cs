@@ -1,13 +1,13 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
 using Ilnitsky.Polls.BusinessLogic;
 using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DataAccess.Entities.Answers;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Ilnitsky.Polls.Middlewares;
 

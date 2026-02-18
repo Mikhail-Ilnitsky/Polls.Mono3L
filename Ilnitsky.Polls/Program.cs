@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+
 using Ilnitsky.Polls;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
@@ -18,9 +21,6 @@ using Microsoft.OpenApi.Models;
 using Prometheus;
 
 using Serilog;
-
-using System;
-using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 

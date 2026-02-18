@@ -1,8 +1,8 @@
-using Ilnitsky.Polls.Contracts.Dtos.Polls;
-using Ilnitsky.Polls.DataAccess.Entities.Polls;
-
 using System;
 using System.Linq;
+
+using Ilnitsky.Polls.Contracts.Dtos.Polls;
+using Ilnitsky.Polls.DataAccess.Entities.Polls;
 
 namespace Ilnitsky.Polls.BusinessLogic;
 

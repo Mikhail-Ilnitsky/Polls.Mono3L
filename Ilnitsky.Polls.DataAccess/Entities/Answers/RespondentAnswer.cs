@@ -1,6 +1,6 @@
-using Ilnitsky.Polls.DataAccess.Entities.Polls;
-
 using System;
+
+using Ilnitsky.Polls.DataAccess.Entities.Polls;
 
 namespace Ilnitsky.Polls.DataAccess.Entities.Answers;
 

@@ -1,10 +1,10 @@
+using System.Threading.Tasks;
+
 using Ilnitsky.Polls.DbInitialization;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
-using System.Threading.Tasks;
 
 namespace Ilnitsky.Polls.DbInitialization;
 
