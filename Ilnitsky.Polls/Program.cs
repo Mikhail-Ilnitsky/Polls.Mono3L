@@ -42,7 +42,7 @@ if (string.IsNullOrWhiteSpace(dbConnectionString))
 
 builder.Services.AddHealthChecks()                          // Регистрируем сервисы мониторинга состояния
     .AddCheck("self", () => HealthCheckResult.Healthy())    // Простая проверка
-    .AddSqlServer(                                          // Проверка доступности БД
+    .AddMySql(                                              // Проверка доступности БД
         connectionString: dbConnectionString,
         name: "sql_server",
         failureStatus: HealthStatus.Degraded,
