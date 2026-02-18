@@ -29,8 +29,110 @@ indent_size = 2
 indent_style = space
 indent_size = 4
 
+dotnet_diagnostic.IDE0305.severity = none						# Отключаем warning'и для IDE0305, требующие преобразовать .ToList() в [... ]
+
 dotnet_style_encoding = utf-8_without_bom:warning				# Отключаем BOM для C# файлов
 
 dotnet_sort_system_directives_first = true						# Группа using'ов системных пространст имён System.* всегда идёт первой
 dotnet_separate_import_directive_groups = true					# Разделяем пустыми строками группы using'ов
 csharp_style_namespace_declarations = file_scoped:suggestion	# Убираем фигурные скобки для namespace	(В Cleanup нужно добавление Apply namespace preferences)
+
+
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning		# Требуем явно писать private/public
+csharp_prefer_braces = true:warning														# Тербуем  фигурные скобки для однострочных операторов if/else/while/for
+
+
+# =============================================================================
+# ОПИСАНИЕ СИМВОЛОВ
+# =============================================================================
+
+# Классы и структуры
+dotnet_naming_symbols.classes_and_structs.applicable_kinds = class, struct
+
+# Интерфейсы
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+
+# Публичные методы
+dotnet_naming_symbols.public_methods.applicable_kinds = method
+dotnet_naming_symbols.public_methods.applicable_accessibilities = public
+
+# Асинхронные методы
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+dotnet_naming_symbols.async_methods.required_modifiers = async
+
+# Публичные свойства
+dotnet_naming_symbols.public_properties.applicable_kinds = property
+dotnet_naming_symbols.public_properties.applicable_accessibilities = public
+
+# Константы
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.required_modifiers = const
+
+# Публичные поля
+dotnet_naming_symbols.public_fields.applicable_kinds = field
+dotnet_naming_symbols.public_fields.applicable_accessibilities = public
+dotnet_naming_symbols.public_fields.required_modifiers = !const
+
+# Приватные поля (исключая константы)
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers = !const
+
+# =============================================================================
+# ОПИСАНИЕ СТИЛЕЙ
+# =============================================================================
+
+dotnet_naming_styles.pascal_case.capitalization = pascal_case
+
+dotnet_naming_styles.interface_style.capitalization = pascal_case
+dotnet_naming_styles.interface_style.required_prefix = I
+
+dotnet_naming_styles.private_field_style.capitalization = camel_case
+dotnet_naming_styles.private_field_style.required_prefix = _
+
+dotnet_naming_styles.async_style.capitalization = pascal_case
+dotnet_naming_styles.async_style.required_suffix = Async
+
+# =============================================================================
+# ПРИМЕНЕНИЕ ПРАВИЛ (Порядок важен: от частного к общему)
+# =============================================================================
+
+# Интерфейсы должны быть IPascalCase
+dotnet_naming_rules.interfaces_rule.symbols = interfaces
+dotnet_naming_rules.interfaces_rule.style = interface_style
+dotnet_naming_rules.interfaces_rule.severity = warning
+
+# Константы должны быть PascalCase
+dotnet_naming_rules.constants_rule.symbols = constants
+dotnet_naming_rules.constants_rule.style = pascal_case
+dotnet_naming_rules.constants_rule.severity = warning
+
+# Классы и структуры должны быть PascalCase
+dotnet_naming_rules.classes_rule.symbols = classes_and_structs
+dotnet_naming_rules.classes_rule.style = pascal_case
+dotnet_naming_rules.classes_rule.severity = warning
+
+# Асинхронные методы должны иметь суффикс Async
+dotnet_naming_rules.async_rule.symbols = async_methods
+dotnet_naming_rules.async_rule.style = async_style
+dotnet_naming_rules.async_rule.severity = warning
+
+# Публичные методы должны быть PascalCase
+dotnet_naming_rules.public_methods_rule.symbols = public_methods
+dotnet_naming_rules.public_methods_rule.style = pascal_case
+dotnet_naming_rules.public_methods_rule.severity = warning
+
+# Публичные свойства должны быть PascalCase
+dotnet_naming_rules.public_properties_rule.symbols = public_properties
+dotnet_naming_rules.public_properties_rule.style = pascal_case
+dotnet_naming_rules.public_properties_rule.severity = warning
+
+# Публичные поля должны быть PascalCase
+dotnet_naming_rules.public_fields_rule.symbols = public_fields
+dotnet_naming_rules.public_fields_rule.style = pascal_case
+dotnet_naming_rules.public_fields_rule.severity = warning
+
+# Приватные поля должны быть _camelCase
+dotnet_naming_rules.private_fields_rule.symbols = private_fields
+dotnet_naming_rules.private_fields_rule.style = private_field_style
+dotnet_naming_rules.private_fields_rule.severity = warning
