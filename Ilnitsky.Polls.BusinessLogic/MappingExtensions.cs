@@ -9,13 +9,13 @@ namespace Ilnitsky.Polls.BusinessLogic;
 public static class MappingExtensions
 {
     public static PollLinkDto ToLinkDto(this Poll entity)
-        => new PollLinkDto(
+        => new(
             entity.Id,
             entity.Name ?? "?",
             entity.Questions.Count);
 
     public static PollDto ToDto(this Poll entity)
-        => new PollDto(
+        => new(
             entity.Id,
             entity.DateTime,
             entity.Name ?? "?",
@@ -26,7 +26,7 @@ public static class MappingExtensions
                 .ToList());
 
     public static Poll ToEntity(this PollDto dto, bool createId = false)
-        => new Poll
+        => new()
         {
             Id = !createId ? dto.PollId : GuidHelper.CreateGuidV7(),
             DateTime = !createId ? dto.DateTime : DateTime.UtcNow,
@@ -39,7 +39,7 @@ public static class MappingExtensions
         };
 
     public static QuestionDto ToDto(this Question entity)
-        => new QuestionDto(
+        => new(
             entity.Id,
             entity.Text ?? "?",
             entity.AllowCustomAnswer,
@@ -53,7 +53,7 @@ public static class MappingExtensions
                 .ToList());
 
     public static Question ToEntity(this QuestionDto dto, bool createId = false)
-        => new Question
+        => new()
         {
             Id = !createId ? dto.QuestionId : GuidHelper.CreateGuidV7(),
             Text = dto.Question,
