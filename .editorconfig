@@ -28,5 +28,5 @@ indent_size = 2
 [*.{cs,cshtml,razor}]
 indent_style = space
 indent_size = 4
-# Отключаем BOM для C# файлов
-dotnet_style_encoding = utf-8_without_bom:warning
+dotnet_style_encoding = utf-8_without_bom:warning		# Отключаем BOM для C# файлов
+dotnet_separate_import_directive_groups = true			# Разделяем пустыми строками руппы using'ов

@@ -5,6 +5,7 @@ using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DbInitialization;
 using Ilnitsky.Polls.Filters;
 using Ilnitsky.Polls.Middlewares;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+
 using Prometheus;
+
 using Serilog;
+
 using System;
 using System.IO;
 
