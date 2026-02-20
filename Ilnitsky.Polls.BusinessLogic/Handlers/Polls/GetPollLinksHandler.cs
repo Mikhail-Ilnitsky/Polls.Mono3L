@@ -17,15 +17,17 @@ public class GetPollLinksHandler(ApplicationDbContext dbContext)
     public async Task<List<PollLinkDto>> HandleAsync(int offset, int limit)
     {
         var polls = (await _dbContext.Polls
-                .Include(p => p.Questions)
-                    .ThenInclude(q => q.Answers)
-                .AsSingleQuery()
                 .Where(p => p.IsActive)
                 .OrderByDescending(p => p.DateTime)
                 .Skip(offset)
                 .Take(limit)
+                .Select(p => new
+                {
+                    Poll = p,
+                    QuestionsCount = p.Questions.Count()
+                })
                 .ToArrayAsync())
-                .Select(p => p.ToLinkDto())
+                .Select(e => e.Poll.ToLinkDto(e.QuestionsCount))
                 .ToList();
 
         return polls;

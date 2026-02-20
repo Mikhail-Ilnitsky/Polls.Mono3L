@@ -14,6 +14,12 @@ public static class MappingExtensions
             entity.Name ?? "?",
             entity.Questions.Count);
 
+    public static PollLinkDto ToLinkDto(this Poll entity, int questionsCount)
+        => new(
+            entity.Id,
+            entity.Name ?? "?",
+            questionsCount);
+
     public static PollDto ToDto(this Poll entity)
         => new(
             entity.Id,
