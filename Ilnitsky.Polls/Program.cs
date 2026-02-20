@@ -80,13 +80,20 @@ builder.Services.AddTransient<CreateRespondentAnswerHandler>();
 
 var app = builder.Build();
 
+app.UseMiddleware<ErrorLoggingMiddleware>();        // Логируем явные ошибки и обрабатываем (и логируем) необработанные исключения
+
 app.UseHttpsRedirection();                          // Подключаем перенаправление HTTP-запросов на HTTPS
 
 app.UseSession();                                   // Подключаем использование сессий
 
-app.UseMiddleware<ErrorLoggingMiddleware>();        // Логируем явные ошибки и обрабатываем (и логируем) необработанные исключения
-app.UseMiddleware<RespondentMiddleware>();          // Проверяем наличие у респондента respondentId, и создаём его, либо обновляем
-app.UseMiddleware<RespondentSessionMiddleware>();   // Проверяем наличие у респондента respondentSessionId, и создаём его, если его нет
+app.UseWhen(                                        // Не проверяем respondentId если путь начинается с /metrics или /health
+    context => !context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase)
+        && !context.Request.Path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase),
+    appBuilder =>
+    {
+        appBuilder.UseMiddleware<RespondentMiddleware>();          // Проверяем наличие у респондента respondentId, и создаём его, либо обновляем
+        appBuilder.UseMiddleware<RespondentSessionMiddleware>();   // Проверяем наличие у респондента respondentSessionId, и создаём его, если его нет
+    });
 
 if (app.Environment.IsDevelopment())
 {
@@ -100,9 +107,8 @@ app.UseStaticFiles();                               // Подключаем по
 app.UseRouting();                                   // Подключаем определение конечных точек
 
 app.UseWhen(                                        // Не собираем метрики если путь начинается с /metrics или /health
-    context =>
-        !context.Request.Path.StartsWithSegments("/metrics", StringComparison.InvariantCultureIgnoreCase)
-        && !context.Request.Path.StartsWithSegments("/health", StringComparison.InvariantCultureIgnoreCase),
+    context => !context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase)
+        && !context.Request.Path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase),
     appBuilder => appBuilder.UseHttpMetrics());     // Собираем метрики с информацией о маршруте
 
 //app.UseAuthorization();
