@@ -28,37 +28,46 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
         {
             return BaseResponse.IncorrectValue("Не должно быть пустых ответов!", "В качестве ответа передана пустая строка или строка пробелов");
         }
-        if (!_dbContext.Respondents.Any(r => r.Id == respondentId))
-        {
-            return BaseResponse.EntityNotFound("Не найден респондент!", $"Нет респондента с Id = {respondentId}");
-        }
-        if (!_dbContext.RespondentSessions.Any(r => r.Id == respondentSessionId))
-        {
-            return BaseResponse.EntityNotFound("Не найдена сессия респондента!", $"Нет сессии с Id = {respondentSessionId}");
-        }
-        if (!_dbContext.Polls.Any(r => r.Id == answerDto.PollId))
-        {
-            return BaseResponse.EntityNotFound("Не найден опрос!", $"Нет опроса с Id = {answerDto.PollId}");
-        }
 
-        var question = _dbContext.Questions
-            .Include(q => q.Answers)
-            .AsSingleQuery()
-            .FirstOrDefault(r => r.Id == answerDto.QuestionId);
+        var question = await _dbContext.Questions
+            .Where(r => r.Id == answerDto.QuestionId)
+            .Select(q => new
+            {
+                q.AllowCustomAnswer,
+                q.AllowMultipleChoice,
+                Answers = q.Answers.Select(a => a.Text).ToList(),
+                IsPoll = _dbContext.Polls.Any(r => r.Id == answerDto.PollId),
+                IsRespondent = _dbContext.Respondents.Any(r => r.Id == respondentId),
+                IsRespondentSession = _dbContext.RespondentSessions.Any(r => r.Id == respondentSessionId)
+            })
+            .FirstOrDefaultAsync();
 
         if (question is null)
         {
             return BaseResponse.EntityNotFound("Не найден вопрос!", $"Нет вопроса с Id = {answerDto.QuestionId}");
         }
+        if (!question.IsRespondent)
+        {
+            return BaseResponse.EntityNotFound("Не найден респондент!", $"Нет респондента с Id = {respondentId}");
+        }
+        if (!question.IsRespondentSession)
+        {
+            return BaseResponse.EntityNotFound("Не найдена сессия респондента!", $"Нет сессии с Id = {respondentSessionId}");
+        }
+        if (!question.IsPoll)
+        {
+            return BaseResponse.EntityNotFound("Не найден опрос!", $"Нет опроса с Id = {answerDto.PollId}");
+        }
         if (!question.AllowMultipleChoice && answerDto.Answers.Count > 1)
         {
             return BaseResponse.IncorrectValue("На этот вопрос не должно быть больше одного ответа!", $"Вопрос позволяет только один ответ, но количество ответов равно {answerDto.Answers.Count}");
         }
-        if (!question.AllowCustomAnswer && !question.Answers.Any(a => a.Text == answerDto.Answers[0]))
+        if (!question.AllowCustomAnswer && !question.Answers.Any(a => a == answerDto.Answers[0]))
         {
             return BaseResponse.IncorrectValue("На этот вопрос не должно быть произвольного ответа!", $"Передан непредусмотренный ответ '{answerDto.Answers[0]}'");
         }
 
+        var dateTime = DateTime.UtcNow;
         Guid? multipleAnswersId = answerDto.Answers.Count > 1
                 ? GuidHelper.CreateGuidV7()
                 : null;
@@ -76,13 +85,12 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
                 RespondentSessionId = respondentSessionId,
                 RespondentId = respondentId,
                 Text = a,
-                DateTime = DateTime.UtcNow,
+                DateTime = dateTime,
                 MultipleAnswersId = multipleAnswersId,
                 MultipleAnswersCount = multipleAnswersCount,
             });
 
-        _dbContext.RespondentAnswers.AddRange(answers);
-
+        await _dbContext.RespondentAnswers.AddRangeAsync(answers);
         await _dbContext.SaveChangesAsync();
 
         return BaseResponse.Created("Ответ принят!");
