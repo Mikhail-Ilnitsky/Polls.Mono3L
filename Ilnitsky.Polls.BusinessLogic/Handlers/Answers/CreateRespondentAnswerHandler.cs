@@ -7,6 +7,8 @@ using Ilnitsky.Polls.Contracts.Dtos.Answers;
 using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DataAccess.Entities.Answers;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 
 public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
@@ -39,7 +41,10 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
             return BaseResponse.EntityNotFound("Не найден опрос!", $"Нет опроса с Id = {answerDto.PollId}");
         }
 
-        var question = _dbContext.Questions.FirstOrDefault(r => r.Id == answerDto.QuestionId);
+        var question = _dbContext.Questions
+            .Include(q => q.Answers)
+            .AsSingleQuery()
+            .FirstOrDefault(r => r.Id == answerDto.QuestionId);
 
         if (question is null)
         {

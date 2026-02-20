@@ -17,6 +17,9 @@ public class GetPollLinksHandler(ApplicationDbContext dbContext)
     public async Task<List<PollLinkDto>> HandleAsync(int offset, int limit)
     {
         var polls = (await _dbContext.Polls
+                .Include(p => p.Questions)
+                    .ThenInclude(q => q.Answers)
+                .AsSingleQuery()
                 .Where(p => p.IsActive)
                 .OrderByDescending(p => p.DateTime)
                 .Skip(offset)

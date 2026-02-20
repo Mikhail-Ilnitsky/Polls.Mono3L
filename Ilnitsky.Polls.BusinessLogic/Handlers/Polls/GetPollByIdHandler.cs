@@ -16,6 +16,9 @@ public class GetPollByIdHandler(ApplicationDbContext dbContext)
     public async Task<Response<PollDto>> HandleAsync(Guid pollId)
     {
         var pollEntity = await _dbContext.Polls
+            .Include(p => p.Questions)
+                .ThenInclude(q => q.Answers)
+            .AsSingleQuery()
             .FirstOrDefaultAsync(p => p.Id == pollId);
 
         if (pollEntity is null)
