@@ -20,6 +20,46 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
         Guid respondentSessionId,
         Guid respondentId)
     {
+        var validationResult = await ValidateAsync(answerDto, respondentSessionId, respondentId);
+        if (validationResult != null)
+        {
+            return validationResult;
+        }
+
+        var dateTime = DateTime.UtcNow;
+        Guid? multipleAnswersId = answerDto.Answers.Count > 1
+                ? GuidHelper.CreateGuidV7()
+                : null;
+        int? multipleAnswersCount = answerDto.Answers.Count > 1
+                ? answerDto.Answers.Count
+                : null;
+
+        var answers = answerDto
+            .Answers
+            .Select(a => new RespondentAnswer
+            {
+                Id = GuidHelper.CreateGuidV7(),
+                QuestionId = answerDto.QuestionId,
+                PollId = answerDto.PollId,
+                RespondentSessionId = respondentSessionId,
+                RespondentId = respondentId,
+                Text = a,
+                DateTime = dateTime,
+                MultipleAnswersId = multipleAnswersId,
+                MultipleAnswersCount = multipleAnswersCount,
+            });
+
+        await _dbContext.RespondentAnswers.AddRangeAsync(answers);
+        await _dbContext.SaveChangesAsync();
+
+        return BaseResponse.Created("Ответ принят!");
+    }
+
+    private async Task<BaseResponse?> ValidateAsync(
+        CreateRespondentAnswerDto answerDto,
+        Guid respondentSessionId,
+        Guid respondentId)
+    {
         if (answerDto.Answers.Count == 0)
         {
             return BaseResponse.IncorrectValue("Не задан ответ!", "Количество ответов равно 0");
@@ -67,32 +107,6 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
             return BaseResponse.IncorrectValue("На этот вопрос не должно быть произвольного ответа!", $"Передан непредусмотренный ответ '{answerDto.Answers[0]}'");
         }
 
-        var dateTime = DateTime.UtcNow;
-        Guid? multipleAnswersId = answerDto.Answers.Count > 1
-                ? GuidHelper.CreateGuidV7()
-                : null;
-        int? multipleAnswersCount = answerDto.Answers.Count > 1
-                ? answerDto.Answers.Count
-                : null;
-
-        var answers = answerDto
-            .Answers
-            .Select(a => new RespondentAnswer
-            {
-                Id = GuidHelper.CreateGuidV7(),
-                QuestionId = answerDto.QuestionId,
-                PollId = answerDto.PollId,
-                RespondentSessionId = respondentSessionId,
-                RespondentId = respondentId,
-                Text = a,
-                DateTime = dateTime,
-                MultipleAnswersId = multipleAnswersId,
-                MultipleAnswersCount = multipleAnswersCount,
-            });
-
-        await _dbContext.RespondentAnswers.AddRangeAsync(answers);
-        await _dbContext.SaveChangesAsync();
-
-        return BaseResponse.Created("Ответ принят!");
+        return null;
     }
 }
