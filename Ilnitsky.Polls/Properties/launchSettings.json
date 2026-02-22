@@ -37,7 +37,9 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HTTPS_PORTS": "8081",
         "ASPNETCORE_HTTP_PORTS": "8080",
-        "ConnectionStrings__DefaultConnection": "Server=db_mariadb_11_8;Port=3306;Database=PollsMono3L;User=root;Password=1234;"
+        "ConnectionStrings__DefaultConnection": "Server=mariadb;Port=3306;Database=PollsMono3L;User=root;Password=1234;",
+        "Serilog__WriteTo__SeqSink__Args__serverUrl": "http://seq2025:5341",
+        "Serilog__WriteTo__GrafanaLokiSink__Args__uri": "http://loki3:3100"
       },
       "publishAllPorts": true,
       "useSSL": true
