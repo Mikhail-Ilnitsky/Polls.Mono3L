@@ -46,7 +46,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
-  <Target Name="ActionsBeforePublish" BeforeTargets="Publish">
+  <Target Name="ActionsBeforePublish" BeforeTargets="Publish" Condition="'$(BuildFrontend)' != 'false'">
     <Exec WorkingDirectory="front_app" Command="npm run build" />
   </Target>
 

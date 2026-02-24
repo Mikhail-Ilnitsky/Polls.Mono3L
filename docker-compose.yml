@@ -1,7 +1,9 @@
+name: ilnitsky-polls
+
 services:
   
   app:
-    image: ${DOCKER_REGISTRY-}ilnitsky-polls-m3l:${TAG:-latest}
+    image: ${DOCKER_REGISTRY-}ilnitsky-polls-m3l:${TAG:-dev}
     build:
       context: .
       dockerfile: Ilnitsky.Polls/Dockerfile
