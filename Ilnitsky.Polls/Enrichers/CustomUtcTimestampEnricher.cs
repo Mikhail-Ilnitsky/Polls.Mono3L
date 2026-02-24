@@ -1,7 +1,7 @@
 using Serilog.Core;
 using Serilog.Events;
 
-namespace Ilnitsky.Polls;
+namespace Ilnitsky.Polls.Enrichers;
 
 public class CustomUtcTimestampEnricher : ILogEventEnricher
 {
