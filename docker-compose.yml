@@ -1,0 +1,66 @@
+services:
+  
+  app:
+    image: ${DOCKER_REGISTRY-}ilnitsky-polls-m3l:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Ilnitsky.Polls/Dockerfile
+      args:
+        - BUILD_CONFIGURATION=Release
+    container_name: pools-app
+    restart: unless-stopped
+    networks:
+      - polls-network
+    # Переменные среды:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      - ASPNETCORE_HTTP_PORTS=8080    # Внутренний HTTP
+      - ASPNETCORE_HTTPS_PORTS=8081   # Внутренний HTTPS
+      - ConnectionStrings__DefaultConnection=Server=polls-db;Port=3306;Database=PollsMono3L;User=root;Password=${DB_PASSWORD}
+    # Ресурсы для production
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # Health check для оркестрации
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Зависимости: ждать готовности БД
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:11.8.2-noble
+    container_name: polls-db
+    environment:
+        MYSQL_ROOT_PASSWORD: 1234
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - polls-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  db-data:
+
+networks:
+  polls-network:
+    driver: bridge

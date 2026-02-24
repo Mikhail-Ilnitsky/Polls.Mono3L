@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36705.20
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.Contracts", "Ilnitsky.Polls.Contracts\Ilnitsky.Polls.Contracts.csproj", "{C50B461A-0DBB-48A2-8EED-70A971B50673}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.DataAccess", "Ilnitsky.Polls.DataAccess\Ilnitsky.Polls.DataAccess.csproj", "{3014CC36-58C9-4440-94F9-BF211471CCC0}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{3014CC36-58C9-4440-94F9-BF211471CCC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3014CC36-58C9-4440-94F9-BF211471CCC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3014CC36-58C9-4440-94F9-BF211471CCC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

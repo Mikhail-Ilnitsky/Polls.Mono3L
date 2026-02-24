@@ -16,6 +16,7 @@
     <DocumentationFile>Api.xml</DocumentationFile>
     <!-- Подавляем предупреждение об отсутствии XML-комментариев -->
     <NoWarn>$(NoWarn);1573;1591</NoWarn>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
