@@ -6,9 +6,9 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <UserSecretsId>67717e96-b806-4971-ad0b-ef828e7da497</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	
-	  <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
-	  <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+  
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
 
     <!-- Включаем генерацию XML-файла документации -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -21,11 +21,11 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.MySql" Version="7.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.23">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.13">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.23" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.13" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.2.1" />
