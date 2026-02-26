@@ -12,7 +12,7 @@ services:
     volumes:
       - seq-data:/data
     ports:
-      - "8001:80"
+      - "8007:80"
       #- "5341:5341"  # Не выставляем порт наружу из сети
     networks:
       - polls-network
@@ -40,7 +40,7 @@ services:
       - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     ports:
-      - "9090:9090"
+      - "9097:9090"
     networks:
       - polls-network
 
@@ -55,7 +55,7 @@ services:
       - grafana-data:/var/lib/grafana
       - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
     ports:
-      - "3000:3000"
+      - "3007:3000"
     networks:
       - polls-network
     depends_on:
