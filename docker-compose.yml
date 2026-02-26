@@ -1,4 +1,4 @@
-name: ilnitsky-polls
+name: ilnitsky-polls-app
 
 services:
   
@@ -16,10 +16,12 @@ services:
     # Переменные среды:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:8080;https://+:8081
+      #- ASPNETCORE_URLS=http://+:8080;https://+:8081
       - ASPNETCORE_HTTP_PORTS=8080    # Внутренний HTTP
       - ASPNETCORE_HTTPS_PORTS=8081   # Внутренний HTTPS
-      - ConnectionStrings__DefaultConnection=Server=polls-db;Port=3306;Database=PollsMono3L;User=root;Password=${DB_PASSWORD}
+      - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=${DB_NAME};User=${DB_USER};Password=${DB_PASSWORD}
+      - Serilog__WriteTo__SeqSink__Args__serverUrl=http://seq:5341
+      - Serilog__WriteTo__GrafanaLokiSink__Args__uri=http://loki:3100
     # Ресурсы для production
     deploy:
       resources:
@@ -45,7 +47,10 @@ services:
     image: mariadb:11.8.2-noble
     container_name: polls-db
     environment:
-        MYSQL_ROOT_PASSWORD: 1234
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
     volumes:
       - db-data:/var/lib/mysql
     ports:
@@ -65,4 +70,4 @@ volumes:
 
 networks:
   polls-network:
-    driver: bridge
+    external: true  # ← подключаемся к существующей сети

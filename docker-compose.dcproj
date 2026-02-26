@@ -11,10 +11,16 @@
     <DockerComposeProjectName>ilnitsky-polls-m3l</DockerComposeProjectName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".env" />
+    <None Include=".env.example" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="grafana-datasources.yml" />
+    <None Include="infra-compose.yml" />
+    <None Include="loki-config.yml" />
+    <None Include="prometheus-config.yml" />
   </ItemGroup>
 </Project>
