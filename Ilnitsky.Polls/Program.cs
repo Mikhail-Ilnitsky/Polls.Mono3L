@@ -10,6 +10,7 @@ using Ilnitsky.Polls.Filters;
 using Ilnitsky.Polls.Middlewares;
 
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,15 @@ builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfig
     .Enrich.WithThreadId()
     .Enrich.WithEnvironmentName()
     .Enrich.WithMachineName());
+
+if (builder.Environment.IsProduction())
+{
+    var keysPath = "/app/dp-keys";                          // Путь внутри контейнера, где будем хранить ключи шифрования
+
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
+        .SetApplicationName("pool-app");                    // Присваиваем приложению имя, чтобы задать "соль" для шифрования
+}
 
 var dbConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrWhiteSpace(dbConnectionString))

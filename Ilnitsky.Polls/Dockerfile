@@ -1,7 +1,6 @@
 # See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-###-### Базовый образ (base) для запуска (Runtime) из VS в режиме отладки
-
+### ЭТАП 0: Базовый образ (base) для запуска (Runtime) из VS в режиме отладки
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
 USER $APP_UID
 WORKDIR /app
@@ -9,7 +8,6 @@ EXPOSE 8080
 EXPOSE 8081
 
 
-###-### Образ собираемый для продакшена
 
 ### ЭТАП 1: Сборка фронтенда (Node.js)
 FROM node:lts-alpine3.22 AS build-nodejs
@@ -24,6 +22,7 @@ COPY Ilnitsky.Polls/front_app/ .
 RUN npm run build
 
 
+
 ### ЭТАП 2: Сборка .NET проекта
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build-dotnet
 ARG BUILD_CONFIGURATION=Release
@@ -35,7 +34,7 @@ COPY ["Ilnitsky.Polls.BusinessLogic/Ilnitsky.Polls.BusinessLogic.csproj", "Ilnit
 COPY ["Ilnitsky.Polls.Contracts/Ilnitsky.Polls.Contracts.csproj", "Ilnitsky.Polls.Contracts/"]
 COPY ["Ilnitsky.Polls.DataAccess/Ilnitsky.Polls.DataAccess.csproj", "Ilnitsky.Polls.DataAccess/"]
 
-# Восстанавливаем пакеты
+# Восстанавливаем пакеты (этот слой кешируется)
 RUN dotnet restore "./Ilnitsky.Polls/Ilnitsky.Polls.csproj"
 
 # Копируем все исходники бэкенда
@@ -49,6 +48,7 @@ WORKDIR "/src/Ilnitsky.Polls"
 RUN dotnet build "./Ilnitsky.Polls.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 
+
 ### ЭТАП 3: Публикация (сборка) проекта со всеми необходимыми зависимостями в отдельную папку для деплоя
 FROM build-dotnet AS publish
 ARG BUILD_CONFIGURATION=Release
@@ -57,8 +57,22 @@ ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Ilnitsky.Polls.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false /p:BuildFrontend=false
 
 
+
 ### ЭТАП 4: Финальный образ используемый в производственной среде или при запуске из VS в обычном режиме
 FROM base AS final
 WORKDIR /app
+
+# Переключаемся на root, чтобы создать папку с нужными правами
+USER root
+
+# Создаём папку для ключей шифрования
+RUN mkdir -p /app/dp-keys && chown -R $APP_UID:$APP_UID /app/dp-keys
+
+# Возвращаемся к пользователю приложения (1654), чтобы не работать под root
+USER $APP_UID
+
+# Копируем готовый артефакт из этапа публикации
 COPY --from=publish /app/publish .
+
+# Точка входа: запускаем основной процесс ASP.NET Core
 ENTRYPOINT ["dotnet", "Ilnitsky.Polls.dll"]
