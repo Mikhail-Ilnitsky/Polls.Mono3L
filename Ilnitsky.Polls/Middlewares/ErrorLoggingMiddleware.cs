@@ -52,15 +52,21 @@ public class ErrorLoggingMiddleware(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex,
-                "Исключение для {Method} {Path}: {Message}",
-                httpContext.Request.Method,
-                httpContext.Request.Path,
-                ex.Message);
-
-            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            await httpContext.Response
-                .WriteAsJsonAsync(ActionHelper.GetProblemDetails(httpContext.Response.StatusCode, "Внутренняя ошибка сервера"));
+            try
+            {
+                _logger.LogError(ex,
+                    "Исключение для {Method} {Path}: {Message}",
+                    httpContext.Request.Method,
+                    httpContext.Request.Path,
+                    ex.Message);
+            }
+            finally
+            {
+                httpContext.Response.Clear();   // Удаляем возможно неправильные заголовки установленные до выброса исключения
+                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                await httpContext.Response
+                    .WriteAsJsonAsync(ActionHelper.GetProblemDetails(httpContext.Response.StatusCode, "Внутренняя ошибка сервера"));
+            }
         }
     }
 }
