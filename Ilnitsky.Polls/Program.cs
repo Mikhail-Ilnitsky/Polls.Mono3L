@@ -12,6 +12,7 @@ using Ilnitsky.Polls.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,12 @@ builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfig
     .Enrich.WithThreadId()
     .Enrich.WithEnvironmentName()
     .Enrich.WithMachineName());
+
+// Настраиваем проксирование заголовков
+var forwardedOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
 
 if (builder.Environment.IsProduction())
 {
@@ -92,12 +99,23 @@ var app = builder.Build();
 
 app.UseMiddleware<ErrorLoggingMiddleware>();        // Логируем явные ошибки и обрабатываем (и логируем) необработанные исключения
 
-app.UseHttpsRedirection();                          // Подключаем перенаправление HTTP-запросов на HTTPS
+app.UseForwardedHeaders(forwardedOptions);          // Подключаем распозначание протокола в случае наличия обратного прокси
+//app.UseHsts();                                    // ТОЛЬКО НА СЕРВЕРЕ! Запрещаем браузеру впредь обращаться не по HTTPS
+
+app.UseWhen(                                        // Не перенаправляем если путь начинается с /metrics или /health
+    context =>
+        !context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase)
+        && !context.Request.Path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase),
+    appBuilder =>
+    {
+        appBuilder.UseHttpsRedirection();           // Подключаем перенаправление HTTP-запросов на HTTPS
+    });
 
 app.UseSession();                                   // Подключаем использование сессий
 
 app.UseWhen(                                        // Не проверяем respondentId если путь начинается с /metrics или /health
-    context => !context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase)
+    context =>
+        !context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase)
         && !context.Request.Path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase),
     appBuilder =>
     {

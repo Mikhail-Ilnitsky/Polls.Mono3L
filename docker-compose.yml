@@ -18,9 +18,9 @@ services:
     # Переменные среды:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      #- ASPNETCORE_URLS=http://+:8080;https://+:8081
       - ASPNETCORE_HTTP_PORTS=8080    # Внутренний HTTP
-      - ASPNETCORE_HTTPS_PORTS=8081   # Внутренний HTTPS
+      #- ASPNETCORE_HTTPS_PORTS=8081   # Внутренний HTTPS (прячем в проде)
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true  # Разрешаем считывание IP пользователя и протокола из заголовков прокси-сервера
       - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=${DB_NAME};User=${DB_USER};Password=${DB_PASSWORD}
       - Serilog__WriteTo__SeqSink__Args__serverUrl=http://seq:5341
       - Serilog__WriteTo__GrafanaLokiSink__Args__uri=http://loki:3100
@@ -55,8 +55,6 @@ services:
       - MYSQL_DATABASE=${DB_NAME}
     volumes:
       - db-data:/var/lib/mysql
-    ports:
-      - "3307:3306"
     networks:
       - polls-network
     restart: unless-stopped

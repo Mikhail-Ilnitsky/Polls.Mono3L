@@ -2,7 +2,8 @@ services:
 
   app:
     environment:
-      #- ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/Ilnitsky.Polls.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
     volumes:
@@ -14,3 +15,7 @@ services:
     ports:
       - "8080:8080"    # Внешний HTTP
       - "8081:8081"    # Внешний HTTPS
+
+  db:
+    ports:
+      - "3307:3306"    # Открываем прямой доступ к БД только в режиме разработки

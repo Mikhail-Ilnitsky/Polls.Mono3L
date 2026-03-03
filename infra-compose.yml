@@ -1,21 +1,40 @@
 name: ilnitsky-polls-infra
 
 services:
+
+  nginx:
+    image: nginx:1.28.2-alpine3.23
+    container_name: polls-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro                       # Сертификаты для Nginx
+    networks:
+      - polls-network
+    depends_on:
+      - grafana
+      - seq
+    restart: unless-stopped
   
   seq:
     image: datalust/seq:2025.2
     container_name: polls-seq
     environment:
+      - SEQ_API_CANONICAL_URI=http://localhost/seq              # Для корректных путей
+
       - ACCEPT_EULA=Y
       - SEQ_FIRSTRUN_ADMINUSERNAME=${SEQ_USER}
       - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_PASSWORD}
     volumes:
       - seq-data:/data
-    ports:
-      - "8007:80"
-      #- "5341:5341"  # Не выставляем порт наружу из сети
+    #ports:
+    #  - "8007:80"
+    #  - "5341:5341"  # Не выставляем порт наружу из сети
     networks:
       - polls-network
+    restart: unless-stopped
 
   loki:
     image: grafana/loki:3.5.10
@@ -26,9 +45,10 @@ services:
       - ./loki-config.yml:/etc/loki/local-config.yaml
       - loki-data:/tmp/loki
     #ports:
-      #- "3100:3100"  # Не выставляем порт наружу из сети
+    #  - "3100:3100"  # Не выставляем порт наружу из сети
     networks:
       - polls-network
+    restart: unless-stopped
 
   prometheus:
     image: prom/prometheus:v3.9.1
@@ -39,28 +59,38 @@ services:
     volumes:
       - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
-    ports:
-      - "9097:9090"
+    #ports:
+    #  - "9097:9090"  # Не выставляем порт наружу из сети
     networks:
       - polls-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   grafana:
     image: grafana/grafana:12.3
     container_name: polls-grafana
     environment:
+      - GF_SERVER_DOMAIN=localhost                                            # Указываем домен сайта, который Grafana будет использовать для генерации ссылок (например, в письмах или алертах)
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/   # Указываем URL, по которому пользователь заходит в Grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true                                    # Указываем Grafana добавлять префикс /grafana/ ко всем путям своих внутренних ресурсов (JS, CSS, картинки), чтобы Nginx мог их правильно найти
+
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-    ports:
-      - "3007:3000"
+    #ports:
+    #  - "3007:3000"  # Не выставляем порт наружу из сети
     networks:
       - polls-network
     depends_on:
       - loki
       - prometheus
+    restart: unless-stopped
 
 volumes:
   seq-data:  

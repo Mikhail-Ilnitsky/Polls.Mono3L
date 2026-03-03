@@ -21,6 +21,10 @@
     <None Include="grafana-datasources.yml" />
     <None Include="infra-compose.yml" />
     <None Include="loki-config.yml" />
+    <None Include="nginx\nginx.conf" />
     <None Include="prometheus-config.yml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="nginx\certs\" />
   </ItemGroup>
 </Project>
