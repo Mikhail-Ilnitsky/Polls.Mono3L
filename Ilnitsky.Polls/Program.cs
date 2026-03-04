@@ -41,8 +41,9 @@ var forwardedOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 };
-forwardedOptions.KnownNetworks.Clear();                     // Удаляем список доверенных подсетей (по умолчанию там loopback/localhost, т. е. 127.0.0.1)
-forwardedOptions.KnownProxies.Clear();                      // Удаляем список конкретных IP-адресов доверенных прокси-серверов
+// Вместо ручной очистки списков используем ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+//forwardedOptions.KnownNetworks.Clear();                     // Удаляем список доверенных подсетей (по умолчанию там loopback/localhost, т. е. 127.0.0.1)
+//forwardedOptions.KnownProxies.Clear();                      // Удаляем список конкретных IP-адресов доверенных прокси-серверов
 
 if (builder.Environment.IsProduction())
 {
