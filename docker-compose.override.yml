@@ -3,7 +3,7 @@ services:
   app:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_HTTPS_PORTS=8081   # Внутренний порт HTTPS и он же порт редиректа (открываем только в режиме разработки)
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/Ilnitsky.Polls.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
     volumes:

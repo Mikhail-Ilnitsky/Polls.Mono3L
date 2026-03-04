@@ -41,6 +41,8 @@ var forwardedOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 };
+forwardedOptions.KnownNetworks.Clear();                     // 
+forwardedOptions.KnownProxies.Clear();
 
 if (builder.Environment.IsProduction())
 {
