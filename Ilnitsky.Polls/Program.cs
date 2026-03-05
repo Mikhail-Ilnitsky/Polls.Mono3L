@@ -12,6 +12,7 @@ using Ilnitsky.Polls.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -114,14 +115,16 @@ app.UseWhen(                                        // Не перенаправ
         appBuilder.UseHttpsRedirection();           // Подключаем перенаправление HTTP-запросов на HTTPS
     });
 
-app.UseSession();                                   // Подключаем использование сессий
+app.UseDefaultFiles();                              // Подключаем поддержку страниц html по умолчанию
+app.UseStaticFiles();                               // Подключаем поддержку статических файлов
 
-app.UseWhen(                                        // Не проверяем respondentId если путь начинается с /metrics или /health
+app.UseWhen(                                        // Проверяем respondentId только для API (кроме кэшируемого метода получения списка опросов)
     context =>
-        !context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase)
-        && !context.Request.Path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase),
+        context.Request.Path.StartsWithSegments("/api/v1")                                                              // Только API
+        && !(context.Request.Path.Value?.TrimEnd('/') == "/api/v1/polls" && HttpMethods.IsGet(context.Request.Method)), // Только не метод получения списка опросов
     appBuilder =>
     {
+        appBuilder.UseSession();                                   // Подключаем использование сессий
         appBuilder.UseMiddleware<RespondentMiddleware>();          // Проверяем наличие у респондента respondentId, и создаём его, либо обновляем
         appBuilder.UseMiddleware<RespondentSessionMiddleware>();   // Проверяем наличие у респондента respondentSessionId, и создаём его, если его нет
     });
@@ -132,13 +135,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();                             // Подключаем отображение страницы Swagger
 }
 
-app.UseDefaultFiles();                              // Подключаем поддержку страниц html по умолчанию
-app.UseStaticFiles();                               // Подключаем поддержку статических файлов
-
 app.UseRouting();                                   // Подключаем определение конечных точек
 
 app.UseWhen(                                        // Не собираем метрики если путь начинается с /metrics или /health
-    context => !context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase)
+    context =>
+        !context.Request.Path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase)
         && !context.Request.Path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase),
     appBuilder => appBuilder.UseHttpMetrics());     // Собираем метрики с информацией о маршруте
 
