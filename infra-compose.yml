@@ -9,8 +9,11 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro                       # Сертификаты для Nginx
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro                    # Пробрасываем основной конфиг Nginx (только чтение)
+      - ./nginx/proxy_cache_params.conf:/etc/nginx/proxy_cache_params.conf:ro   # Пробрасываем файл с параметрами кэша Nginx (только чтение)
+      - ./nginx/certs:/etc/nginx/certs:ro                                       # Сертификаты для Nginx (только чтение)
+
+      - nginx-cache-data:/var/cache/nginx/proxy_cache                           # Папка кэша, чтобы данные сохранялись на хосте
     networks:
       - polls-network
     depends_on:
@@ -93,6 +96,7 @@ services:
     restart: unless-stopped
 
 volumes:
+  nginx-cache-data:  
   seq-data:  
   loki-data:
   prometheus-data:

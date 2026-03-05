@@ -22,6 +22,7 @@
     <None Include="infra-compose.yml" />
     <None Include="loki-config.yml" />
     <None Include="nginx\nginx.conf" />
+    <None Include="nginx\proxy_cache_params.conf" />
     <None Include="prometheus-config.yml" />
   </ItemGroup>
   <ItemGroup>
