@@ -21,6 +21,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080    # Внутренний порт HTTP
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true  # Разрешаем считывание IP пользователя и протокола из заголовков прокси-сервера
       - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=${DB_NAME};User=${DB_USER};Password=${DB_PASSWORD}
+      - ConnectionStrings__Redis=redis:6379,password=${REDIS_PASSWORD},abortConnect=false
       - Serilog__WriteTo__SeqSink__Args__serverUrl=http://seq:5341
       - Serilog__WriteTo__GrafanaLokiSink__Args__uri=http://loki:3100
     # Ресурсы для production
@@ -39,9 +40,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    # Зависимости: ждать готовности БД
+    # Зависимости: ждать готовности БД и Redis
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   db:
@@ -64,9 +67,26 @@ services:
       timeout: 5s
       retries: 3
 
+  redis:
+    image: redis:8.0.2-alpine3.21
+    container_name: polls-redis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+    networks:
+      - polls-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "--no-auth-warning", "ping"]
+      start_period: 5s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
 volumes:
   app-keys:
   db-data:
+  redis-data:
 
 networks:
   polls-network:
