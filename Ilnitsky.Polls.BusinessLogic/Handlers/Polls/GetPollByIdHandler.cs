@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Ilnitsky.Polls.Contracts.Dtos;
@@ -6,15 +7,36 @@ using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Ilnitsky.Polls.DataAccess;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 
-public class GetPollByIdHandler(ApplicationDbContext dbContext)
+public class GetPollByIdHandler(
+    IDistributedCache cache,
+    ApplicationDbContext dbContext)
 {
+    private readonly IDistributedCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
     private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+
+    private static readonly DistributedCacheEntryOptions _cacheOptions = new()
+    {
+        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+    };
 
     public async Task<Response<PollDto>> HandleAsync(Guid pollId)
     {
+        var pollKey = $"poll_{pollId}";
+        var cachedPollString = await _cache.GetStringAsync(pollKey);
+
+        if (cachedPollString == "ABSENT")
+        {
+            return GetNotFoundResponse(pollId);
+        }
+        if (cachedPollString is not null)
+        {
+            return Response<PollDto>.Success(JsonSerializer.Deserialize<PollDto>(cachedPollString)!);
+        }
+
         var pollEntity = await _dbContext.Polls
             .AsNoTracking()
             .Include(p => p.Questions)
@@ -24,9 +46,16 @@ public class GetPollByIdHandler(ApplicationDbContext dbContext)
 
         if (pollEntity is null)
         {
-            return Response<PollDto>.EntityNotFound("Опрос не найден!", $"Нет опроса с Id = {pollId}");
+            await _cache.SetStringAsync(pollKey, "ABSENT", _cacheOptions);
+            return GetNotFoundResponse(pollId);
         }
 
-        return Response<PollDto>.Success(pollEntity.ToDto());
+        var pollDto = pollEntity.ToDto();
+        await _cache.SetStringAsync(pollKey, JsonSerializer.Serialize(pollDto), _cacheOptions);
+
+        return Response<PollDto>.Success(pollDto);
     }
+
+    private static Response<PollDto> GetNotFoundResponse(Guid pollId)
+        => Response<PollDto>.EntityNotFound("Опрос не найден!", $"Нет опроса с Id = {pollId}");
 }

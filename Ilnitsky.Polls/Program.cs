@@ -60,6 +60,11 @@ if (string.IsNullOrWhiteSpace(dbConnectionString))
 {
     throw new InvalidOperationException("Connection string for ApplicationDbContext is not configured.");
 }
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
+if (string.IsNullOrWhiteSpace(redisConnectionString))
+{
+    throw new InvalidOperationException("Connection string for Redis is not configured.");
+}
 
 builder.Services.AddHealthChecks()                          // Регистрируем сервисы мониторинга состояния
     .AddCheck("self", () => HealthCheckResult.Healthy())    // Простая проверка
@@ -91,6 +96,12 @@ builder.Services.AddSwaggerGen(options =>                   // Регистри�
 
 builder.Services.AddDistributedMemoryCache();               // Регистрируем IDistributedMemoryCache для хранения данных сессий
 builder.Services.AddSession();                              // Регистрируем сервисы сессии
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConnectionString;          // Строка подключения Redis
+    options.InstanceName = "PollsApp_";                     // Префикс для ключей
+});
 
 // Регистрируем хэндлеры
 builder.Services.AddTransient<GetPollLinksHandler>();
