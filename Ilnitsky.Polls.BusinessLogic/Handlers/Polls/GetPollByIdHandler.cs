@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using Ilnitsky.Polls.Contracts.Dtos;
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
+using Ilnitsky.Polls.Contracts.Providers;
 using Ilnitsky.Polls.DataAccess;
 
 using Microsoft.EntityFrameworkCore;
@@ -13,15 +14,12 @@ namespace Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 
 public class GetPollByIdHandler(
     IDistributedCache cache,
+    ICacheOptionsProvider cacheOptions,
     ApplicationDbContext dbContext)
 {
     private readonly IDistributedCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly ICacheOptionsProvider _cacheOptions = cacheOptions ?? throw new ArgumentNullException(nameof(cacheOptions));
     private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-
-    private static readonly DistributedCacheEntryOptions _cacheOptions = new()
-    {
-        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-    };
 
     public async Task<Response<PollDto>> HandleAsync(Guid pollId)
     {
@@ -46,12 +44,12 @@ public class GetPollByIdHandler(
 
         if (pollEntity is null)
         {
-            await _cache.SetStringAsync(pollKey, "ABSENT", _cacheOptions);
+            await _cache.SetStringAsync(pollKey, "ABSENT", _cacheOptions.DefaultExpiration);
             return GetNotFoundResponse(pollId);
         }
 
         var pollDto = pollEntity.ToDto();
-        await _cache.SetStringAsync(pollKey, JsonSerializer.Serialize(pollDto), _cacheOptions);
+        await _cache.SetStringAsync(pollKey, JsonSerializer.Serialize(pollDto), _cacheOptions.DefaultExpiration);
 
         return Response<PollDto>.Success(pollDto);
     }

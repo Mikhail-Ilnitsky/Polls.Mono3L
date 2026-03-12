@@ -3,11 +3,14 @@ using System.IO;
 
 using Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
+using Ilnitsky.Polls.Contracts.Providers;
+using Ilnitsky.Polls.Contracts.Settings;
 using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DbInitialization;
 using Ilnitsky.Polls.Enrichers;
 using Ilnitsky.Polls.Filters;
 using Ilnitsky.Polls.Middlewares;
+using Ilnitsky.Polls.Providers;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -97,11 +100,15 @@ builder.Services.AddSwaggerGen(options =>                   // Регистри�
 builder.Services.AddDistributedMemoryCache();               // Регистрируем IDistributedMemoryCache для хранения данных сессий
 builder.Services.AddSession();                              // Регистрируем сервисы сессии
 
-builder.Services.AddStackExchangeRedisCache(options =>
+builder.Services.AddStackExchangeRedisCache(options =>      // Регистрируем кэширование в Redis
 {
     options.Configuration = redisConnectionString;          // Строка подключения Redis
     options.InstanceName = "PollsApp_";                     // Префикс для ключей
 });
+
+builder.Services.Configure<CacheSettings>(builder.Configuration.GetSection("Cache"));   // Регистрируем секцию настроек кэширования
+
+builder.Services.AddSingleton<ICacheOptionsProvider, CacheOptionsProvider>();           // Регистрируем провайдер настроек кэширования
 
 // Регистрируем хэндлеры
 builder.Services.AddTransient<GetPollLinksHandler>();
