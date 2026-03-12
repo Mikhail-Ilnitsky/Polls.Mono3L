@@ -39,6 +39,7 @@
         "ASPNETCORE_HTTP_PORTS": "8080",
         "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true", // Очищаем forwardedOptions.KnownNetworks/forwardedOptions.KnownProxies
         "ConnectionStrings__DefaultConnection": "Server=mariadb;Port=3306;Database=PollsMono3L;User=root;Password=1234;",
+        "ConnectionStrings__Redis": "redis8:6379,password=1234,abortConnect=false",
         "Serilog__WriteTo__SeqSink__Args__serverUrl": "http://seq2025:5341",
         "Serilog__WriteTo__GrafanaLokiSink__Args__uri": "http://loki3:3100"
       },
