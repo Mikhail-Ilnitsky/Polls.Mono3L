@@ -1,4 +1,4 @@
-namespace Ilnitsky.Polls.Contracts.Settings;
+namespace Ilnitsky.Polls.Services.Settings;
 
 public class CacheSettings
 {

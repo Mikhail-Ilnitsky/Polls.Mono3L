@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 using Ilnitsky.Polls.Contracts.Dtos;
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
-using Ilnitsky.Polls.Contracts.Providers;
 using Ilnitsky.Polls.DataAccess;
+using Ilnitsky.Polls.Services.OptionsProviders;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;

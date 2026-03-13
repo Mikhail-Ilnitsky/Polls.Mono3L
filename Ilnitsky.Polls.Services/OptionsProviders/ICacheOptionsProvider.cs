@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Ilnitsky.Polls.Contracts.Providers;
+namespace Ilnitsky.Polls.Services.OptionsProviders;
 
 public interface ICacheOptionsProvider
 {

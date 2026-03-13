@@ -1,12 +1,9 @@
-using System;
-
-using Ilnitsky.Polls.Contracts.Providers;
-using Ilnitsky.Polls.Contracts.Settings;
+using Ilnitsky.Polls.Services.Settings;
 
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 
-namespace Ilnitsky.Polls.Providers;
+namespace Ilnitsky.Polls.Services.OptionsProviders;
 
 public class CacheOptionsProvider(IOptions<CacheSettings> settings) : ICacheOptionsProvider
 {
