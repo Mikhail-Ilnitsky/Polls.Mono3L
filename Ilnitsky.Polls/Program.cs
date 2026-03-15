@@ -22,7 +22,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+
+using Polly;
+using Polly.Retry;
 
 using Prometheus;
 
@@ -118,6 +122,25 @@ builder.Services.AddScoped<IRedisService, RedisService>();                      
 builder.Services.Configure<CacheSettings>(builder.Configuration.GetSection("Cache"));   // Регистрируем секцию настроек кэширования
 
 builder.Services.AddSingleton<ICacheOptionsProvider, CacheOptionsProvider>();           // Регистрируем провайдер настроек кэширования
+
+builder.Services.AddResiliencePipeline("redis-strategy", (builder, context) =>
+{
+    var logger = context.ServiceProvider.GetRequiredService<ILogger<RedisService>>();
+
+    builder.AddRetry(new RetryStrategyOptions
+    {
+        MaxRetryAttempts = 3,
+        BackoffType = DelayBackoffType.Exponential,
+        UseJitter = true,                               // Добавляем случайность, чтобы не "положить" Redis шквалом одновременных запросов
+        Delay = TimeSpan.FromMilliseconds(200),
+        OnRetry = args =>
+        {
+            logger.LogWarning("Redis retry {Attempt}. Error: {Error}",
+                args.AttemptNumber + 1, args.Outcome.Exception?.Message);
+            return default;
+        }
+    });
+});
 
 // Регистрируем хэндлеры
 builder.Services.AddTransient<GetPollLinksHandler>();
