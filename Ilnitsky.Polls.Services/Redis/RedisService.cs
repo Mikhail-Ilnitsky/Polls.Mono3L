@@ -4,7 +4,6 @@ using Ilnitsky.Polls.Services.OptionsProviders;
 
 using Microsoft.Extensions.Logging;
 
-using Polly;
 using Polly.Registry;
 
 using StackExchange.Redis;
@@ -18,79 +17,76 @@ public class RedisService(
     ILogger<RedisService> logger)
         : IRedisService
 {
-    private readonly ResiliencePipeline _pipeline = pipelineProvider?.GetPipeline("redis-strategy") ?? throw new ArgumentNullException(nameof(pipelineProvider));
+    private readonly ResiliencePipelineProvider<string> _provider = pipelineProvider ?? throw new ArgumentNullException(nameof(pipelineProvider));
     private readonly IDatabase _db = connectionMultiplexer?.GetDatabase() ?? throw new ArgumentNullException(nameof(connectionMultiplexer));
     private readonly ICacheOptionsProvider _cacheOptions = cacheOptions ?? throw new ArgumentNullException(nameof(cacheOptions));
     private readonly ILogger<RedisService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    public async Task SetAsync<T>(string key, T? value, TimeSpan? expiration = null)
+    public async Task<RedisServiceResult<T>> GetAsync<T>(string key)
     {
-        try
-        {
-            expiration ??= _cacheOptions.DefaultExpiration;
-
-            await _pipeline.ExecuteAsync(async token =>
-            {
-                var valueString = value is null
-                ? "ABSENT"
-                : JsonSerializer.Serialize(value);
-
-                var isSetted = await _db.StringSetAsync(key, valueString, expiration);
-
-                _logger.LogDebug("Redis-cache SET: {IsSetted} for Key={Key}, Expiration={Expiration}", isSetted, key, expiration);
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error setting Redis-cache for key={Key}", key);
-        }
-    }
-
-    public async Task<(bool HasValue, T? Value)> GetAsync<T>(string key)
-    {
-        try
-        {
-            return await _pipeline.ExecuteAsync(async token =>
+        var result = await _provider
+            .GetPipeline<object>("redis-get")
+            .ExecuteAsync(async token =>
             {
                 var redisValue = await _db.StringGetAsync(key);
 
                 _logger.LogDebug(
-                    "Redis-сache GET: {Result} for Кey={Key}",
+                    "Redis GET: {Result} for Кey={Key}",
                     redisValue.IsNull ? "MISS" : "HIT",
                     key);
 
                 if (redisValue.IsNull)
                 {
-                    return (false, default);
+                    return (object)new RedisServiceResult<T>(false, default, true);
                 }
                 if (redisValue == "ABSENT")
                 {
-                    return (true, default);
+                    return (object)new RedisServiceResult<T>(true, default, true);
                 }
 
-                return (true, JsonSerializer.Deserialize<T>(redisValue!));
+                return (object)new RedisServiceResult<T>(true, JsonSerializer.Deserialize<T>(redisValue!), true);
             });
-        }
-        catch (Exception ex)
+
+        if (result is RedisServiceResult<T> genericResult)
         {
-            _logger.LogError(ex, "Error getting from Redis-cache for Key={Key}", key);
-            return (false, default);
+            return genericResult;
         }
+        if (result is RedisServiceResult baseResult)
+        {
+            return new RedisServiceResult<T>(true, default, baseResult.IsAvailable);
+        }
+
+        return new RedisServiceResult<T>(true, default, false);
+    }
+
+    public async Task SetAsync<T>(string key, T? value, TimeSpan? expiration = null)
+    {
+        expiration ??= _cacheOptions.DefaultExpiration;
+
+        await _provider
+            .GetPipeline<object>("redis-set")
+            .ExecuteAsync(async token =>
+            {
+                var valueString = value is null
+                    ? "ABSENT"
+                    : JsonSerializer.Serialize(value);
+
+                var isSetted = await _db.StringSetAsync(key, valueString, expiration);
+
+                _logger.LogDebug("Redis SET: {IsSetted} for Key={Key}, Expiration={Expiration}", isSetted, key, expiration);
+                return new RedisServiceResult(true);
+            });
     }
 
     public async Task RemoveAsync(string key)
     {
-        try
-        {
-            await _pipeline.ExecuteAsync(async token =>
+        await _provider
+            .GetPipeline<object>("redis-remove")
+            .ExecuteAsync(async token =>
             {
                 var isDeleted = await _db.KeyDeleteAsync(key);
-                _logger.LogDebug("Redis-сache REMOVE: {IsDeleted} for Key={Key}", isDeleted, key);
+                _logger.LogDebug("Redis REMOVE: {IsDeleted} for Key={Key}", isDeleted, key);
+                return new RedisServiceResult(true);
             });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error removing from Redis-cache for Key={Key}", key);
-        }
     }
 }

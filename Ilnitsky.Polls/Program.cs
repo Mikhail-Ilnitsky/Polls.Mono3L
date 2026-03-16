@@ -26,6 +26,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 using Polly;
+using Polly.CircuitBreaker;
+using Polly.Fallback;
 using Polly.Retry;
 
 using Prometheus;
@@ -123,23 +125,115 @@ builder.Services.Configure<CacheSettings>(builder.Configuration.GetSection("Cach
 
 builder.Services.AddSingleton<ICacheOptionsProvider, CacheOptionsProvider>();           // Регистрируем провайдер настроек кэширования
 
-builder.Services.AddResiliencePipeline("redis-strategy", (builder, context) =>
+
+// Создаем общий "предохранитель" для пайплайнов Redis, чтобы проблемы в одном методе отключали и остальные
+var redisCircuitOptions = new CircuitBreakerStrategyOptions
+{
+    FailureRatio = 0.5,                             // "Размыкаем цепь", если 50% запросов упали
+    SamplingDuration = TimeSpan.FromSeconds(30),    // Окно статистики, анализируем последние 30 секунд
+    MinimumThroughput = 5,                          // Минимум 5 запросов для "размыкания цепи"
+    BreakDuration = TimeSpan.FromSeconds(15)        // Сколько врменеи не трогать Redis после "размыкания цепи"
+};
+
+// Настраиваем пайплайн Redis для ЧТЕНИЯ (максимум попыток доступа)
+builder.Services.AddResiliencePipeline<string, object>("redis-get", (piplineBuilder, context) =>
 {
     var logger = context.ServiceProvider.GetRequiredService<ILogger<RedisService>>();
 
-    builder.AddRetry(new RetryStrategyOptions
+    // Подписываем общий объект на логи (один раз здесь достаточно)
+    redisCircuitOptions.OnOpened = args =>                  // Обрабатываем случай "разрыва цепи"
     {
-        MaxRetryAttempts = 3,
-        BackoffType = DelayBackoffType.Exponential,
-        UseJitter = true,                               // Добавляем случайность, чтобы не "положить" Redis шквалом одновременных запросов
-        Delay = TimeSpan.FromMilliseconds(200),
-        OnRetry = args =>
+        logger.LogCritical("Redis DOWN: Circuit opened for {Duration}s", args.BreakDuration.TotalSeconds);
+        return default;
+    };
+    redisCircuitOptions.OnClosed = _ =>                     // Обрабатываем случай "замыкания цепи"
+    {
+        logger.LogInformation("Redis UP: Circuit closed, cache resumed");
+        return default;
+    };
+
+    piplineBuilder
+        .AddFallback(new FallbackStrategyOptions<object>
         {
-            logger.LogWarning("Redis retry {Attempt}. Error: {Error}",
-                args.AttemptNumber + 1, args.Outcome.Exception?.Message);
-            return default;
-        }
-    });
+            FallbackAction = _ => Outcome.FromResultAsValueTask<object>(new RedisServiceResult(false)),
+            OnFallback = args =>
+            {
+                logger.LogWarning(args.Outcome.Exception, "Redis GET failed (Timeout/Error)");
+                return default;
+            }
+        })
+        .AddTimeout(TimeSpan.FromMilliseconds(600))         // Общий таймаут на все попытки + паузы вместе
+        .AddCircuitBreaker(redisCircuitOptions)             // Прекращаем попытки на заданное время, если Redis недоступен
+        .AddRetry(new RetryStrategyOptions<object>          // Выполняем повторные попытки запросов к Redis
+        {
+            ShouldHandle = new PredicateBuilder<object>()
+                .Handle<Exception>()                       // Обрабатывать все ошибки (все типы исключений)
+                .HandleResult(result => result is RedisServiceResult { IsAvailable: false }), // Обрабатывать наш вариант результата (если он вернулся вместо исключения)
+            MaxRetryAttempts = 3,                           // Количество повторов (итого 4 попытки: 1 основная + 3 дополнительных)
+            BackoffType = DelayBackoffType.Exponential,     // Экспоненциальная задержка: каждая следующая попытка будет через увеличивающийся интервал (например, 20мс, 40мс, 80мс)
+            UseJitter = true,                               // Джиттер добавляет случайное смещение к задержке (+/- несколько мс), чтобы много запросов не ударили по Redis одновременно в одну и ту же секунду после паузы
+            Delay = TimeSpan.FromMilliseconds(20),          // Базовое время ожидания перед первой повторной попыткой
+            OnRetry = args =>
+            {
+                logger.LogWarning(
+                    "Redis GET Retry {Attempt}. Error: {Error}",
+                    args.AttemptNumber + 1,
+                    args.Outcome.Exception?.Message);
+                return default;
+            }
+        })
+        .AddTimeout(TimeSpan.FromMilliseconds(100));        // Таймаут текущей попытки, ждем ответа от Redis не более 100мс за раз
+});
+
+// Настраиваем пайплайн Redis для ЗАПИСИ (минимум задержек)
+builder.Services.AddResiliencePipeline<string, object>("redis-set", (piplineBuilder, context) =>
+{
+    var logger = context.ServiceProvider.GetRequiredService<ILogger<RedisService>>();
+
+    piplineBuilder
+        .AddFallback(new FallbackStrategyOptions<object>
+        {
+            FallbackAction = _ => Outcome.FromResultAsValueTask<object>(new RedisServiceResult(false)),
+            OnFallback = args =>
+            {
+                logger.LogWarning(args.Outcome.Exception, "Redis SET failed (Timeout/Error)");
+                return default;
+            }
+        })
+        .AddCircuitBreaker(redisCircuitOptions)             // Прекращаем попытки на заданное время, если Redis недоступен
+        .AddTimeout(TimeSpan.FromMilliseconds(100));        // Если сетевой вызов к Redis длится дольше 100мс, принудительно обрываем соединение
+});
+
+// Настраиваем пайплайн Redis для УДАЛЕНИЯ (средний приоритет)
+builder.Services.AddResiliencePipeline<string, object>("redis-remove", (piplineBuilder, context) =>
+{
+    var logger = context.ServiceProvider.GetRequiredService<ILogger<RedisService>>();
+
+    piplineBuilder
+        .AddFallback(new FallbackStrategyOptions<object>
+        {
+            FallbackAction = _ => Outcome.FromResultAsValueTask<object>(new RedisServiceResult(false)),
+            OnFallback = args =>
+            {
+                logger.LogWarning(args.Outcome.Exception, "Redis REMOVE failed (Timeout/Error)");
+                return default;
+            }
+        })
+        .AddCircuitBreaker(redisCircuitOptions)             // Прекращаем попытки на заданное время, если Redis недоступен
+        .AddRetry(new RetryStrategyOptions                  // Выполняем повторные попытки запросов к Redis
+        {
+            MaxRetryAttempts = 1,                           // Количество повторов (итого 2 попытки: 1 основная + 1 дополнительная)
+            Delay = TimeSpan.FromMilliseconds(50),          // Базовое время ожидания перед первой повторной попыткой
+            OnRetry = args =>
+            {
+                logger.LogWarning(
+                    "Redis REMOVE Retry {Attempt}. Error: {Error}",
+                    args.AttemptNumber + 1,
+                    args.Outcome.Exception?.Message);
+                return default;
+            }
+        })
+        .AddTimeout(TimeSpan.FromMilliseconds(150));        // Таймаут текущей попытки, ждем ответа от Redis не более 150мс за раз
 });
 
 // Регистрируем хэндлеры

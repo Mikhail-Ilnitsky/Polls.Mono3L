@@ -23,16 +23,16 @@ public class GetPollByIdHandler(
     public async Task<Response<PollDto>> HandleAsync(Guid pollId)
     {
         var cacheKey = $"api_poll_{pollId}";
-        var (hasCacheValue, cacheValue) = await _redisService.GetAsync<PollDto>(cacheKey);
+        var redisCache = await _redisService.GetAsync<PollDto>(cacheKey);
 
-        if (hasCacheValue)
+        if (redisCache.IsAvailable && redisCache.HasValue)
         {
-            if (cacheValue is null)
+            if (redisCache.Value is null)
             {
                 return GetNotFoundResponse(pollId);
             }
 
-            return Response<PollDto>.Success(cacheValue);
+            return Response<PollDto>.Success(redisCache.Value);
         }
 
         var pollEntity = await _dbContext.Polls
@@ -44,12 +44,20 @@ public class GetPollByIdHandler(
 
         if (pollEntity is null)
         {
-            await _redisService.SetAsync<PollDto>(cacheKey, null, _cacheOptions.DefaultExpiration);
+            if (redisCache.IsAvailable)
+            {
+                await _redisService.SetAsync<PollDto>(cacheKey, null, _cacheOptions.DefaultExpiration);
+            }
+
             return GetNotFoundResponse(pollId);
         }
 
         var pollDto = pollEntity.ToDto();
-        await _redisService.SetAsync(cacheKey, pollDto, _cacheOptions.DefaultExpiration);
+
+        if (redisCache.IsAvailable)
+        {
+            await _redisService.SetAsync(cacheKey, pollDto, _cacheOptions.DefaultExpiration);
+        }
 
         return Response<PollDto>.Success(pollDto);
     }
