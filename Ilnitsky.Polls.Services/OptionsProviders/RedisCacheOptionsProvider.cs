@@ -4,9 +4,8 @@ using Microsoft.Extensions.Options;
 
 namespace Ilnitsky.Polls.Services.OptionsProviders;
 
-public class CacheOptionsProvider(IOptions<CacheSettings> settings) : ICacheOptionsProvider
+public class RedisCacheOptionsProvider(IOptions<RedisCacheSettings> settings) : ICacheOptionsProvider
 {
     public TimeSpan DefaultExpiration => TimeSpan.FromMinutes(settings.Value.DefaultExpirationMinutes);
-
-    public TimeSpan ShortExpiration => TimeSpan.FromMinutes(settings.Value.ShortExpirationMinutes);
+    public TimeSpan PollExpiration => TimeSpan.FromMinutes(settings.Value.PollExpirationMinutes);
 }

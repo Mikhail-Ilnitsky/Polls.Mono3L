@@ -1,6 +1,6 @@
-namespace Ilnitsky.Polls.Services.Redis;
+namespace Ilnitsky.Polls.Services.RedisCache;
 
-public interface IRedisService
+public interface IRedisCacheService
 {
     Task<RedisServiceResult<T>> GetAsync<T>(string key);
     Task SetAsync<T>(string key, T? value, TimeSpan? expiration = null);

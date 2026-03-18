@@ -20,10 +20,18 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080    # Внутренний порт HTTP
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true  # Разрешаем считывание IP пользователя и протокола из заголовков прокси-сервера
+
       - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=${DB_NAME};User=${DB_USER};Password=${DB_PASSWORD}
       - ConnectionStrings__Redis=redis:6379,password=${REDIS_PASSWORD},abortConnect=false,connectTimeout=100,syncTimeout=100
+
       - Serilog__WriteTo__SeqSink__Args__serverUrl=http://seq:5341
       - Serilog__WriteTo__GrafanaLokiSink__Args__uri=http://loki:3100
+
+      - MemoryCache_DefaultExpirationSeconds=300
+      - RedisCache_DefaultExpirationMinutes=30
+
+      - MemoryCache_PollExpirationSeconds=600
+      - RedisCache_PollExpirationMinutes=60
     # Ресурсы для production
     deploy:
       resources:

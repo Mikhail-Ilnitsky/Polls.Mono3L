@@ -8,19 +8,19 @@ using Polly.Registry;
 
 using StackExchange.Redis;
 
-namespace Ilnitsky.Polls.Services.Redis;
+namespace Ilnitsky.Polls.Services.RedisCache;
 
-public class RedisService(
+public class RedisCacheService(
     ResiliencePipelineProvider<string> pipelineProvider,
-    ICacheOptionsProvider cacheOptions,
+    RedisCacheOptionsProvider cacheOptionsProvider,
     IConnectionMultiplexer connectionMultiplexer,
-    ILogger<RedisService> logger)
-        : IRedisService
+    ILogger<RedisCacheService> logger)
+        : IRedisCacheService
 {
     private readonly ResiliencePipelineProvider<string> _provider = pipelineProvider ?? throw new ArgumentNullException(nameof(pipelineProvider));
     private readonly IDatabase _db = connectionMultiplexer?.GetDatabase() ?? throw new ArgumentNullException(nameof(connectionMultiplexer));
-    private readonly ICacheOptionsProvider _cacheOptions = cacheOptions ?? throw new ArgumentNullException(nameof(cacheOptions));
-    private readonly ILogger<RedisService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly RedisCacheOptionsProvider _cacheOptionsProvider = cacheOptionsProvider ?? throw new ArgumentNullException(nameof(cacheOptionsProvider));
+    private readonly ILogger<RedisCacheService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<RedisServiceResult<T>> GetAsync<T>(string key)
     {
@@ -51,17 +51,17 @@ public class RedisService(
         {
             return genericResult;
         }
-        if (result is RedisServiceResult baseResult)
+        if (result is RedisCacheResult baseResult)
         {
-            return new RedisServiceResult<T>(true, default, baseResult.IsAvailable);
+            return new RedisServiceResult<T>(false, default, baseResult.IsRedisAvailable);
         }
 
-        return new RedisServiceResult<T>(true, default, false);
+        return new RedisServiceResult<T>(false, default, false);
     }
 
     public async Task SetAsync<T>(string key, T? value, TimeSpan? expiration = null)
     {
-        expiration ??= _cacheOptions.DefaultExpiration;
+        expiration ??= _cacheOptionsProvider.DefaultExpiration;
 
         await _provider
             .GetPipeline<object>("redis-set")
@@ -74,7 +74,7 @@ public class RedisService(
                 var isSetted = await _db.StringSetAsync(key, valueString, expiration);
 
                 _logger.LogDebug("Redis SET: {IsSetted} for Key={Key}, Expiration={Expiration}", isSetted, key, expiration);
-                return new RedisServiceResult(true);
+                return new RedisCacheResult(true);
             });
     }
 
@@ -86,7 +86,7 @@ public class RedisService(
             {
                 var isDeleted = await _db.KeyDeleteAsync(key);
                 _logger.LogDebug("Redis REMOVE: {IsDeleted} for Key={Key}", isDeleted, key);
-                return new RedisServiceResult(true);
+                return new RedisCacheResult(true);
             });
     }
 }

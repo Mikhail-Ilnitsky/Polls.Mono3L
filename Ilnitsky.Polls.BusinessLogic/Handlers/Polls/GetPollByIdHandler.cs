@@ -4,35 +4,37 @@ using System.Threading.Tasks;
 using Ilnitsky.Polls.Contracts.Dtos;
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Ilnitsky.Polls.DataAccess;
+using Ilnitsky.Polls.Services.DualCache;
 using Ilnitsky.Polls.Services.OptionsProviders;
-using Ilnitsky.Polls.Services.Redis;
 
 using Microsoft.EntityFrameworkCore;
 
 namespace Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 
 public class GetPollByIdHandler(
-    IRedisService redisService,
-    ICacheOptionsProvider cacheOptions,
+    IDualCacheService cacheService,
+    MemoryCacheOptionsProvider memoryCacheOptions,
+    RedisCacheOptionsProvider redisCacheOptions,
     ApplicationDbContext dbContext)
 {
-    private readonly IRedisService _redisService = redisService ?? throw new ArgumentNullException(nameof(redisService));
-    private readonly ICacheOptionsProvider _cacheOptions = cacheOptions ?? throw new ArgumentNullException(nameof(cacheOptions));
+    private readonly IDualCacheService _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
+    private readonly MemoryCacheOptionsProvider _memoryCacheOptions = memoryCacheOptions ?? throw new ArgumentNullException(nameof(memoryCacheOptions));
+    private readonly RedisCacheOptionsProvider _redisCacheOptions = redisCacheOptions ?? throw new ArgumentNullException(nameof(redisCacheOptions));
     private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
     public async Task<Response<PollDto>> HandleAsync(Guid pollId)
     {
         var cacheKey = $"api_poll_{pollId}";
-        var redisCache = await _redisService.GetAsync<PollDto>(cacheKey);
+        var cache = await _cacheService.GetAsync<PollDto>(cacheKey);
 
-        if (redisCache.IsAvailable && redisCache.HasValue)
+        if (cache.HasValue)
         {
-            if (redisCache.Value is null)
+            if (cache.Value is null)
             {
                 return GetNotFoundResponse(pollId);
             }
 
-            return Response<PollDto>.Success(redisCache.Value);
+            return Response<PollDto>.Success(cache.Value);
         }
 
         var pollEntity = await _dbContext.Polls
@@ -44,21 +46,22 @@ public class GetPollByIdHandler(
 
         if (pollEntity is null)
         {
-            if (redisCache.IsAvailable)
-            {
-                await _redisService.SetAsync<PollDto>(cacheKey, null, _cacheOptions.DefaultExpiration);
-            }
-
+            await _cacheService.SetAsync<PollDto>(
+                cacheKey,
+                null,
+                cache.IsRedisAvailable,
+                _redisCacheOptions.PollExpiration,
+                _memoryCacheOptions.PollExpiration);
             return GetNotFoundResponse(pollId);
         }
 
         var pollDto = pollEntity.ToDto();
-
-        if (redisCache.IsAvailable)
-        {
-            await _redisService.SetAsync(cacheKey, pollDto, _cacheOptions.DefaultExpiration);
-        }
-
+        await _cacheService.SetAsync(
+            cacheKey,
+            pollDto,
+            cache.IsRedisAvailable,
+            _redisCacheOptions.PollExpiration,
+            _memoryCacheOptions.PollExpiration);
         return Response<PollDto>.Success(pollDto);
     }
 
