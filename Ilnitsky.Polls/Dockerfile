@@ -60,6 +60,7 @@ RUN dotnet publish "./Ilnitsky.Polls.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 
 ### ЭТАП 4: Финальный образ используемый в производственной среде или при запуске из VS в обычном режиме
 FROM base AS final
+LABEL org.opencontainers.image.source="https://github.com/mikhail-ilnitsky/polls.mono3l"
 WORKDIR /app
 
 # Переключаемся на root, чтобы создать папку с нужными правами
