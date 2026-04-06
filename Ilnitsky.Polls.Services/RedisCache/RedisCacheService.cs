@@ -22,7 +22,7 @@ public class RedisCacheService(
     private readonly RedisCacheOptionsProvider _cacheOptionsProvider = cacheOptionsProvider ?? throw new ArgumentNullException(nameof(cacheOptionsProvider));
     private readonly ILogger<RedisCacheService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-    public async Task<RedisServiceResult<T>> GetAsync<T>(string key)
+    public async Task<RedisCacheResult<T>> GetAsync<T>(string key)
     {
         var result = await _provider
             .GetPipeline<object>("redis-get")
@@ -37,26 +37,26 @@ public class RedisCacheService(
 
                 if (redisValue.IsNull)
                 {
-                    return (object)new RedisServiceResult<T>(false, default, true);
+                    return (object)new RedisCacheResult<T>(false, default, true);
                 }
                 if (redisValue == "ABSENT")
                 {
-                    return (object)new RedisServiceResult<T>(true, default, true);
+                    return (object)new RedisCacheResult<T>(true, default, true);
                 }
 
-                return (object)new RedisServiceResult<T>(true, JsonSerializer.Deserialize<T>(redisValue!), true);
+                return (object)new RedisCacheResult<T>(true, JsonSerializer.Deserialize<T>(redisValue!), true);
             });
 
-        if (result is RedisServiceResult<T> genericResult)
+        if (result is RedisCacheResult<T> genericResult)
         {
             return genericResult;
         }
         if (result is RedisCacheResult baseResult)
         {
-            return new RedisServiceResult<T>(false, default, baseResult.IsRedisAvailable);
+            return new RedisCacheResult<T>(false, default, baseResult.IsRedisAvailable);
         }
 
-        return new RedisServiceResult<T>(false, default, false);
+        return new RedisCacheResult<T>(false, default, false);
     }
 
     public async Task SetAsync<T>(string key, T? value, TimeSpan? expiration = null)

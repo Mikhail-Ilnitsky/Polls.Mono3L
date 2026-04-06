@@ -22,12 +22,12 @@ public class DualCacheService(
 
     public TimeSpan MaxMemoryExpiration => TimeSpan.FromMinutes(10);
 
-    public async Task<RedisServiceResult<T>> GetAsync<T>(string key)
+    public async Task<RedisCacheResult<T>> GetAsync<T>(string key)
     {
         if (_memoryCache.TryGetValue(key, out T? value))
         {
             _logger.LogDebug("MemoryCache GET: HIT for Кey={Key}", key);
-            return new RedisServiceResult<T>(true, value, true);
+            return new RedisCacheResult<T>(true, value, true);
         }
 
         _logger.LogDebug("MemoryCache GET: MISS for Кey={Key}", key);
