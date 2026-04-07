@@ -42,7 +42,7 @@ public class DbInitializer(ApplicationDbContext _dbContext) : IDbInitializer
         await _dbContext.SaveChangesAsync();
     }
 
-    public static Guid CreateGuidV7() => GuidHelper.CreateGuidV7();
+    private static Guid CreateGuidV7() => GuidHelper.CreateGuidV7();
 
     public static List<Answer> CreateAnswers(List<string> answers)
         => answers
