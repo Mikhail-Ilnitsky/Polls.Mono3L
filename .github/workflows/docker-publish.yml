@@ -10,10 +10,60 @@ on:
 permissions:
   contents: read
   packages: write
+  checks: write
 
 jobs:
-  build-and-push:
+  build-app-and-test:
     runs-on: ubuntu-latest
+    steps:
+      - name: Клонируем код в рабочую директорию GitHub Actions runner'а
+        uses: actions/checkout@v4
+
+      - name: Устанавливаем .NET 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Восстанавливаем NuGet-пакеты из кэша
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Скачиваем и устанавливаем недостающие NuGet-пакеты
+        run: dotnet restore
+
+      - name: Сборка решения
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Запуск тестов xUnit
+        run: |
+          dotnet test Ilnitsky.Polls.Tests.XUnit/Ilnitsky.Polls.Tests.XUnit.csproj \
+          --no-build --configuration Release \
+          --verbosity normal \
+          --logger "console;verbosity=detailed" \
+          -logger "trx;LogFileName=xunit-test-results.trx"
+
+      - name: Загрузка результатов тестов как артефактов
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xunit-test-results-${{ github.run_number }}
+          path: '**/TestResults/*.trx'
+          retention-days: 7
+
+      - name: Публикуем отчёт в GitHub Pages
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: xUnit Tests
+          path: '**/TestResults/*.trx'
+          reporter: dotnet-trx
+  
+  build-image-and-push:
+    runs-on: ubuntu-latest
+    needs: build-app-and-test
     steps:
       - name: Клонируем код в рабочую директорию GitHub Actions runner'а
         uses: actions/checkout@v4
