@@ -6,7 +6,6 @@ using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.Contracts.Dtos;
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Ilnitsky.Polls.DataAccess;
-using Ilnitsky.Polls.DbInitialization;
 using Ilnitsky.Polls.Services.DualCache;
 using Ilnitsky.Polls.Services.OptionsProviders;
 using Ilnitsky.Polls.Services.RedisCache;
@@ -126,7 +125,7 @@ public class GetPollByIdHandlerTests : IDisposable
     public async Task HandleAsync_ReturnsNotFound_WhenPollDoesNotExistAnywhere()
     {
         // Arrange
-        var pollId = DbInitializer.CreateGuidV7();
+        var pollId = GuidHelper.CreateGuidV7();
 
         // Мокаем пустой кэш (имитируем Cache Miss)
         _cacheMock
