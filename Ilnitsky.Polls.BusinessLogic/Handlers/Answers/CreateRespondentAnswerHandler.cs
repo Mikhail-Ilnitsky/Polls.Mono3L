@@ -98,11 +98,16 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
         {
             return BaseResponse.EntityNotFound("Не найден опрос!", $"Нет опроса с Id = {answerDto.PollId}");
         }
+
         if (!question.AllowMultipleChoice && answerDto.Answers.Count > 1)
         {
             return BaseResponse.IncorrectValue("На этот вопрос не должно быть больше одного ответа!", $"Вопрос позволяет только один ответ, но количество ответов равно {answerDto.Answers.Count}");
         }
-        if (!question.AllowCustomAnswer && !question.Answers.Any(a => a == answerDto.Answers[0]))
+        if (question.AllowMultipleChoice && answerDto.Answers.GroupBy(s => s).Any(g => g.Count() > 1))
+        {
+            return BaseResponse.IncorrectValue("Не должно быть одинаковых ответов!", "Если разрешён множественный выбор, все ответы должны быть разными");
+        }
+        if (!question.AllowCustomAnswer && !answerDto.Answers.All(ua => question.Answers.Any(qa => qa == ua)))
         {
             return BaseResponse.IncorrectValue("На этот вопрос не должно быть произвольного ответа!", $"Передан непредусмотренный ответ '{answerDto.Answers[0]}'");
         }
