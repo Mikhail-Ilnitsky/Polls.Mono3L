@@ -32,10 +32,10 @@ jobs:
           restore-keys: ${{ runner.os }}-nuget-
 
       - name: Скачиваем и устанавливаем недостающие NuGet-пакеты
-        run: dotnet restore
+        run: dotnet restore Ilnitsky.Polls.Mono3L.sln
 
       - name: Сборка решения
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build Ilnitsky.Polls.Mono3L.sln --no-restore --configuration Release
 
       - name: Запуск тестов xUnit
         run: |
@@ -43,7 +43,7 @@ jobs:
           --no-build --configuration Release \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
-          -logger "trx;LogFileName=xunit-test-results.trx"
+          --logger "trx;LogFileName=xunit-test-results.trx"
 
       - name: Загрузка результатов тестов как артефактов
         uses: actions/upload-artifact@v4
