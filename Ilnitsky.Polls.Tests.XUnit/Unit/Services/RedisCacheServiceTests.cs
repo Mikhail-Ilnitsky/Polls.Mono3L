@@ -146,4 +146,21 @@ public class RedisCacheServiceTests
                 CommandFlags.None),
             Times.Once);
     }
+
+    [Fact]
+    public async Task RemoveAsync_CallsKeyDelete()
+    {
+        // Arrange
+        var service = CreateService();
+
+        // Act
+        await service.RemoveAsync("key_for_delete");
+
+        // Assert
+        _dbMock.Verify(
+            x => x.KeyDeleteAsync(
+                (RedisKey)"key_for_delete",
+                CommandFlags.None),
+            Times.Once);
+    }
 }
