@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -117,5 +118,32 @@ public class RedisCacheServiceTests
         Assert.False(result.HasValue);
         Assert.Null(result.Value);
         Assert.True(result.IsRedisAvailable);
+    }
+
+    [Fact]
+    public async Task SetAsync_CallsRedisWithCorrectParameters()
+    {
+        // Arrange
+        var service = CreateService();
+
+        var (pollEntity, pollId, pollKey) = TestDbHelper.CreatePoll();
+        var pollDto = pollEntity.ToDto();
+        var pollJson = JsonSerializer.Serialize(pollDto);
+
+        var customTtl = TimeSpan.FromMinutes(10);
+
+        // Act
+        await service.SetAsync(pollKey, pollDto, customTtl);
+
+        // Assert
+        _dbMock.Verify(
+            x => x.StringSetAsync(
+                It.Is<RedisKey>(k => k == pollKey),
+                It.Is<RedisValue>(v => v == pollJson),
+                It.Is<TimeSpan?>(t => t == customTtl),
+                false,
+                When.Always,
+                CommandFlags.None),
+            Times.Once);
     }
 }
