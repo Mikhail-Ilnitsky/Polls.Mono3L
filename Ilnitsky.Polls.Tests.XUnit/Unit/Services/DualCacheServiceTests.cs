@@ -164,4 +164,23 @@ public class DualCacheServiceTests
         Assert.True(isValue);
         Assert.Equal(pollDto.PollId, value?.PollId);
     }
+
+    [Fact]
+    public async Task RemoveAsync_ClearsBothCaches()
+    {
+        // Arrange
+        var service = CreateService();
+        var (pollEntity, pollId, pollKey) = TestDbHelper.CreatePoll();
+        var pollDto = pollEntity.ToDto();
+        _memoryCache.Set(pollKey, pollDto);
+
+        // Act
+        await service.RemoveAsync(pollKey);
+
+        // Assert
+        Assert.False(_memoryCache.TryGetValue(pollKey, out _));
+        _redisCacheMock.Verify(
+            x => x.RemoveAsync(pollKey),
+            Times.Once);
+    }
 }
