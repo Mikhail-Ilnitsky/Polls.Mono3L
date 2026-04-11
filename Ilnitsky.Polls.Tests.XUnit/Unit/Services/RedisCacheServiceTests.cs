@@ -73,8 +73,8 @@ public class RedisCacheServiceTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.HasValue);
         Assert.True(result.IsRedisAvailable);
+        Assert.True(result.HasValue);
         Assert.NotNull(result.Value);
         Assert.Equal(pollDto.Name, result.Value.Name);
     }
@@ -96,8 +96,8 @@ public class RedisCacheServiceTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result.HasValue);
         Assert.True(result.IsRedisAvailable);
+        Assert.True(result.HasValue);
         Assert.Null(result.Value);
     }
 
@@ -115,9 +115,10 @@ public class RedisCacheServiceTests
         var result = await service.GetAsync<PollDto>(pollKey);
 
         // Assert
+        Assert.NotNull(result);
+        Assert.True(result.IsRedisAvailable);
         Assert.False(result.HasValue);
         Assert.Null(result.Value);
-        Assert.True(result.IsRedisAvailable);
     }
 
     [Fact]
