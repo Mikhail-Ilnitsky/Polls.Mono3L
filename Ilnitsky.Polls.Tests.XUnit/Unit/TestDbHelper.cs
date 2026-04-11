@@ -4,7 +4,7 @@ using System.Linq;
 using Ilnitsky.Polls.DataAccess.Entities.Polls;
 using Ilnitsky.Polls.DbInitialization;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Unit.Handlers;
+namespace Ilnitsky.Polls.Tests.XUnit.Unit;
 
 public static class TestDbHelper
 {
