@@ -1,0 +1,121 @@
+using System.Text.Json;
+using System.Threading.Tasks;
+
+using Ilnitsky.Polls.BusinessLogic;
+using Ilnitsky.Polls.Contracts.Dtos.Polls;
+using Ilnitsky.Polls.Services.OptionsProviders;
+using Ilnitsky.Polls.Services.RedisCache;
+using Ilnitsky.Polls.Services.Settings;
+
+using Microsoft.Extensions.Logging;
+
+using Moq;
+
+using Polly;
+using Polly.Registry;
+
+using StackExchange.Redis;
+
+namespace Ilnitsky.Polls.Tests.XUnit.Unit.Services;
+
+public class RedisCacheServiceTests
+{
+    private readonly Mock<IConnectionMultiplexer> _redisMock;
+    private readonly Mock<IDatabase> _dbMock;
+    private readonly Mock<ILogger<RedisCacheService>> _loggerMock;
+    private readonly RedisCacheOptionsProvider _optionsProvider;
+    private readonly Mock<ResiliencePipelineProvider<string>> _pipelineProviderMock;
+
+    public RedisCacheServiceTests()
+    {
+        _dbMock = new Mock<IDatabase>();
+        _redisMock = new Mock<IConnectionMultiplexer>();
+        _redisMock
+            .Setup(x => x.GetDatabase(It.IsAny<int>(), It.IsAny<object>()))
+            .Returns(_dbMock.Object);
+
+        _loggerMock = new Mock<ILogger<RedisCacheService>>();
+
+        var redisCacheSettings = new RedisCacheSettings
+        {
+            DefaultExpirationMinutes = 30,
+            PollExpirationMinutes = 60
+        };
+        var redisCacheOptions = Microsoft.Extensions.Options.Options.Create(redisCacheSettings);
+        _optionsProvider = new RedisCacheOptionsProvider(redisCacheOptions);
+
+        // Мокаем Polly: возвращаем пустой пайплайн, который просто выполняет код
+        _pipelineProviderMock = new Mock<ResiliencePipelineProvider<string>>();
+        _pipelineProviderMock
+            .Setup(x => x.GetPipeline<object>(It.IsAny<string>()))
+            .Returns(ResiliencePipeline<object>.Empty);
+    }
+
+    private RedisCacheService CreateService() =>
+        new(_pipelineProviderMock.Object, _optionsProvider, _redisMock.Object, _loggerMock.Object);
+
+    [Fact]
+    public async Task GetAsync_ReturnsValue_WhenKeyExists()
+    {
+        // Arrange
+        var service = CreateService();
+        var (pollEntity, pollId, pollKey) = TestDbHelper.CreatePoll();
+        var pollDto = pollEntity.ToDto();
+        var pollJson = JsonSerializer.Serialize(pollDto);
+
+        _dbMock
+            .Setup(x => x.StringGetAsync(pollKey, It.IsAny<CommandFlags>()))
+            .ReturnsAsync(pollJson);
+
+        // Act
+        var result = await service.GetAsync<PollDto>(pollKey);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.HasValue);
+        Assert.True(result.IsRedisAvailable);
+        Assert.NotNull(result.Value);
+        Assert.Equal(pollDto.Name, result.Value.Name);
+    }
+
+    [Fact]
+    public async Task GetAsync_ReturnsValueNull_WhenKeyExistsAndValueIsABSENT()
+    {
+        // Arrange
+        var service = CreateService();
+        var (_, _, pollKey) = TestDbHelper.CreatePoll();
+        var pollJson = "ABSENT";
+
+        _dbMock
+            .Setup(x => x.StringGetAsync(pollKey, It.IsAny<CommandFlags>()))
+            .ReturnsAsync(pollJson);
+
+        // Act
+        var result = await service.GetAsync<PollDto>(pollKey);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.HasValue);
+        Assert.True(result.IsRedisAvailable);
+        Assert.Null(result.Value);
+    }
+
+    [Fact]
+    public async Task GetAsync_ReturnsHasValueFalse_WhenKeyDoesNotExist()
+    {
+        // Arrange
+        var service = CreateService();
+        var (_, _, pollKey) = TestDbHelper.CreatePoll();
+        _dbMock
+            .Setup(x => x.StringGetAsync(It.IsAny<RedisKey>(), It.IsAny<CommandFlags>()))
+            .ReturnsAsync(RedisValue.Null);
+
+        // Act
+        var result = await service.GetAsync<PollDto>(pollKey);
+
+        // Assert
+        Assert.False(result.HasValue);
+        Assert.Null(result.Value);
+        Assert.True(result.IsRedisAvailable);
+    }
+}
