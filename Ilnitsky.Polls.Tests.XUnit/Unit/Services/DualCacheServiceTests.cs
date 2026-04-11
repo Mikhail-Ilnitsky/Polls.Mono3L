@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 using Ilnitsky.Polls.BusinessLogic;
@@ -126,5 +127,41 @@ public class DualCacheServiceTests
         _redisCacheMock.Verify(
             x => x.GetAsync<PollDto>(pollKey),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task SetAsync_SavesToCache_WhenExpirationIsNormal()
+    {
+        // Arrange
+        var service = CreateService();
+        var (pollEntity, pollId, pollKey) = TestDbHelper.CreatePoll();
+        var pollDto = pollEntity.ToDto();
+        var longExpiration = TimeSpan.FromMinutes(1);
+
+        // Act
+        await service.SetAsync(pollKey, pollDto, true, memoryExpiration: longExpiration);
+
+        // Assert
+        var isValue = _memoryCache.TryGetValue<PollDto>(pollKey, out var value);
+        Assert.True(isValue);
+        Assert.Equal(pollDto.PollId, value?.PollId);
+    }
+
+    [Fact]
+    public async Task SetAsync_SavesToCache_EvenIfExpirationExceedsMax()
+    {
+        // Arrange
+        var service = CreateService();
+        var (pollEntity, pollId, pollKey) = TestDbHelper.CreatePoll();
+        var pollDto = pollEntity.ToDto();
+        var longExpiration = TimeSpan.FromHours(1);
+
+        // Act
+        await service.SetAsync(pollKey, pollDto, true, memoryExpiration: longExpiration);
+
+        // Assert
+        var isValue = _memoryCache.TryGetValue<PollDto>(pollKey, out var value);
+        Assert.True(isValue);
+        Assert.Equal(pollDto.PollId, value?.PollId);
     }
 }
