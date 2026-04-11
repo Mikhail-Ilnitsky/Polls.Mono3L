@@ -483,7 +483,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
 
         var questionId = poll.Questions.First().Id;
         var answerText = poll.Questions.First().Answers.First().Text;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, respondentSessionId, respondentId);
@@ -523,7 +523,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
         var questionId = poll.Questions.First().Id;
         var answer1Text = poll.Questions.First().Answers.First().Text;
         var answer2Text = poll.Questions.First().Answers.Last().Text;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answer1Text, answer2Text]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answer1Text!, answer2Text!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, respondentSessionId, respondentId);
