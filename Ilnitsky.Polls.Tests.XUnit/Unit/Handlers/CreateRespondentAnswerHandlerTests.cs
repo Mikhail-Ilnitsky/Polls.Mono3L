@@ -101,7 +101,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
         await _dbContext.SaveChangesAsync();
 
         var questionId = poll.Questions.First().Id;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [null]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [null!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, Guid.NewGuid(), Guid.NewGuid());
@@ -171,7 +171,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
 
         var questionId = poll.Questions.First().Id;
         var answerText = poll.Questions.First().Answers.First().Text;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText!]);
 
         var badRespondentId = GuidHelper.CreateGuidV7();
 
@@ -209,7 +209,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
 
         var questionId = poll.Questions.First().Id;
         var answerText = poll.Questions.First().Answers.First().Text;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText!]);
 
         var badRespondentSessionId = GuidHelper.CreateGuidV7();
 
@@ -228,7 +228,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
     public async Task HandleAsync_ReturnsEntityNotFound_WhenPollNotFound()
     {
         // Arrange
-        var (poll, pollId, _) = TestDbHelper.CreatePoll();
+        var (poll, _, _) = TestDbHelper.CreatePoll();
         var respondentId = GuidHelper.CreateGuidV7();
         var respondentSessionId = GuidHelper.CreateGuidV7();
         _dbContext.Polls.Add(poll);
@@ -248,7 +248,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
         var questionId = poll.Questions.First().Id;
         var answerText = poll.Questions.First().Answers.First().Text;
         var badPollId = GuidHelper.CreateGuidV7();
-        var answerDto = new CreateRespondentAnswerDto(badPollId, questionId, [answerText]);
+        var answerDto = new CreateRespondentAnswerDto(badPollId, questionId, [answerText!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, respondentSessionId, respondentId);
@@ -288,7 +288,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
 
         var questionId = poll.Questions.First().Id;
         var answerText = poll.Questions.First().Answers.First().Text;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText, answerText]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText!, answerText!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, respondentSessionId, respondentId);
@@ -328,7 +328,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
         var questionId = poll.Questions.First().Id;
         var answer1Text = poll.Questions.First().Answers.First().Text;
         var answer2Text = poll.Questions.First().Answers.Last().Text;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answer1Text, answer2Text]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answer1Text!, answer2Text!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, respondentSessionId, respondentId);
@@ -405,7 +405,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
 
         var questionId = poll.Questions.First().Id;
         var answerText = poll.Questions.First().Answers.First().Text;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, respondentSessionId, respondentId);
@@ -444,7 +444,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
 
         var questionId = poll.Questions.First().Id;
         var answerText = poll.Questions.First().Answers.First().Text;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [answerText!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, respondentSessionId, respondentId);
@@ -575,7 +575,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
 
     public void Dispose()
     {
-        _dbContext.Database.EnsureDeleted();
         _dbContext.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

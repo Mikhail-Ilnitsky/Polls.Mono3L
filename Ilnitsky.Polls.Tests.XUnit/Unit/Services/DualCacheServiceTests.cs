@@ -17,7 +17,7 @@ namespace Ilnitsky.Polls.Tests.XUnit.Unit.Services;
 
 public class DualCacheServiceTests
 {
-    private readonly IMemoryCache _memoryCache;
+    private readonly MemoryCache _memoryCache;
     private readonly Mock<IRedisCacheService> _redisCacheMock;
     private readonly Mock<ILogger<RedisCacheService>> _loggerMock;
     private readonly MemoryCacheOptionsProvider _memoryOptions;
@@ -134,7 +134,7 @@ public class DualCacheServiceTests
     {
         // Arrange
         var service = CreateService();
-        var (pollEntity, pollId, pollKey) = TestDbHelper.CreatePoll();
+        var (pollEntity, _, pollKey) = TestDbHelper.CreatePoll();
         var pollDto = pollEntity.ToDto();
         var longExpiration = TimeSpan.FromMinutes(1);
 
@@ -152,7 +152,7 @@ public class DualCacheServiceTests
     {
         // Arrange
         var service = CreateService();
-        var (pollEntity, pollId, pollKey) = TestDbHelper.CreatePoll();
+        var (pollEntity, _, pollKey) = TestDbHelper.CreatePoll();
         var pollDto = pollEntity.ToDto();
         var longExpiration = TimeSpan.FromHours(1);
 

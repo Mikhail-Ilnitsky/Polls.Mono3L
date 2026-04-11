@@ -173,7 +173,7 @@ public class GetPollByIdHandlerTests : IDisposable
 
     public void Dispose()
     {
-        _dbContext.Database.EnsureDeleted();
         _dbContext.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
