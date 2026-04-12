@@ -7,8 +7,9 @@
     <UserSecretsId>67717e96-b806-4971-ad0b-ef828e7da497</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   
-    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <GenerateTypeScriptCompleted>true</GenerateTypeScriptCompleted>
+    <TypeScriptEnabled>false</TypeScriptEnabled>
 
     <!-- Включаем генерацию XML-файла документации -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
