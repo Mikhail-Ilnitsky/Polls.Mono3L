@@ -26,8 +26,11 @@ public class GetPollLinksHandlerTests : IDisposable
         _handler = new GetPollLinksHandler(_dbContext);
     }
 
-    [Fact]
-    public async Task HandleAsync_ReturnsSinglePoll_WhenSingleActivePollExists()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task HandleAsync_ReturnsSinglePoll_WhenSingleActivePollExists(int limit)
     {
         // Arrange
         var (poll, _, _) = TestDbHelper.CreatePoll();
@@ -35,7 +38,7 @@ public class GetPollLinksHandlerTests : IDisposable
         await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await _handler.HandleAsync(offset: 0, limit: 10);
+        var result = await _handler.HandleAsync(offset: 0, limit: limit);
 
         // Assert
         Assert.NotNull(result);
@@ -83,8 +86,11 @@ public class GetPollLinksHandlerTests : IDisposable
         Assert.Equal(polls[3].Name, result[1].Name);
     }
 
-    [Fact]
-    public async Task HandleAsync_ReturnsEmptyList_WhenOffsetIsTooHigh()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    public async Task HandleAsync_ReturnsEmptyList_WhenOffsetIsTooHigh(int offset)
     {
         // Arrange
         var (poll, _, _) = TestDbHelper.CreatePoll();
@@ -92,19 +98,23 @@ public class GetPollLinksHandlerTests : IDisposable
         await _dbContext.SaveChangesAsync();
 
         // Act
-        var result = await _handler.HandleAsync(offset: 10, limit: 5);
+        var result = await _handler.HandleAsync(offset, limit: 5);
 
         // Assert
         Assert.Empty(result);
     }
 
-    [Fact]
-    public async Task HandleAsync_ReturnsEmptyList_WhenDbIsEmpty()
+    [Theory]
+    [InlineData(0, 5)]
+    [InlineData(0, 10)]
+    [InlineData(5, 5)]
+    [InlineData(10, 10)]
+    public async Task HandleAsync_ReturnsEmptyList_WhenDbIsEmpty(int offset, int limit)
     {
         // Arrange
 
         // Act
-        var result = await _handler.HandleAsync(offset: 0, limit: 5);
+        var result = await _handler.HandleAsync(offset, limit);
 
         // Assert
         Assert.Empty(result);

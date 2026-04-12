@@ -129,35 +129,21 @@ public class DualCacheServiceTests
             Times.Once);
     }
 
-    [Fact]
-    public async Task SetAsync_SavesToCache_WhenExpirationIsNormal()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(10)]
+    [InlineData(100)]
+    [InlineData(1000)]
+    public async Task SetAsync_SavesToCache_WhenMemoryExpirationIsNormalOrExceedsMax(int memoryExpirationMinutes)
     {
         // Arrange
         var service = CreateService();
         var (pollEntity, _, pollKey) = TestDbHelper.CreatePoll();
         var pollDto = pollEntity.ToDto();
-        var longExpiration = TimeSpan.FromMinutes(1);
+        var memoryExpiration = TimeSpan.FromMinutes(memoryExpirationMinutes);
 
         // Act
-        await service.SetAsync(pollKey, pollDto, true, memoryExpiration: longExpiration);
-
-        // Assert
-        var isValue = _memoryCache.TryGetValue<PollDto>(pollKey, out var value);
-        Assert.True(isValue);
-        Assert.Equal(pollDto.PollId, value?.PollId);
-    }
-
-    [Fact]
-    public async Task SetAsync_SavesToCache_EvenIfExpirationExceedsMax()
-    {
-        // Arrange
-        var service = CreateService();
-        var (pollEntity, _, pollKey) = TestDbHelper.CreatePoll();
-        var pollDto = pollEntity.ToDto();
-        var longExpiration = TimeSpan.FromHours(1);
-
-        // Act
-        await service.SetAsync(pollKey, pollDto, true, memoryExpiration: longExpiration);
+        await service.SetAsync(pollKey, pollDto, true, memoryExpiration: memoryExpiration);
 
         // Assert
         var isValue = _memoryCache.TryGetValue<PollDto>(pollKey, out var value);

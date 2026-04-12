@@ -50,8 +50,12 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
         Assert.NotNull(result.ErrorDetails);
     }
 
-    [Fact]
-    public async Task HandleAsync_ReturnsIncorrectValue_WhenAnswerStringIsEmpty()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("        ")]
+    public async Task HandleAsync_ReturnsIncorrectValue_WhenAnswerStringIsNullOrWhiteSpace(string invalidValue)
     {
         // Arrange
         var (poll, pollId, _) = TestDbHelper.CreatePoll();
@@ -59,49 +63,7 @@ public class CreateRespondentAnswerHandlerTests : IDisposable
         await _dbContext.SaveChangesAsync();
 
         var questionId = poll.Questions.First().Id;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [""]);
-
-        // Act
-        var result = await _handler.HandleAsync(answerDto, Guid.NewGuid(), Guid.NewGuid());
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(ErrorType.IncorrectValue, result.ErrorType);
-        Assert.Equal("Не должно быть пустых ответов!", result.Message);
-        Assert.NotNull(result.ErrorDetails);
-    }
-
-    [Fact]
-    public async Task HandleAsync_ReturnsIncorrectValue_WhenAnswerStringIsWhiteSpace()
-    {
-        // Arrange
-        var (poll, pollId, _) = TestDbHelper.CreatePoll();
-        _dbContext.Polls.Add(poll);
-        await _dbContext.SaveChangesAsync();
-
-        var questionId = poll.Questions.First().Id;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, ["         "]);
-
-        // Act
-        var result = await _handler.HandleAsync(answerDto, Guid.NewGuid(), Guid.NewGuid());
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(ErrorType.IncorrectValue, result.ErrorType);
-        Assert.Equal("Не должно быть пустых ответов!", result.Message);
-        Assert.NotNull(result.ErrorDetails);
-    }
-
-    [Fact]
-    public async Task HandleAsync_ReturnsIncorrectValue_WhenAnswerStringIsNull()
-    {
-        // Arrange
-        var (poll, pollId, _) = TestDbHelper.CreatePoll();
-        _dbContext.Polls.Add(poll);
-        await _dbContext.SaveChangesAsync();
-
-        var questionId = poll.Questions.First().Id;
-        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [null!]);
+        var answerDto = new CreateRespondentAnswerDto(pollId, questionId, [invalidValue!]);
 
         // Act
         var result = await _handler.HandleAsync(answerDto, Guid.NewGuid(), Guid.NewGuid());
