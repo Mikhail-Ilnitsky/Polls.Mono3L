@@ -7,13 +7,14 @@ using Ilnitsky.Polls.Services.DualCache;
 using Ilnitsky.Polls.Services.OptionsProviders;
 using Ilnitsky.Polls.Services.RedisCache;
 using Ilnitsky.Polls.Services.Settings;
+using Ilnitsky.Polls.Tests.Shared;
 
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 using Moq;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Unit.Services;
+namespace Ilnitsky.Polls.Tests.XUnit.Services;
 
 public class DualCacheServiceTests
 {

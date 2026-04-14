@@ -7,6 +7,7 @@ using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Ilnitsky.Polls.Services.OptionsProviders;
 using Ilnitsky.Polls.Services.RedisCache;
 using Ilnitsky.Polls.Services.Settings;
+using Ilnitsky.Polls.Tests.Shared;
 
 using Microsoft.Extensions.Logging;
 
@@ -17,7 +18,7 @@ using Polly.Registry;
 
 using StackExchange.Redis;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Unit.Services;
+namespace Ilnitsky.Polls.Tests.XUnit.Services;
 
 public class RedisCacheServiceTests
 {

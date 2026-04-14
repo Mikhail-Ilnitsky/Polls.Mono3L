@@ -8,10 +8,11 @@ using Ilnitsky.Polls.Contracts.Dtos;
 using Ilnitsky.Polls.Contracts.Dtos.Answers;
 using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DataAccess.Entities.Answers;
+using Ilnitsky.Polls.Tests.Shared;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Unit.Handlers;
+namespace Ilnitsky.Polls.Tests.XUnit.Handlers;
 
 public class CreateRespondentAnswerHandlerTests : IDisposable
 {

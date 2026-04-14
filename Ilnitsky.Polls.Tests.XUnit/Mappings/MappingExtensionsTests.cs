@@ -5,8 +5,9 @@ using System.Linq;
 using Ilnitsky.Polls.BusinessLogic;
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Ilnitsky.Polls.DataAccess.Entities.Polls;
+using Ilnitsky.Polls.Tests.Shared;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Unit.Mappings;
+namespace Ilnitsky.Polls.Tests.XUnit.Mappings;
 
 public class MappingExtensionsTests
 {

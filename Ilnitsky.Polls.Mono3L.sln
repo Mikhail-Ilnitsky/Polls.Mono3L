@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.Services", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.Tests.XUnit", "Ilnitsky.Polls.Tests.XUnit\Ilnitsky.Polls.Tests.XUnit.csproj", "{76AE44D6-FDC4-48F6-9216-DE8CE976FF99}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.Tests.NUnit", "Ilnitsky.Polls.Tests.NUnit\Ilnitsky.Polls.Tests.NUnit.csproj", "{859BAC27-B9BD-4A6D-96EC-32EE21DE6CBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.Tests.Shared", "Ilnitsky.Polls.Tests.Shared\Ilnitsky.Polls.Tests.Shared.csproj", "{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +54,14 @@ Global
 		{76AE44D6-FDC4-48F6-9216-DE8CE976FF99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76AE44D6-FDC4-48F6-9216-DE8CE976FF99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76AE44D6-FDC4-48F6-9216-DE8CE976FF99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{859BAC27-B9BD-4A6D-96EC-32EE21DE6CBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{859BAC27-B9BD-4A6D-96EC-32EE21DE6CBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{859BAC27-B9BD-4A6D-96EC-32EE21DE6CBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{859BAC27-B9BD-4A6D-96EC-32EE21DE6CBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
