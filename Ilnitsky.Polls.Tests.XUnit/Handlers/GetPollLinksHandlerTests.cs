@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DbInitialization;
+using Ilnitsky.Polls.Tests.Shared;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Unit.Handlers;
+namespace Ilnitsky.Polls.Tests.XUnit.Handlers;
 
 public class GetPollLinksHandlerTests : IDisposable
 {

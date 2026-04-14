@@ -10,12 +10,13 @@ using Ilnitsky.Polls.Services.DualCache;
 using Ilnitsky.Polls.Services.OptionsProviders;
 using Ilnitsky.Polls.Services.RedisCache;
 using Ilnitsky.Polls.Services.Settings;
+using Ilnitsky.Polls.Tests.Shared;
 
 using Microsoft.EntityFrameworkCore;
 
 using Moq;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Unit.Handlers;
+namespace Ilnitsky.Polls.Tests.XUnit.Handlers;
 
 public class GetPollByIdHandlerTests : IDisposable
 {
