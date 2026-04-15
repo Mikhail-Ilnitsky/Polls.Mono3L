@@ -16,7 +16,7 @@ using Moq;
 
 namespace Ilnitsky.Polls.Tests.XUnit.Services;
 
-public class DualCacheServiceTests
+public class DualCacheServiceTests : IDisposable
 {
     private readonly MemoryCache _memoryCache;
     private readonly Mock<IRedisCacheService> _redisCacheMock;
@@ -45,9 +45,6 @@ public class DualCacheServiceTests
         var memoryCacheOptions = Microsoft.Extensions.Options.Options.Create(memoryCacheSettings);
         var redisCacheOptions = Microsoft.Extensions.Options.Options.Create(redisCacheSettings);
 
-        _memoryOptions = new(memoryCacheOptions);
-        _redisOptions = new(redisCacheOptions);
-
         _memoryOptions = new MemoryCacheOptionsProvider(memoryCacheOptions);
         _redisOptions = new RedisCacheOptionsProvider(redisCacheOptions);
     }
@@ -75,6 +72,7 @@ public class DualCacheServiceTests
         Assert.NotNull(result.Value);
         Assert.Equal(pollDto.PollId, result.Value.PollId);
         Assert.Equal(pollDto.Name, result.Value.Name);
+
         // Проверяем, что Redis вообще не вызывался
         _redisCacheMock.Verify(
             x => x.GetAsync<PollDto>(It.IsAny<string>()),
@@ -124,6 +122,7 @@ public class DualCacheServiceTests
         Assert.True(result.IsRedisAvailable);
         Assert.False(result.HasValue);
         Assert.Null(result.Value);
+
         // Проверяем, что Redis вызывался один раз
         _redisCacheMock.Verify(
             x => x.GetAsync<PollDto>(pollKey),
@@ -148,6 +147,7 @@ public class DualCacheServiceTests
 
         // Assert
         var isValue = _memoryCache.TryGetValue<PollDto>(pollKey, out var value);
+
         Assert.True(isValue);
         Assert.Equal(pollDto.PollId, value?.PollId);
     }
@@ -166,8 +166,14 @@ public class DualCacheServiceTests
 
         // Assert
         Assert.False(_memoryCache.TryGetValue(pollKey, out _));
+
         _redisCacheMock.Verify(
             x => x.RemoveAsync(pollKey),
             Times.Once);
+    }
+
+    public void Dispose()
+    {
+        _memoryCache?.Dispose();
     }
 }
