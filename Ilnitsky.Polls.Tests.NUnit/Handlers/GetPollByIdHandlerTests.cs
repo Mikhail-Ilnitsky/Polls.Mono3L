@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Moq;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Handlers;
+namespace Ilnitsky.Polls.Tests.NUnit.Handlers;
 
 public class GetPollByIdHandlerTests
 {
