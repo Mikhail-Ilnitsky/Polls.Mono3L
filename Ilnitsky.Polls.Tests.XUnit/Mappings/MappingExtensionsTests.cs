@@ -87,16 +87,20 @@ public class MappingExtensionsTests
         Assert.Equal(pollEntity.Html, result.Html);
         Assert.Equal(pollEntity.DateTime, result.DateTime);
         Assert.Equal(pollEntity.IsActive, result.IsActive);
-        Assert.Equal(pollEntity.Questions.First().Id, result.Questions[0].QuestionId);
-        Assert.Equal(pollEntity.Questions.First().Text, result.Questions[0].Question);
-        Assert.Equal(pollEntity.Questions.First().AllowCustomAnswer, result.Questions[0].AllowCustomAnswer);
-        Assert.Equal(pollEntity.Questions.First().AllowMultipleChoice, result.Questions[0].AllowMultipleChoice);
-        Assert.Equal(pollEntity.Questions.First().Number, result.Questions[0].Number);
-        Assert.Equal(pollEntity.Questions.First().TargetAnswer, result.Questions[0].TargetAnswer);
-        Assert.Equal(pollEntity.Questions.First().MatchNextNumber, result.Questions[0].MatchNextNumber);
-        Assert.Equal(pollEntity.Questions.First().DefaultNextNumber, result.Questions[0].DefaultNextNumber);
-        Assert.Equal(pollEntity.Questions.First().Answers.Count, result.Questions[0].Answers.Count);
-        Assert.Equal(pollEntity.Questions.First().Answers.Select(a => a.Text), result.Questions[0].Answers);
+
+        var resultQuestion = result.Questions[0];
+        var pollQuestion = pollEntity.Questions.First();
+
+        Assert.Equal(pollQuestion.Id, resultQuestion.QuestionId);
+        Assert.Equal(pollQuestion.Text, resultQuestion.Question);
+        Assert.Equal(pollQuestion.AllowCustomAnswer, resultQuestion.AllowCustomAnswer);
+        Assert.Equal(pollQuestion.AllowMultipleChoice, resultQuestion.AllowMultipleChoice);
+        Assert.Equal(pollQuestion.Number, resultQuestion.Number);
+        Assert.Equal(pollQuestion.TargetAnswer, resultQuestion.TargetAnswer);
+        Assert.Equal(pollQuestion.MatchNextNumber, resultQuestion.MatchNextNumber);
+        Assert.Equal(pollQuestion.DefaultNextNumber, resultQuestion.DefaultNextNumber);
+        Assert.Equal(pollQuestion.Answers.Count, resultQuestion.Answers.Count);
+        Assert.Equal(pollQuestion.Answers.Select(a => a.Text), resultQuestion.Answers);
     }
 
     [Fact]
@@ -117,16 +121,20 @@ public class MappingExtensionsTests
         Assert.Equal(pollEntity.Html, result.Html);
         Assert.Equal(pollEntity.DateTime, result.DateTime);
         Assert.Equal(pollEntity.IsActive, result.IsActive);
-        Assert.Equal(pollEntity.Questions.First().Id, result.Questions.First().Id);
-        Assert.Equal(pollEntity.Questions.First().Text, result.Questions.First().Text);
-        Assert.Equal(pollEntity.Questions.First().AllowCustomAnswer, result.Questions.First().AllowCustomAnswer);
-        Assert.Equal(pollEntity.Questions.First().AllowMultipleChoice, result.Questions.First().AllowMultipleChoice);
-        Assert.Equal(pollEntity.Questions.First().Number, result.Questions.First().Number);
-        Assert.Equal(pollEntity.Questions.First().TargetAnswer, result.Questions.First().TargetAnswer);
-        Assert.Equal(pollEntity.Questions.First().MatchNextNumber, result.Questions.First().MatchNextNumber);
-        Assert.Equal(pollEntity.Questions.First().DefaultNextNumber, result.Questions.First().DefaultNextNumber);
-        Assert.Equal(pollEntity.Questions.First().Answers.Count, result.Questions.First().Answers.Count);
-        Assert.Equal(pollEntity.Questions.First().Answers.Select(a => a.Text), result.Questions.First().Answers.Select(a => a.Text));
+
+        var resultQuestion = result.Questions.First();
+        var pollQuestion = pollEntity.Questions.First();
+
+        Assert.Equal(pollQuestion.Id, resultQuestion.Id);
+        Assert.Equal(pollQuestion.Text, resultQuestion.Text);
+        Assert.Equal(pollQuestion.AllowCustomAnswer, resultQuestion.AllowCustomAnswer);
+        Assert.Equal(pollQuestion.AllowMultipleChoice, resultQuestion.AllowMultipleChoice);
+        Assert.Equal(pollQuestion.Number, resultQuestion.Number);
+        Assert.Equal(pollQuestion.TargetAnswer, resultQuestion.TargetAnswer);
+        Assert.Equal(pollQuestion.MatchNextNumber, resultQuestion.MatchNextNumber);
+        Assert.Equal(pollQuestion.DefaultNextNumber, resultQuestion.DefaultNextNumber);
+        Assert.Equal(pollQuestion.Answers.Count, resultQuestion.Answers.Count);
+        Assert.Equal(pollQuestion.Answers.Select(a => a.Text), resultQuestion.Answers.Select(a => a.Text));
     }
 
     [Theory]
