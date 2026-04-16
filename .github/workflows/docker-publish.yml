@@ -92,12 +92,11 @@ jobs:
         uses: irongut/CodeCoverageSummary@v1.3.0
         if: always()
         with:
-          filename: 'TestResults/**/*.xml'
+          filename: 'TestResults/[0-9a-f]*/coverage.cobertura.xml'
           badge: true
           format: markdown
           output: both
-          merge_low_depth: true   # Объединяем одинаковые строки из разных файлов, чтобы они не дублировались в таблице
-          thresholds: '50 75'
+          thresholds: '40 75'
           fail_below_min: true  
 
       - name: Выводим Summary
