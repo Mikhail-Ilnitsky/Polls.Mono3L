@@ -92,7 +92,7 @@ jobs:
         uses: irongut/CodeCoverageSummary@v1.3.0
         if: always()
         with:
-          filename: './TestResults/[0-9a-f]*/*.xml'
+          filename: './TestResults/**/coverage.cobertura.xml'
           badge: true
           format: markdown
           output: both
