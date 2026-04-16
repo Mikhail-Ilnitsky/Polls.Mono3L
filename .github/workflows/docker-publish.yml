@@ -92,7 +92,7 @@ jobs:
         uses: irongut/CodeCoverageSummary@v1.3.0
         if: always()
         with:
-          filename: 'TestResults/[0-9a-f]*/*.xml'
+          filename: './TestResults/[0-9a-f]*/*.xml'
           badge: true
           format: markdown
           output: both
@@ -102,7 +102,7 @@ jobs:
       - name: Выводим Summary
         if: always()
         run: |
-          ls -R ./TestResults
+          ls -R ./TestResults # Для отладки смотрим содержимое папки
           if [ -f code-coverage-results.md ]; then
             cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
           else
@@ -138,7 +138,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: xunit-test-results-${{ github.run_number }}
+          name: nunit-test-results-${{ github.run_number }}
           path: '**/TestResults/*.trx'
           retention-days: 7
 
