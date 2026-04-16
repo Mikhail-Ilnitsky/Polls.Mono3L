@@ -72,7 +72,8 @@ jobs:
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults \
           --logger "console;verbosity=detailed" \
-          --logger "trx;LogFileName=xunit-test-results.trx"
+          --logger "trx;LogFileName=xunit-test-results.trx" \
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
       - name: Загрузка результатов тестов как артефактов
         uses: actions/upload-artifact@v4
