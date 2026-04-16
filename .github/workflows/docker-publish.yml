@@ -13,7 +13,7 @@ permissions:
   checks: write
 
 jobs:
-  build-app-and-test:
+  build-app:
     runs-on: ubuntu-latest
     steps:
       - name: Клонируем код в рабочую директорию GitHub Actions runner'а
@@ -36,6 +36,31 @@ jobs:
 
       - name: Сборка решения
         run: dotnet build Ilnitsky.Polls.Mono3L.sln --no-restore --configuration Release
+
+      - name: Сохраняем собранное решение (bin и obj папки)
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-app
+          path: |
+            ./
+            !./.git
+            !**/node_modules
+          retention-days: 1
+
+  run-xunit-tests:
+    needs: build-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Скачиваем уже собранное решение
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-app
+
+      - name: Устанавливаем SDK и настраиваем окружения для запуска тестов
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
 
       - name: Запуск тестов xUnit
         run: |
@@ -60,10 +85,49 @@ jobs:
           name: xUnit Tests
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
+
+  run-nunit-tests:
+    needs: build-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Скачиваем уже собранное решение
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-app
+
+      - name: Устанавливаем SDK и настраиваем окружения для запуска тестов
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+          cache: true
+
+      - name: Запуск тестов NUnit
+        run: |
+          dotnet test Ilnitsky.Polls.Tests.NUnit/Ilnitsky.Polls.Tests.NUnit.csproj \
+          --no-build --configuration Release \
+          --verbosity normal \
+          --logger "console;verbosity=detailed" \
+          --logger "trx;LogFileName=nunit-test-results.trx"
+
+      - name: Загрузка результатов тестов как артефактов
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xunit-test-results-${{ github.run_number }}
+          path: '**/TestResults/*.trx'
+          retention-days: 7
+
+      - name: Публикуем отчёт в GitHub Pages
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: NUnit Tests
+          path: '**/TestResults/*.trx'
+          reporter: dotnet-trx
   
   build-image-and-push:
     runs-on: ubuntu-latest
-    needs: build-app-and-test
+    needs: [run-xunit-tests, run-nunit-tests]
     steps:
       - name: Клонируем код в рабочую директорию GitHub Actions runner'а
         uses: actions/checkout@v4
