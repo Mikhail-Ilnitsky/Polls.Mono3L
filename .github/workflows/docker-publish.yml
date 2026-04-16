@@ -80,13 +80,17 @@ jobs:
           path: '**/TestResults/*.trx'
           retention-days: 7
 
-      - name: Публикуем отчёт в GitHub Pages
+      - name: Публикуем отчёт по тестам в GitHub Pages
         uses: dorny/test-reporter@v1
         if: always()
         with:
           name: xUnit Tests Results
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
+
+      - name: Очищаем дубликты отчетов покрытия (папки созданные VSTest), чтобы остались только папки созданные Coverlet
+        if: always()
+        run: rm -rf ./TestResults/_* 
 
       - name: Вычисляем покрытие тестами
         uses: irongut/CodeCoverageSummary@v1.3.0
