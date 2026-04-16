@@ -69,6 +69,7 @@ jobs:
           dotnet test Ilnitsky.Polls.Tests.XUnit/Ilnitsky.Polls.Tests.XUnit.csproj \
           --no-build --configuration Release \
           --verbosity normal \
+          --collect:"XPlat Code Coverage" \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=xunit-test-results.trx"
 
@@ -87,6 +88,24 @@ jobs:
           name: xUnit Tests Results
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
+
+      - name: Вычисялем покрытие тестами
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        if: always()
+        with:
+          filename: '**/coverage.cobertura.xml'
+          badge: true
+          format: markdown
+          output: both
+
+      - name: Выводим Summary
+        if: always()
+        run: |
+          if [ -f code-coverage-results.md ]; then
+            cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Файл покрытия не найден" >> $GITHUB_STEP_SUMMARY
+          fi
 
   run-nunit-tests:
     needs: build-app
