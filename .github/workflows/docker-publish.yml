@@ -69,8 +69,8 @@ jobs:
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults \
           --logger "console;verbosity=detailed" \
-          --logger "trx;LogFileName=xunit-test-results.trx"
-          #-- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+          --logger "trx;LogFileName=xunit-test-results.trx" \
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
 
       - name: Загрузка результатов тестов как артефактов
         uses: actions/upload-artifact@v4
@@ -96,7 +96,9 @@ jobs:
           badge: true
           format: markdown
           output: both
+          merge_low_depth: true   # Объединяем одинаковые строки из разных файлов, чтобы они не дублировались в таблице
           thresholds: '50 75'
+          fail_below_min: true  
 
       - name: Выводим Summary
         if: always()
