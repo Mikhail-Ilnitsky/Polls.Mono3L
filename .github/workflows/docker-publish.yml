@@ -54,26 +54,22 @@ jobs:
       - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
         uses: actions/checkout@v4
 
-      - name: Скачиваем уже собранное решение
-        uses: actions/download-artifact@v4
-        with:
-          name: compiled-app
-
-      - name: Устанавливаем SDK и настраиваем окружения для запуска тестов
+      - name: Устанавливаем .NET SDK и настраиваем окружение для запуска тестов
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+          cache: true
 
       - name: Запуск тестов xUnit
         run: |
           dotnet test Ilnitsky.Polls.Tests.XUnit/Ilnitsky.Polls.Tests.XUnit.csproj \
-          --no-build --configuration Release \
+          --configuration Release \
           --verbosity normal \
           --collect:"XPlat Code Coverage" \
           --results-directory ./TestResults \
           --logger "console;verbosity=detailed" \
-          --logger "trx;LogFileName=xunit-test-results.trx" \
-          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+          --logger "trx;LogFileName=xunit-test-results.trx"
+          #-- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
       - name: Загрузка результатов тестов как артефактов
         uses: actions/upload-artifact@v4
@@ -99,6 +95,7 @@ jobs:
           badge: true
           format: markdown
           output: both
+          thresholds: '50 75'
 
       - name: Выводим Summary
         if: always()
@@ -122,7 +119,7 @@ jobs:
         with:
           name: compiled-app
 
-      - name: Устанавливаем SDK и настраиваем окружения для запуска тестов
+      - name: Устанавливаем .NET SDK и настраиваем окружение для запуска тестов
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
