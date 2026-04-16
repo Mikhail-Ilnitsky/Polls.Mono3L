@@ -51,6 +51,9 @@ jobs:
     needs: build-app
     runs-on: ubuntu-latest
     steps:
+      - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
+        uses: actions/checkout@v4
+
       - name: Скачиваем уже собранное решение
         uses: actions/download-artifact@v4
         with:
@@ -89,6 +92,9 @@ jobs:
     needs: build-app
     runs-on: ubuntu-latest
     steps:
+      - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
+        uses: actions/checkout@v4
+
       - name: Скачиваем уже собранное решение
         uses: actions/download-artifact@v4
         with:
