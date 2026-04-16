@@ -84,7 +84,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: xUnit Tests
+          name: xUnit Tests Results
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
 
@@ -125,7 +125,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: NUnit Tests
+          name: NUnit Tests Results
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
   
