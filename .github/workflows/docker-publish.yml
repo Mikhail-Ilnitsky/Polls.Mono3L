@@ -54,29 +54,25 @@ jobs:
       - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
         uses: actions/checkout@v4
 
-      - name: Скачиваем уже собранное решение
-        uses: actions/download-artifact@v4
-        with:
-          name: compiled-app
-
       - name: Устанавливаем .NET SDK и настраиваем окружение для запуска тестов
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
       - name: Запуск тестов xUnit
         run: |
           dotnet test Ilnitsky.Polls.Tests.XUnit/Ilnitsky.Polls.Tests.XUnit.csproj \
-          --no-build \
           --configuration Release \
           --verbosity normal \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./TestResults \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=xunit-test-results.trx" \
-          --results-directory ./TestResults \
-          --collect:"Code Coverage;Format=Cobertura" \
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
 
-      - name: Загружаем результаты тестов как артефакты
+      - name: Загрузка результатов тестов как артефактов
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -92,7 +88,11 @@ jobs:
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
 
-      - name: Создаём Summary покрытия тестами
+      - name: Очищаем дубликты отчетов покрытия (папки созданные VSTest), чтобы остались только папки созданные Coverlet
+        if: always()
+        run: rm -rf ./TestResults/_* 
+
+      - name: Вычисляем покрытие тестами
         uses: irongut/CodeCoverageSummary@v1.3.0
         if: always()
         with:
@@ -103,7 +103,7 @@ jobs:
           thresholds: '40 75'
           fail_below_min: true  
 
-      - name: Выводим Summary покрытия тестами
+      - name: Выводим Summary
         if: always()
         run: |
           ls -R ./TestResults # Для отладки смотрим содержимое папки
@@ -133,13 +133,12 @@ jobs:
       - name: Запуск тестов NUnit
         run: |
           dotnet test Ilnitsky.Polls.Tests.NUnit/Ilnitsky.Polls.Tests.NUnit.csproj \
-          --no-build \
-          --configuration Release \
+          --no-build --configuration Release \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=nunit-test-results.trx"
 
-      - name: Загружаем результаты тестов как артефакты
+      - name: Загрузка результатов тестов как артефактов
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -147,7 +146,7 @@ jobs:
           path: '**/TestResults/*.trx'
           retention-days: 7
 
-      - name: Публикуем отчёт по тестам в GitHub Pages
+      - name: Публикуем отчёт в GitHub Pages
         uses: dorny/test-reporter@v1
         if: always()
         with:
