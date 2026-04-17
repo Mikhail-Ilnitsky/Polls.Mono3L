@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.Tests.NUnit"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.Tests.Shared", "Ilnitsky.Polls.Tests.Shared\Ilnitsky.Polls.Tests.Shared.csproj", "{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ilnitsky.Polls.Tests.NUnit.Fluent", "Ilnitsky.Polls.Tests.NUnit.Fluent\Ilnitsky.Polls.Tests.NUnit.Fluent.csproj", "{C838204A-C75E-42A1-B99A-2D4DEB9B5E12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{989A2194-8E5D-4C5B-9CE9-09B9C5C13AFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C838204A-C75E-42A1-B99A-2D4DEB9B5E12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C838204A-C75E-42A1-B99A-2D4DEB9B5E12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C838204A-C75E-42A1-B99A-2D4DEB9B5E12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C838204A-C75E-42A1-B99A-2D4DEB9B5E12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
