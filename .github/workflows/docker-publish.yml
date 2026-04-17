@@ -73,8 +73,7 @@ jobs:
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=xunit-test-results.trx" \
           --results-directory ./TestResults \
-          --collect:"Code Coverage" \
-          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=Cobertura \
+          --collect:"Code Coverage;Format=Cobertura" \
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
 
       - name: Загружаем результаты тестов как артефакты
