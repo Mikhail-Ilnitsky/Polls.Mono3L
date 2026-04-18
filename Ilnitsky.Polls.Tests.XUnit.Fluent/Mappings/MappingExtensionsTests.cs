@@ -8,11 +8,11 @@ using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Ilnitsky.Polls.DataAccess.Entities.Polls;
 using Ilnitsky.Polls.Tests.Shared;
 
-namespace Ilnitsky.Polls.Tests.NUnit.Fluent.Mappings;
+namespace Ilnitsky.Polls.Tests.XUnit.Fluent.Mappings;
 
 public class MappingExtensionsTests
 {
-    [Test]
+    [Fact]
     public void Poll_ToLinkDto_MapsCorrectWithQuestionsCount()
     {
         // Arrange
@@ -42,7 +42,7 @@ public class MappingExtensionsTests
         });
     }
 
-    [Test]
+    [Fact]
     public void Poll_ToLinkDto_UsesQuestionMark_WhenNameIsNull()
     {
         // Arrange
@@ -59,7 +59,7 @@ public class MappingExtensionsTests
         result.Name.Should().Be("?");
     }
 
-    [Test]
+    [Fact]
     public void Poll_ToDto_UsesQuestionMark_WhenNameIsNull()
     {
         // Arrange
@@ -89,7 +89,7 @@ public class MappingExtensionsTests
         result.Questions.Should().BeEmpty();
     }
 
-    [Test]
+    [Fact]
     public void Poll_ToDto_MapsCorrect()
     {
         // Arrange
@@ -145,7 +145,7 @@ public class MappingExtensionsTests
         );
     }
 
-    [Test]
+    [Fact]
     public void PollDto_ToEntity_MapsCorrect()
     {
         // Arrange
@@ -162,8 +162,9 @@ public class MappingExtensionsTests
         );
     }
 
-    [TestCase("00000000-0000-0000-0000-000000000000")]
-    [TestCase("019c1aa8-9bf0-750d-9e6d-832de94b1c13")]
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("019c1aa8-9bf0-750d-9e6d-832de94b1c13")]
     public void PollDto_ToEntity_CreatesNewIdAndDate_WhenCreateIdIsTrue(Guid guid)
     {
         // Arrange
@@ -179,8 +180,9 @@ public class MappingExtensionsTests
         result.Name.Should().Be(dto.Name);
     }
 
-    [TestCase("00000000-0000-0000-0000-000000000000")]
-    [TestCase("019c1aa8-9bf0-750d-9e6d-832de94b1c13")]
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("019c1aa8-9bf0-750d-9e6d-832de94b1c13")]
     public void PollDto_ToEntity_KeepsIdAndDateFromDto_WhenCreateIdIsFalse(Guid guid)
     {
         // Arrange
@@ -205,8 +207,9 @@ public class MappingExtensionsTests
         result.Name.Should().Be(dto.Name);
     }
 
-    [TestCase("00000000-0000-0000-0000-000000000000")]
-    [TestCase("019c1aa8-9bf0-750d-9e6d-832de94b1c13")]
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("019c1aa8-9bf0-750d-9e6d-832de94b1c13")]
     public void QuestionDto_ToEntity_CreatesNewIds_WhenCreateIdIsTrue(Guid guid)
     {
         // Arrange
@@ -233,8 +236,9 @@ public class MappingExtensionsTests
 
     }
 
-    [TestCase("00000000-0000-0000-0000-000000000000")]
-    [TestCase("019c1aa8-9bf0-750d-9e6d-832de94b1c13")]
+    [Theory]
+    [InlineData("00000000-0000-0000-0000-000000000000")]
+    [InlineData("019c1aa8-9bf0-750d-9e6d-832de94b1c13")]
     public void QuestionDto_ToEntity_KeepsIdFromDto_WhenCreateIdIsFalse(Guid guid)
     {
         // Arrange
@@ -284,7 +288,7 @@ public class MappingExtensionsTests
         result.Answers.Should().OnlyContain(a => a.Id == Guid.Empty);
     }
 
-    [Test]
+    [Fact]
     public void QuestionDto_ToEntity_MapsCorrect()
     {
         // Arrange
@@ -322,7 +326,7 @@ public class MappingExtensionsTests
         );
     }
 
-    [Test]
+    [Fact]
     public void Question_ToDto_MapsCorrect()
     {
         // Arrange
@@ -350,7 +354,7 @@ public class MappingExtensionsTests
         );
     }
 
-    [Test]
+    [Fact]
     public void Question_ToDto_UsesQuestionMark_WhenFieldsAreNull()
     {
         // Arrange
