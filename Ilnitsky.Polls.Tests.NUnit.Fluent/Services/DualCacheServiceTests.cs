@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 
+using FluentAssertions;
+
 using Ilnitsky.Polls.BusinessLogic;
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Ilnitsky.Polls.Services.DualCache;
@@ -14,17 +16,18 @@ using Microsoft.Extensions.Logging;
 
 using Moq;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Services;
+namespace Ilnitsky.Polls.Tests.NUnit.Fluent.Services;
 
-public class DualCacheServiceTests : IDisposable
+public class DualCacheServiceTests
 {
-    private readonly MemoryCache _memoryCache;
-    private readonly Mock<IRedisCacheService> _redisCacheMock;
-    private readonly Mock<ILogger<RedisCacheService>> _loggerMock;
-    private readonly MemoryCacheOptionsProvider _memoryOptions;
-    private readonly RedisCacheOptionsProvider _redisOptions;
+    private MemoryCache _memoryCache;
+    private Mock<IRedisCacheService> _redisCacheMock;
+    private Mock<ILogger<RedisCacheService>> _loggerMock;
+    private MemoryCacheOptionsProvider _memoryOptions;
+    private RedisCacheOptionsProvider _redisOptions;
 
-    public DualCacheServiceTests()
+    [SetUp]
+    public void Setup()
     {
         // Используем реальный MemoryCache для точности проверки
         _memoryCache = new MemoryCache(new MemoryCacheOptions());
@@ -52,7 +55,7 @@ public class DualCacheServiceTests : IDisposable
     private DualCacheService CreateService() =>
         new(_memoryCache, _redisCacheMock.Object, _memoryOptions, _redisOptions, _loggerMock.Object);
 
-    [Fact]
+    [Test]
     public async Task GetAsync_ReturnsFromMemory_WhenKeyExistsInMemory()
     {
         // Arrange
@@ -66,12 +69,12 @@ public class DualCacheServiceTests : IDisposable
         var result = await service.GetAsync<PollDto>(pollKey);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.True(result.IsRedisAvailable);
-        Assert.True(result.HasValue);
-        Assert.NotNull(result.Value);
-        Assert.Equal(pollDto.PollId, result.Value.PollId);
-        Assert.Equal(pollDto.Name, result.Value.Name);
+        result.Should().BeEquivalentTo(new
+        {
+            IsRedisAvailable = true,
+            HasValue = true,
+            Value = pollDto
+        });
 
         // Проверяем, что Redis вообще не вызывался
         _redisCacheMock.Verify(
@@ -79,7 +82,7 @@ public class DualCacheServiceTests : IDisposable
             Times.Never);
     }
 
-    [Fact]
+    [Test]
     public async Task GetAsync_ReturnsFromRedis_WhenKeyMissingInMemory()
     {
         // Arrange
@@ -95,15 +98,15 @@ public class DualCacheServiceTests : IDisposable
         var result = await service.GetAsync<PollDto>(pollKey);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.True(result.IsRedisAvailable);
-        Assert.True(result.HasValue);
-        Assert.NotNull(result.Value);
-        Assert.Equal(pollDto.PollId, result.Value.PollId);
-        Assert.Equal(pollDto.Name, result.Value.Name);
+        result.Should().BeEquivalentTo(new
+        {
+            IsRedisAvailable = true,
+            HasValue = true,
+            Value = pollDto
+        });
     }
 
-    [Fact]
+    [Test]
     public async Task GetAsync_ReturnsHasValueFalse_WhenKeyMissingInBothCaches()
     {
         // Arrange
@@ -118,10 +121,12 @@ public class DualCacheServiceTests : IDisposable
         var result = await service.GetAsync<PollDto>(pollKey);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.True(result.IsRedisAvailable);
-        Assert.False(result.HasValue);
-        Assert.Null(result.Value);
+        result.Should().BeEquivalentTo(new
+        {
+            IsRedisAvailable = true,
+            HasValue = false,
+            Value = (object?)null
+        });
 
         // Проверяем, что Redis вызывался один раз
         _redisCacheMock.Verify(
@@ -129,11 +134,10 @@ public class DualCacheServiceTests : IDisposable
             Times.Once);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(10)]
-    [InlineData(100)]
-    [InlineData(1000)]
+    [TestCase(1)]
+    [TestCase(10)]
+    [TestCase(100)]
+    [TestCase(1000)]
     public async Task SetAsync_SavesToCache_WhenMemoryExpirationIsNormalOrExceedsMax(int memoryExpirationMinutes)
     {
         // Arrange
@@ -148,11 +152,12 @@ public class DualCacheServiceTests : IDisposable
         // Assert
         var isValue = _memoryCache.TryGetValue<PollDto>(pollKey, out var value);
 
-        Assert.True(isValue);
-        Assert.Equal(pollDto.PollId, value?.PollId);
+        isValue.Should().BeTrue();
+        value.Should().NotBeNull();
+        value.PollId.Should().Be(pollDto.PollId);
     }
 
-    [Fact]
+    [Test]
     public async Task RemoveAsync_ClearsBothCaches()
     {
         // Arrange
@@ -165,16 +170,17 @@ public class DualCacheServiceTests : IDisposable
         await service.RemoveAsync(pollKey);
 
         // Assert
-        Assert.False(_memoryCache.TryGetValue(pollKey, out _));
+        var isValue = _memoryCache.TryGetValue(pollKey, out _);
+        isValue.Should().BeFalse();
 
         _redisCacheMock.Verify(
             x => x.RemoveAsync(pollKey),
             Times.Once);
     }
 
-    public void Dispose()
+    [TearDown]
+    public void TearDown()
     {
-        _memoryCache?.Dispose();
-        GC.SuppressFinalize(this);
+        _memoryCache.Dispose();
     }
 }
