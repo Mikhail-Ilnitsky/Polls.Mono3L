@@ -101,29 +101,31 @@ public class MappingExtensionsTests
         // Assert
         // v1
         var pollQuestion = pollEntity.Questions.First();
-        result.Should().BeEquivalentTo(new
-        {
-            PollId = pollEntity.Id,
-            pollEntity.Name,
-            pollEntity.Html,
-            pollEntity.DateTime,
-            pollEntity.IsActive,
-            Questions = new[]
+        result.Should().BeEquivalentTo(
+            new
             {
-                new
+                PollId = pollEntity.Id,
+                pollEntity.Name,
+                pollEntity.Html,
+                pollEntity.DateTime,
+                pollEntity.IsActive,
+                Questions = new[]
                 {
-                    QuestionId = pollQuestion.Id,
-                    Question = pollQuestion.Text,
-                    pollQuestion.AllowCustomAnswer,
-                    pollQuestion.AllowMultipleChoice,
-                    pollQuestion.Number,
-                    pollQuestion.TargetAnswer,
-                    pollQuestion.MatchNextNumber,
-                    pollQuestion.DefaultNextNumber,
-                    Answers = pollQuestion.Answers.Select(a => a.Text)
+                    new
+                    {
+                        QuestionId = pollQuestion.Id,
+                        Question = pollQuestion.Text,
+                        pollQuestion.AllowCustomAnswer,
+                        pollQuestion.AllowMultipleChoice,
+                        pollQuestion.Number,
+                        pollQuestion.TargetAnswer,
+                        pollQuestion.MatchNextNumber,
+                        pollQuestion.DefaultNextNumber,
+                        Answers = pollQuestion.Answers.Select(a => a.Text)
+                    }
                 }
-            }
-        });
+            },
+            options => options.WithStrictOrdering());
 
         // v2
         result.Should().BeEquivalentTo(
@@ -158,7 +160,9 @@ public class MappingExtensionsTests
         // Assert
         result.Should().BeEquivalentTo(
             pollEntity,
-            options => options.Excluding(ctx => ctx.Path.Contains("Answers") && ctx.Path.EndsWith("Id"))
+            options => options
+                .Excluding(ctx => ctx.Path.Contains("Answers") && ctx.Path.EndsWith("Id"))
+                .WithStrictOrdering()
         );
     }
 
