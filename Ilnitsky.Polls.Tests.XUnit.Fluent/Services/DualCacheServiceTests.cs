@@ -20,11 +20,11 @@ namespace Ilnitsky.Polls.Tests.XUnit.Fluent.Services;
 
 public class DualCacheServiceTests : IDisposable
 {
-    private MemoryCache _memoryCache;
-    private Mock<IRedisCacheService> _redisCacheMock;
-    private Mock<ILogger<RedisCacheService>> _loggerMock;
-    private MemoryCacheOptionsProvider _memoryOptions;
-    private RedisCacheOptionsProvider _redisOptions;
+    private readonly MemoryCache _memoryCache;
+    private readonly Mock<IRedisCacheService> _redisCacheMock;
+    private readonly Mock<ILogger<RedisCacheService>> _loggerMock;
+    private readonly MemoryCacheOptionsProvider _memoryOptions;
+    private readonly RedisCacheOptionsProvider _redisOptions;
 
     public DualCacheServiceTests()
     {
