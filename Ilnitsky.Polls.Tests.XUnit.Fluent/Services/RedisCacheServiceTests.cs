@@ -24,11 +24,11 @@ namespace Ilnitsky.Polls.Tests.XUnit.Fluent.Services;
 
 public class RedisCacheServiceTests
 {
-    private Mock<IConnectionMultiplexer> _redisMock;
-    private Mock<IDatabase> _dbMock;
-    private Mock<ILogger<RedisCacheService>> _loggerMock;
-    private RedisCacheOptionsProvider _optionsProvider;
-    private Mock<ResiliencePipelineProvider<string>> _pipelineProviderMock;
+    private readonly Mock<IConnectionMultiplexer> _redisMock;
+    private readonly Mock<IDatabase> _dbMock;
+    private readonly Mock<ILogger<RedisCacheService>> _loggerMock;
+    private readonly RedisCacheOptionsProvider _optionsProvider;
+    private readonly Mock<ResiliencePipelineProvider<string>> _pipelineProviderMock;
 
     public RedisCacheServiceTests()
     {

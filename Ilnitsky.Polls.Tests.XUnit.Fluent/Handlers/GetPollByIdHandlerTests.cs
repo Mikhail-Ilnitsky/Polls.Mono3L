@@ -22,10 +22,10 @@ namespace Ilnitsky.Polls.Tests.XUnit.Fluent.Handlers;
 
 public class GetPollByIdHandlerTests : IDisposable
 {
-    private Mock<IDualCacheService> _cacheMock;
-    private MemoryCacheOptionsProvider _memoryOptions;
-    private RedisCacheOptionsProvider _redisOptions;
-    private ApplicationDbContext _dbContext;
+    private readonly Mock<IDualCacheService> _cacheMock;
+    private readonly MemoryCacheOptionsProvider _memoryOptions;
+    private readonly RedisCacheOptionsProvider _redisOptions;
+    private readonly ApplicationDbContext _dbContext;
 
     public GetPollByIdHandlerTests()
     {
