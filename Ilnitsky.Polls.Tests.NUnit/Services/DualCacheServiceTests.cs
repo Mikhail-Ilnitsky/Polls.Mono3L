@@ -68,11 +68,17 @@ public class DualCacheServiceTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsRedisAvailable, Is.True);
-        Assert.That(result.HasValue, Is.True);
-        Assert.That(result.Value, Is.Not.Null);
-        Assert.That(result.Value.PollId, Is.EqualTo(pollDto.PollId));
-        Assert.That(result.Value.Name, Is.EqualTo(pollDto.Name));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsRedisAvailable, Is.True);
+            Assert.That(result.HasValue, Is.True);
+            Assert.That(result.Value, Is.Not.Null);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Value.PollId, Is.EqualTo(pollDto.PollId));
+            Assert.That(result.Value.Name, Is.EqualTo(pollDto.Name));
+        });
 
         // Проверяем, что Redis вообще не вызывался
         _redisCacheMock.Verify(
@@ -97,11 +103,17 @@ public class DualCacheServiceTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsRedisAvailable, Is.True);
-        Assert.That(result.HasValue, Is.True);
-        Assert.That(result.Value, Is.Not.Null);
-        Assert.That(result.Value.PollId, Is.EqualTo(pollDto.PollId));
-        Assert.That(result.Value.Name, Is.EqualTo(pollDto.Name));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsRedisAvailable, Is.True);
+            Assert.That(result.HasValue, Is.True);
+            Assert.That(result.Value, Is.Not.Null);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Value.PollId, Is.EqualTo(pollDto.PollId));
+            Assert.That(result.Value.Name, Is.EqualTo(pollDto.Name));
+        });
     }
 
     [Test]
@@ -120,9 +132,12 @@ public class DualCacheServiceTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsRedisAvailable, Is.True);
-        Assert.That(result.HasValue, Is.False);
-        Assert.That(result.Value, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsRedisAvailable, Is.True);
+            Assert.That(result.HasValue, Is.False);
+            Assert.That(result.Value, Is.Null);
+        });
 
         // Проверяем, что Redis вызывался один раз
         _redisCacheMock.Verify(
@@ -148,8 +163,11 @@ public class DualCacheServiceTests
         // Assert
         var isValue = _memoryCache.TryGetValue<PollDto>(pollKey, out var value);
 
-        Assert.That(isValue, Is.True);
-        Assert.That(value?.PollId, Is.EqualTo(pollDto.PollId));
+        Assert.Multiple(() =>
+        {
+            Assert.That(isValue, Is.True);
+            Assert.That(value?.PollId, Is.EqualTo(pollDto.PollId));
+        });
     }
 
     [Test]

@@ -47,9 +47,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
-        Assert.That(result.Message, Is.EqualTo("Не задан ответ!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
+            Assert.That(result.Message, Is.EqualTo("Не задан ответ!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
     }
 
     [TestCase(null)]
@@ -71,9 +74,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
-        Assert.That(result.Message, Is.EqualTo("Не должно быть пустых ответов!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
+            Assert.That(result.Message, Is.EqualTo("Не должно быть пустых ответов!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -105,9 +111,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
-        Assert.That(result.Message, Is.EqualTo("Не найден вопрос!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
+            Assert.That(result.Message, Is.EqualTo("Не найден вопрос!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
         Assert.That(result.ErrorDetails, Does.Contain(badQuestionId.ToString()));
     }
 
@@ -143,9 +152,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
-        Assert.That(result.Message, Is.EqualTo("Не найден респондент!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
+            Assert.That(result.Message, Is.EqualTo("Не найден респондент!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
         Assert.That(result.ErrorDetails, Does.Contain(badRespondentId.ToString()));
     }
 
@@ -181,9 +193,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
-        Assert.That(result.Message, Is.EqualTo("Не найдена сессия респондента!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
+            Assert.That(result.Message, Is.EqualTo("Не найдена сессия респондента!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
         Assert.That(result.ErrorDetails, Does.Contain(badRespondentSessionId.ToString()));
     }
 
@@ -218,9 +233,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
-        Assert.That(result.Message, Is.EqualTo("Не найден опрос!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
+            Assert.That(result.Message, Is.EqualTo("Не найден опрос!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
         Assert.That(result.ErrorDetails, Does.Contain(badPollId.ToString()));
     }
 
@@ -258,9 +276,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
-        Assert.That(result.Message, Is.EqualTo("Не должно быть одинаковых ответов!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
+            Assert.That(result.Message, Is.EqualTo("Не должно быть одинаковых ответов!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -298,9 +319,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
-        Assert.That(result.Message, Is.EqualTo("На этот вопрос не должно быть больше одного ответа!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
+            Assert.That(result.Message, Is.EqualTo("На этот вопрос не должно быть больше одного ответа!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -336,9 +360,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
-        Assert.That(result.Message, Is.EqualTo("На этот вопрос не должно быть произвольного ответа!"));
-        Assert.That(result.ErrorDetails, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.IncorrectValue));
+            Assert.That(result.Message, Is.EqualTo("На этот вопрос не должно быть произвольного ответа!"));
+            Assert.That(result.ErrorDetails, Is.Not.Null);
+        });
     }
 
     [Test]
@@ -375,9 +402,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsSuccess, Is.True);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
-        Assert.That(result.ErrorDetails, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
+            Assert.That(result.ErrorDetails, Is.Null);
+        });
     }
 
     [Test]
@@ -414,9 +444,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsSuccess, Is.True);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
-        Assert.That(result.ErrorDetails, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
+            Assert.That(result.ErrorDetails, Is.Null);
+        });
     }
 
     [Test]
@@ -453,9 +486,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsSuccess, Is.True);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
-        Assert.That(result.ErrorDetails, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
+            Assert.That(result.ErrorDetails, Is.Null);
+        });
     }
 
     [Test]
@@ -493,9 +529,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsSuccess, Is.True);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
-        Assert.That(result.ErrorDetails, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
+            Assert.That(result.ErrorDetails, Is.Null);
+        });
     }
 
     [Test]
@@ -531,9 +570,12 @@ public class CreateRespondentAnswerHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsSuccess, Is.True);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
-        Assert.That(result.ErrorDetails, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
+            Assert.That(result.ErrorDetails, Is.Null);
+        });
     }
 
     [TearDown]
