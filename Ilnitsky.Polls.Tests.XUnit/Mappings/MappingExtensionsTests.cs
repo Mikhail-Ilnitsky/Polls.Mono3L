@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Ilnitsky.Polls.BusinessLogic;
@@ -285,10 +284,10 @@ public class MappingExtensionsTests
         {
             Id = Guid.NewGuid(),
             Text = null,
-            Answers = new List<Answer>
-            {
-                new Answer { Text = null }
-            }
+            Answers =
+            [
+                new() { Text = null }
+            ]
         };
 
         // Act
