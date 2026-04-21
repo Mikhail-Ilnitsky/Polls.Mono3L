@@ -78,11 +78,14 @@ public class GetPollByIdHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsSuccess, Is.True);
-        Assert.That(result.Value?.PollId, Is.EqualTo(pollId));
-        Assert.That(result.Value?.Name, Is.EqualTo("Марки китайских автомобилей"));
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
-        Assert.That(result.ErrorDetails, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.Value?.PollId, Is.EqualTo(pollId));
+            Assert.That(result.Value?.Name, Is.EqualTo("Марки китайских автомобилей"));
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
+            Assert.That(result.ErrorDetails, Is.Null);
+        });
     }
 
     [Test]
@@ -107,11 +110,14 @@ public class GetPollByIdHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsSuccess, Is.True);
-        Assert.That(result.Value?.PollId, Is.EqualTo(pollId));
-        Assert.That(result.Value?.Name, Is.EqualTo("Марки китайских автомобилей"));
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
-        Assert.That(result.ErrorDetails, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.Value?.PollId, Is.EqualTo(pollId));
+            Assert.That(result.Value?.Name, Is.EqualTo("Марки китайских автомобилей"));
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.None));
+            Assert.That(result.ErrorDetails, Is.Null);
+        });
 
         // Проверяем, что метод SetAsync был вызван (данные попали в кэш)
         _cacheMock
@@ -141,11 +147,14 @@ public class GetPollByIdHandlerTests
         // Act
         var result = await handler.HandleAsync(pollId);
 
-        // Assert
-        Assert.That(result.IsSuccess, Is.False);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
-        Assert.That(result.Message, Is.EqualTo("Опрос не найден!"));
-        Assert.That(result.ErrorDetails, Does.Contain(pollId.ToString()));
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
+            Assert.That(result.Message, Is.EqualTo("Опрос не найден!"));
+            Assert.That(result.ErrorDetails, Does.Contain(pollId.ToString()));
+        });
     }
 
     [Test]
@@ -168,11 +177,14 @@ public class GetPollByIdHandlerTests
         // Act
         var result = await handler.HandleAsync(pollId);
 
-        // Assert
-        Assert.That(result.IsSuccess, Is.False);
-        Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
-        Assert.That(result.Message, Is.EqualTo("Опрос не найден!"));
-        Assert.That(result.ErrorDetails, Does.Contain(pollId.ToString()));
+        Assert.Multiple(() =>
+        {
+            // Assert
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.ErrorType, Is.EqualTo(ErrorType.EntityNotFound));
+            Assert.That(result.Message, Is.EqualTo("Опрос не найден!"));
+            Assert.That(result.ErrorDetails, Does.Contain(pollId.ToString()));
+        });
     }
 
     [TearDown]

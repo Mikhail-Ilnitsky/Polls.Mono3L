@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Ilnitsky.Polls.BusinessLogic;
@@ -27,9 +26,12 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.PollId, Is.EqualTo(poll.Id));
-        Assert.That(result.Name, Is.EqualTo(poll.Name));
-        Assert.That(result.QuestionsCount, Is.EqualTo(questionsCount));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.PollId, Is.EqualTo(poll.Id));
+            Assert.That(result.Name, Is.EqualTo(poll.Name));
+            Assert.That(result.QuestionsCount, Is.EqualTo(questionsCount));
+        });
     }
 
     [Test]
@@ -65,9 +67,12 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.PollId, Is.EqualTo(poll.Id));
-        Assert.That(result.Name, Is.EqualTo("?"));
-        Assert.That(result.Questions, Is.Empty);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.PollId, Is.EqualTo(poll.Id));
+            Assert.That(result.Name, Is.EqualTo("?"));
+            Assert.That(result.Questions, Is.Empty);
+        });
     }
 
     [Test]
@@ -81,25 +86,31 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Questions, Has.One.Items);
-        Assert.That(result.PollId, Is.EqualTo(pollEntity.Id));
-        Assert.That(result.Name, Is.EqualTo(pollEntity.Name));
-        Assert.That(result.Html, Is.EqualTo(pollEntity.Html));
-        Assert.That(result.DateTime, Is.EqualTo(pollEntity.DateTime));
-        Assert.That(result.IsActive, Is.EqualTo(pollEntity.IsActive));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Questions, Has.One.Items);
+            Assert.That(result.PollId, Is.EqualTo(pollEntity.Id));
+            Assert.That(result.Name, Is.EqualTo(pollEntity.Name));
+            Assert.That(result.Html, Is.EqualTo(pollEntity.Html));
+            Assert.That(result.DateTime, Is.EqualTo(pollEntity.DateTime));
+            Assert.That(result.IsActive, Is.EqualTo(pollEntity.IsActive));
+        });
 
         var resultQuestion = result.Questions[0];
         var pollQuestion = pollEntity.Questions.First();
 
-        Assert.That(resultQuestion.QuestionId, Is.EqualTo(pollQuestion.Id));
-        Assert.That(resultQuestion.Question, Is.EqualTo(pollQuestion.Text));
-        Assert.That(resultQuestion.AllowCustomAnswer, Is.EqualTo(pollQuestion.AllowCustomAnswer));
-        Assert.That(resultQuestion.AllowMultipleChoice, Is.EqualTo(pollQuestion.AllowMultipleChoice));
-        Assert.That(resultQuestion.Number, Is.EqualTo(pollQuestion.Number));
-        Assert.That(resultQuestion.TargetAnswer, Is.EqualTo(pollQuestion.TargetAnswer));
-        Assert.That(resultQuestion.MatchNextNumber, Is.EqualTo(pollQuestion.MatchNextNumber));
-        Assert.That(resultQuestion.DefaultNextNumber, Is.EqualTo(pollQuestion.DefaultNextNumber));
-        Assert.That(resultQuestion.Answers.Count, Is.EqualTo(pollQuestion.Answers.Count));
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultQuestion.QuestionId, Is.EqualTo(pollQuestion.Id));
+            Assert.That(resultQuestion.Question, Is.EqualTo(pollQuestion.Text));
+            Assert.That(resultQuestion.AllowCustomAnswer, Is.EqualTo(pollQuestion.AllowCustomAnswer));
+            Assert.That(resultQuestion.AllowMultipleChoice, Is.EqualTo(pollQuestion.AllowMultipleChoice));
+            Assert.That(resultQuestion.Number, Is.EqualTo(pollQuestion.Number));
+            Assert.That(resultQuestion.TargetAnswer, Is.EqualTo(pollQuestion.TargetAnswer));
+            Assert.That(resultQuestion.MatchNextNumber, Is.EqualTo(pollQuestion.MatchNextNumber));
+            Assert.That(resultQuestion.DefaultNextNumber, Is.EqualTo(pollQuestion.DefaultNextNumber));
+            Assert.That(resultQuestion.Answers, Has.Count.EqualTo(pollQuestion.Answers.Count));
+        });
         Assert.That(resultQuestion.Answers, Is.EqualTo(pollQuestion.Answers.Select(a => a.Text)));
     }
 
@@ -115,25 +126,31 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Questions, Has.One.Items);
-        Assert.That(result.Id, Is.EqualTo(pollEntity.Id));
-        Assert.That(result.Name, Is.EqualTo(pollEntity.Name));
-        Assert.That(result.Html, Is.EqualTo(pollEntity.Html));
-        Assert.That(result.DateTime, Is.EqualTo(pollEntity.DateTime));
-        Assert.That(result.IsActive, Is.EqualTo(pollEntity.IsActive));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Questions, Has.One.Items);
+            Assert.That(result.Id, Is.EqualTo(pollEntity.Id));
+            Assert.That(result.Name, Is.EqualTo(pollEntity.Name));
+            Assert.That(result.Html, Is.EqualTo(pollEntity.Html));
+            Assert.That(result.DateTime, Is.EqualTo(pollEntity.DateTime));
+            Assert.That(result.IsActive, Is.EqualTo(pollEntity.IsActive));
+        });
 
         var resultQuestion = result.Questions.First();
         var pollQuestion = pollEntity.Questions.First();
 
-        Assert.That(resultQuestion.Id, Is.EqualTo(pollQuestion.Id));
-        Assert.That(resultQuestion.Text, Is.EqualTo(pollQuestion.Text));
-        Assert.That(resultQuestion.AllowCustomAnswer, Is.EqualTo(pollQuestion.AllowCustomAnswer));
-        Assert.That(resultQuestion.AllowMultipleChoice, Is.EqualTo(pollQuestion.AllowMultipleChoice));
-        Assert.That(resultQuestion.Number, Is.EqualTo(pollQuestion.Number));
-        Assert.That(resultQuestion.TargetAnswer, Is.EqualTo(pollQuestion.TargetAnswer));
-        Assert.That(resultQuestion.MatchNextNumber, Is.EqualTo(pollQuestion.MatchNextNumber));
-        Assert.That(resultQuestion.DefaultNextNumber, Is.EqualTo(pollQuestion.DefaultNextNumber));
-        Assert.That(resultQuestion.Answers.Count, Is.EqualTo(pollQuestion.Answers.Count));
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultQuestion.Id, Is.EqualTo(pollQuestion.Id));
+            Assert.That(resultQuestion.Text, Is.EqualTo(pollQuestion.Text));
+            Assert.That(resultQuestion.AllowCustomAnswer, Is.EqualTo(pollQuestion.AllowCustomAnswer));
+            Assert.That(resultQuestion.AllowMultipleChoice, Is.EqualTo(pollQuestion.AllowMultipleChoice));
+            Assert.That(resultQuestion.Number, Is.EqualTo(pollQuestion.Number));
+            Assert.That(resultQuestion.TargetAnswer, Is.EqualTo(pollQuestion.TargetAnswer));
+            Assert.That(resultQuestion.MatchNextNumber, Is.EqualTo(pollQuestion.MatchNextNumber));
+            Assert.That(resultQuestion.DefaultNextNumber, Is.EqualTo(pollQuestion.DefaultNextNumber));
+            Assert.That(resultQuestion.Answers, Has.Count.EqualTo(pollQuestion.Answers.Count));
+        });
         Assert.That(resultQuestion.Answers.Select(a => a.Text), Is.EqualTo(pollQuestion.Answers.Select(a => a.Text)));
     }
 
@@ -149,9 +166,12 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.Not.EqualTo(guid));
-        Assert.That(result.DateTime, Is.Not.EqualTo(DateTime.MinValue));
-        Assert.That(result.Name, Is.EqualTo(dto.Name));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.Not.EqualTo(guid));
+            Assert.That(result.DateTime, Is.Not.EqualTo(DateTime.MinValue));
+            Assert.That(result.Name, Is.EqualTo(dto.Name));
+        });
     }
 
     [TestCase("00000000-0000-0000-0000-000000000000")]
@@ -166,9 +186,12 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo(guid));
-        Assert.That(result.DateTime, Is.EqualTo(DateTime.MinValue));
-        Assert.That(result.Name, Is.EqualTo(dto.Name));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.EqualTo(guid));
+            Assert.That(result.DateTime, Is.EqualTo(DateTime.MinValue));
+            Assert.That(result.Name, Is.EqualTo(dto.Name));
+        });
     }
 
     [TestCase("00000000-0000-0000-0000-000000000000")]
@@ -192,10 +215,16 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.Not.EqualTo(dto.QuestionId));
-        Assert.That(result.Answers, Is.All.Matches<Answer>(a => a.Id != Guid.Empty));
-        Assert.That(result.Answers.Count, Is.EqualTo(2));
-        Assert.That(result.Text, Is.EqualTo(dto.Question));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.Not.EqualTo(dto.QuestionId));
+            Assert.That(result.Answers, Is.All.Matches<Answer>(a => a.Id != Guid.Empty));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Answers, Has.Count.EqualTo(2));
+            Assert.That(result.Text, Is.EqualTo(dto.Question));
+        });
     }
 
     [TestCase("00000000-0000-0000-0000-000000000000")]
@@ -219,10 +248,16 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo(dto.QuestionId));
-        Assert.That(result.Answers, Is.All.Matches<Answer>(a => a.Id == Guid.Empty));
-        Assert.That(result.Answers.Count, Is.EqualTo(2));
-        Assert.That(result.Text, Is.EqualTo(dto.Question));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.EqualTo(dto.QuestionId));
+            Assert.That(result.Answers, Is.All.Matches<Answer>(a => a.Id == Guid.Empty));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Answers, Has.Count.EqualTo(2));
+            Assert.That(result.Text, Is.EqualTo(dto.Question));
+        });
     }
 
     [Test]
@@ -237,15 +272,18 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Id, Is.EqualTo(questionDto.QuestionId));
-        Assert.That(result.Text, Is.EqualTo(questionDto.Question));
-        Assert.That(result.AllowCustomAnswer, Is.EqualTo(questionDto.AllowCustomAnswer));
-        Assert.That(result.AllowMultipleChoice, Is.EqualTo(questionDto.AllowMultipleChoice));
-        Assert.That(result.Number, Is.EqualTo(questionDto.Number));
-        Assert.That(result.TargetAnswer, Is.EqualTo(questionDto.TargetAnswer));
-        Assert.That(result.MatchNextNumber, Is.EqualTo(questionDto.MatchNextNumber));
-        Assert.That(result.DefaultNextNumber, Is.EqualTo(questionDto.DefaultNextNumber));
-        Assert.That(result.Answers.Count, Is.EqualTo(questionDto.Answers.Count));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Id, Is.EqualTo(questionDto.QuestionId));
+            Assert.That(result.Text, Is.EqualTo(questionDto.Question));
+            Assert.That(result.AllowCustomAnswer, Is.EqualTo(questionDto.AllowCustomAnswer));
+            Assert.That(result.AllowMultipleChoice, Is.EqualTo(questionDto.AllowMultipleChoice));
+            Assert.That(result.Number, Is.EqualTo(questionDto.Number));
+            Assert.That(result.TargetAnswer, Is.EqualTo(questionDto.TargetAnswer));
+            Assert.That(result.MatchNextNumber, Is.EqualTo(questionDto.MatchNextNumber));
+            Assert.That(result.DefaultNextNumber, Is.EqualTo(questionDto.DefaultNextNumber));
+            Assert.That(result.Answers, Has.Count.EqualTo(questionDto.Answers.Count));
+        });
         Assert.That(result.Answers.Select(a => a.Text), Is.EqualTo(questionDto.Answers));
     }
 
@@ -261,15 +299,18 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.QuestionId, Is.EqualTo(questionEntity.Id));
-        Assert.That(result.Question, Is.EqualTo(questionEntity.Text));
-        Assert.That(result.AllowCustomAnswer, Is.EqualTo(questionEntity.AllowCustomAnswer));
-        Assert.That(result.AllowMultipleChoice, Is.EqualTo(questionEntity.AllowMultipleChoice));
-        Assert.That(result.Number, Is.EqualTo(questionEntity.Number));
-        Assert.That(result.TargetAnswer, Is.EqualTo(questionEntity.TargetAnswer));
-        Assert.That(result.MatchNextNumber, Is.EqualTo(questionEntity.MatchNextNumber));
-        Assert.That(result.DefaultNextNumber, Is.EqualTo(questionEntity.DefaultNextNumber));
-        Assert.That(result.Answers.Count, Is.EqualTo(questionEntity.Answers.Count));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.QuestionId, Is.EqualTo(questionEntity.Id));
+            Assert.That(result.Question, Is.EqualTo(questionEntity.Text));
+            Assert.That(result.AllowCustomAnswer, Is.EqualTo(questionEntity.AllowCustomAnswer));
+            Assert.That(result.AllowMultipleChoice, Is.EqualTo(questionEntity.AllowMultipleChoice));
+            Assert.That(result.Number, Is.EqualTo(questionEntity.Number));
+            Assert.That(result.TargetAnswer, Is.EqualTo(questionEntity.TargetAnswer));
+            Assert.That(result.MatchNextNumber, Is.EqualTo(questionEntity.MatchNextNumber));
+            Assert.That(result.DefaultNextNumber, Is.EqualTo(questionEntity.DefaultNextNumber));
+            Assert.That(result.Answers, Has.Count.EqualTo(questionEntity.Answers.Count));
+        });
         Assert.That(result.Answers, Is.EqualTo(questionEntity.Answers.Select(a => a.Text)));
     }
 
@@ -281,10 +322,10 @@ public class MappingExtensionsTests
         {
             Id = Guid.NewGuid(),
             Text = null,
-            Answers = new List<Answer>
-            {
-                new Answer { Text = null }
-            }
+            Answers =
+            [
+                new() { Text = null }
+            ]
         };
 
         // Act
@@ -292,8 +333,11 @@ public class MappingExtensionsTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Question, Is.EqualTo("?"));
-        Assert.That(result.Answers, Has.One.Items);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Question, Is.EqualTo("?"));
+            Assert.That(result.Answers, Has.One.Items);
+        });
         Assert.That(result.Answers.First(), Is.EqualTo("?"));
     }
 }

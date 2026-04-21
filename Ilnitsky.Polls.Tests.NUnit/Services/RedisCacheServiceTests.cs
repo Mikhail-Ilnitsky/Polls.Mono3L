@@ -75,9 +75,12 @@ public class RedisCacheServiceTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsRedisAvailable, Is.True);
-        Assert.That(result.HasValue, Is.True);
-        Assert.That(result.Value, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsRedisAvailable, Is.True);
+            Assert.That(result.HasValue, Is.True);
+            Assert.That(result.Value, Is.Not.Null);
+        });
         Assert.That(result.Value.Name, Is.EqualTo(pollDto.Name));
     }
 
@@ -98,9 +101,12 @@ public class RedisCacheServiceTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsRedisAvailable, Is.True);
-        Assert.That(result.HasValue, Is.True);
-        Assert.That(result.Value, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsRedisAvailable, Is.True);
+            Assert.That(result.HasValue, Is.True);
+            Assert.That(result.Value, Is.Null);
+        });
     }
 
     [Test]
@@ -118,9 +124,12 @@ public class RedisCacheServiceTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.IsRedisAvailable, Is.True);
-        Assert.That(result.HasValue, Is.False);
-        Assert.That(result.Value, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsRedisAvailable, Is.True);
+            Assert.That(result.HasValue, Is.False);
+            Assert.That(result.Value, Is.Null);
+        });
     }
 
     [Test]

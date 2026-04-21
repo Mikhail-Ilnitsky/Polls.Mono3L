@@ -80,11 +80,14 @@ public class GetPollLinksHandlerTests
 
         // Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Count, Is.EqualTo(2));
+        Assert.That(result, Has.Count.EqualTo(2));
 
-        // Проверяем сортировку (OrderByDescending по DateTime)
-        Assert.That(result[0].Name, Is.EqualTo(polls[1].Name));
-        Assert.That(result[1].Name, Is.EqualTo(polls[3].Name));
+        // Проверяем сортировку(OrderByDescending по DateTime)
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0].Name, Is.EqualTo(polls[1].Name));
+            Assert.That(result[1].Name, Is.EqualTo(polls[3].Name));
+        });
     }
 
     [TestCase(1)]
