@@ -55,7 +55,7 @@ public class PollsController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<PollDto>> GetPollAsync(
+    public async Task<ActionResult<PollDto>> GetPollByIdAsync(
         [FromRoute] Guid id,
         [FromServices] IGetPollByIdHandler handler)
     {
@@ -65,8 +65,8 @@ public class PollsController : ControllerBase
             throw new Exception("Тестовое исключение!");
         }
 
-        var poll = await handler.HandleAsync(id);
+        var response = await handler.HandleAsync(id);
 
-        return poll.GetActionResult(HttpContext);
+        return response.GetActionResult(HttpContext);
     }
 }

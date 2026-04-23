@@ -24,7 +24,7 @@
             <response code="200">Получен список опросов</response>
             <response code="500">Ошибка сервера</response>
         </member>
-        <member name="M:Ilnitsky.Polls.Controllers.PollsController.GetPollAsync(System.Guid,Ilnitsky.Polls.BusinessLogic.Handlers.Polls.IGetPollByIdHandler)">
+        <member name="M:Ilnitsky.Polls.Controllers.PollsController.GetPollByIdAsync(System.Guid,Ilnitsky.Polls.BusinessLogic.Handlers.Polls.IGetPollByIdHandler)">
             <summary>
             Получение опроса
             </summary>
