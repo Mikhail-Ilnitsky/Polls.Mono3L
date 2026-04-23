@@ -11,7 +11,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ilnitsky.Polls.BusinessLogic.Handlers.Answers;
 
-public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext)
+public interface ICreateRespondentAnswerHandler
+{
+    Task<BaseResponse> HandleAsync(
+        CreateRespondentAnswerDto answerDto,
+        Guid respondentSessionId,
+        Guid respondentId);
+}
+
+public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext) : ICreateRespondentAnswerHandler
 {
     private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 

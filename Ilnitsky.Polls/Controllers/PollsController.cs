@@ -24,10 +24,10 @@ public class PollsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<PollLinkDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-    public async Task<IEnumerable<PollLinkDto>> Get(
+    public async Task<IEnumerable<PollLinkDto>> GetPollLinksAsync(
         [FromQuery] int? offset,
         [FromQuery] int? limit,
-        [FromServices] GetPollLinksHandler handler)
+        [FromServices] IGetPollLinksHandler handler)
     {
         if (offset is null || offset < 0)
         {
@@ -55,9 +55,9 @@ public class PollsController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<PollDto>> Get(
+    public async Task<ActionResult<PollDto>> GetPollAsync(
         [FromRoute] Guid id,
-        [FromServices] GetPollByIdHandler handler)
+        [FromServices] IGetPollByIdHandler handler)
     {
         // HACK: тестовое исключение для несуществующего id
         if (id == Guid.Parse("019c1aa8-9bf0-750d-9e6d-832de94b1c13"))
