@@ -4,7 +4,7 @@
         <name>Ilnitsky.Polls</name>
     </assembly>
     <members>
-        <member name="M:Ilnitsky.Polls.Controllers.AnswersController.Post(Ilnitsky.Polls.Contracts.Dtos.Answers.CreateRespondentAnswerDto,Ilnitsky.Polls.BusinessLogic.Handlers.Answers.CreateRespondentAnswerHandler)">
+        <member name="M:Ilnitsky.Polls.Controllers.AnswersController.Post(Ilnitsky.Polls.Contracts.Dtos.Answers.CreateRespondentAnswerDto,Ilnitsky.Polls.BusinessLogic.Handlers.Answers.ICreateRespondentAnswerHandler)">
             <summary>
             Регистрация ответа респондента
             </summary>
@@ -15,7 +15,7 @@
             <response code="404">Не найдены данные опроса</response>
             <response code="500">Ошибка сервера</response>
         </member>
-        <member name="M:Ilnitsky.Polls.Controllers.PollsController.Get(System.Nullable{System.Int32},System.Nullable{System.Int32},Ilnitsky.Polls.BusinessLogic.Handlers.Polls.GetPollLinksHandler)">
+        <member name="M:Ilnitsky.Polls.Controllers.PollsController.GetPollLinksAsync(System.Nullable{System.Int32},System.Nullable{System.Int32},Ilnitsky.Polls.BusinessLogic.Handlers.Polls.IGetPollLinksHandler)">
             <summary>
             Получение списка опросов
             </summary>
@@ -24,7 +24,7 @@
             <response code="200">Получен список опросов</response>
             <response code="500">Ошибка сервера</response>
         </member>
-        <member name="M:Ilnitsky.Polls.Controllers.PollsController.Get(System.Guid,Ilnitsky.Polls.BusinessLogic.Handlers.Polls.GetPollByIdHandler)">
+        <member name="M:Ilnitsky.Polls.Controllers.PollsController.GetPollAsync(System.Guid,Ilnitsky.Polls.BusinessLogic.Handlers.Polls.IGetPollByIdHandler)">
             <summary>
             Получение опроса
             </summary>

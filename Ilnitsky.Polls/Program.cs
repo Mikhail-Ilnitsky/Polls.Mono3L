@@ -254,9 +254,9 @@ builder.Services.AddSession(options =>                              // Реги�
 });
 
 // Регистрируем хэндлеры
-builder.Services.AddTransient<GetPollLinksHandler>();
-builder.Services.AddTransient<GetPollByIdHandler>();
-builder.Services.AddTransient<CreateRespondentAnswerHandler>();
+builder.Services.AddTransient<IGetPollLinksHandler, GetPollLinksHandler>();
+builder.Services.AddTransient<IGetPollByIdHandler, GetPollByIdHandler>();
+builder.Services.AddTransient<ICreateRespondentAnswerHandler, CreateRespondentAnswerHandler>();
 
 // Подключение ============================================================================================= //
 

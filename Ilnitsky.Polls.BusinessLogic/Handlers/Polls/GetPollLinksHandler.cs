@@ -10,7 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 
-public class GetPollLinksHandler(ApplicationDbContext dbContext)
+public interface IGetPollLinksHandler
+{
+    Task<List<PollLinkDto>> HandleAsync(int offset, int limit);
+}
+
+public class GetPollLinksHandler(ApplicationDbContext dbContext) : IGetPollLinksHandler
 {
     private readonly ApplicationDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 

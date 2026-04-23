@@ -11,11 +11,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 
+public interface IGetPollByIdHandler
+{
+    Task<Response<PollDto>> HandleAsync(Guid pollId);
+}
+
 public class GetPollByIdHandler(
     IDualCacheService cacheService,
     MemoryCacheOptionsProvider memoryCacheOptions,
     RedisCacheOptionsProvider redisCacheOptions,
     ApplicationDbContext dbContext)
+        : IGetPollByIdHandler
 {
     private readonly IDualCacheService _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
     private readonly MemoryCacheOptionsProvider _memoryCacheOptions = memoryCacheOptions ?? throw new ArgumentNullException(nameof(memoryCacheOptions));

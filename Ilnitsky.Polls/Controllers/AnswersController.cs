@@ -30,7 +30,7 @@ public class AnswersController : ControllerBase
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post(
         [FromBody] CreateRespondentAnswerDto answerDto,
-        [FromServices] CreateRespondentAnswerHandler handler)
+        [FromServices] ICreateRespondentAnswerHandler handler)
     {
         var respondentIdString = HttpContext.Session.GetString("RespondentId");
         var respondentSessionIdString = HttpContext.Session.GetString("RespondentSessionId");
