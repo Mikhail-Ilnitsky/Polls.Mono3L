@@ -3,9 +3,9 @@ using Ilnitsky.Polls.Contracts.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ilnitsky.Polls.Controllers;
+namespace Ilnitsky.Polls.Extensions;
 
-public static class ActionHelper
+public static class ResponseExtensions
 {
     public static ActionResult<TValue> GetActionResult<TValue>(this Response<TValue> response, HttpContext httpContext)
     {
