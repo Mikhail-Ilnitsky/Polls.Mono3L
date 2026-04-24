@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using Ilnitsky.Polls.BusinessLogic.Handlers.Polls;
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
+using Ilnitsky.Polls.Extensions;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
