@@ -28,7 +28,7 @@ public class AnswersController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post(
+    public async Task<IActionResult> CreateRespondentAnswer(
         [FromBody] CreateRespondentAnswerDto answerDto,
         [FromServices] ICreateRespondentAnswerHandler handler)
     {

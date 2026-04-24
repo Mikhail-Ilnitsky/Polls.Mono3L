@@ -4,7 +4,7 @@
         <name>Ilnitsky.Polls</name>
     </assembly>
     <members>
-        <member name="M:Ilnitsky.Polls.Controllers.AnswersController.Post(Ilnitsky.Polls.Contracts.Dtos.Answers.CreateRespondentAnswerDto,Ilnitsky.Polls.BusinessLogic.Handlers.Answers.ICreateRespondentAnswerHandler)">
+        <member name="M:Ilnitsky.Polls.Controllers.AnswersController.CreateRespondentAnswer(Ilnitsky.Polls.Contracts.Dtos.Answers.CreateRespondentAnswerDto,Ilnitsky.Polls.BusinessLogic.Handlers.Answers.ICreateRespondentAnswerHandler)">
             <summary>
             Регистрация ответа респондента
             </summary>
