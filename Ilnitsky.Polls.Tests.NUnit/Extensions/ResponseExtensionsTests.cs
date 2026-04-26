@@ -32,11 +32,11 @@ public class ResponseExtensionsTests
         var actionResult = RespExt.GetError(responseMock.Object, context);
 
         // Assert
-        Assert.That(actionResult, Is.InstanceOf(expectedType));
+        Assert.That(actionResult, Is.TypeOf(expectedType));
 
         var objectResult = actionResult as ObjectResult;
 
-        Assert.That(objectResult?.Value, Is.InstanceOf<ProblemDetails>());
+        Assert.That(objectResult?.Value, Is.TypeOf<ProblemDetails>());
         var problemDetails = (ProblemDetails)objectResult?.Value;
 
         Assert.Multiple(() =>
@@ -45,7 +45,7 @@ public class ResponseExtensionsTests
             Assert.That(problemDetails.Detail, Is.EqualTo("Test Error"));
             Assert.That(problemDetails.Title, Is.EqualTo("Ошибка!"));
 
-            Assert.That(context.Items.ContainsKey("ErrorDetails"), Is.True);
+            Assert.That(context.Items, Contains.Key("ErrorDetails"));
             Assert.That(context.Items["ErrorDetails"], Is.EqualTo("Test Error Test Details"));
         });
     }
@@ -62,7 +62,7 @@ public class ResponseExtensionsTests
         var actionResult = response.GetActionResult(context);
 
         // Assert
-        Assert.That(actionResult.Result, Is.InstanceOf<OkObjectResult>());
+        Assert.That(actionResult.Result, Is.TypeOf<OkObjectResult>());
         var okObjectResult = (OkObjectResult)actionResult.Result;
 
         Assert.Multiple(() =>
@@ -83,10 +83,10 @@ public class ResponseExtensionsTests
         var actionResult = response.GetActionResult(context);
 
         // Assert
-        Assert.That(actionResult.Result, Is.InstanceOf<NotFoundObjectResult>());
+        Assert.That(actionResult.Result, Is.TypeOf<NotFoundObjectResult>());
         var notFoundObjectResult = (NotFoundObjectResult)actionResult.Result;
 
-        Assert.That(notFoundObjectResult.Value, Is.InstanceOf<ProblemDetails>());
+        Assert.That(notFoundObjectResult.Value, Is.TypeOf<ProblemDetails>());
         var problemDetails = (ProblemDetails)notFoundObjectResult.Value;
 
         Assert.Multiple(() =>
@@ -96,7 +96,7 @@ public class ResponseExtensionsTests
             Assert.That(problemDetails.Detail, Is.EqualTo("Объект не найден"));
             Assert.That(problemDetails.Title, Is.EqualTo("Ошибка!"));
 
-            Assert.That(context.Items.ContainsKey("ErrorDetails"), Is.True);
+            Assert.That(context.Items, Contains.Key("ErrorDetails"));
             Assert.That(context.Items["ErrorDetails"], Is.EqualTo("Объект не найден Id=123"));
         });
     }
@@ -119,7 +119,7 @@ public class ResponseExtensionsTests
         var actionResult = response.GetActionResult(context);
 
         // Assert
-        Assert.That(actionResult, Is.InstanceOf(expectedType));
+        Assert.That(actionResult, Is.TypeOf(expectedType));
         var objectResult = actionResult as ObjectResult;
         Assert.That(objectResult?.StatusCode, Is.EqualTo(expectedStatusCode));
     }
@@ -148,7 +148,7 @@ public class ResponseExtensionsTests
             Assert.That(problemDetails.Detail, Is.EqualTo("Объект не найден"));
             Assert.That(problemDetails.Title, Is.EqualTo("Ошибка!"));
 
-            Assert.That(context.Items.ContainsKey("ErrorDetails"), Is.True);
+            Assert.That(context.Items, Contains.Key("ErrorDetails"));
             Assert.That(context.Items["ErrorDetails"], Is.EqualTo("Объект не найден Id=123"));
         });
     }
