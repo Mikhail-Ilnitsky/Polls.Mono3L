@@ -50,9 +50,9 @@ public class AnswersControllerTests
     {
         _httpContext.Items
             .Should().ContainKey("ErrorDetails")
-                .WhoseValue.As<string>()
-                .Should().StartWith(expectedStart)
-                .And.Contain(expectedValue);
+                .WhoseValue.Should().BeOfType<string>()
+                    .Which.Should().StartWith(expectedStart)
+                    .And.Contain(expectedValue);
     }
 
     [Fact]
