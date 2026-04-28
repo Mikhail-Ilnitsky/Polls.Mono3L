@@ -92,11 +92,11 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext) : ICr
 
         if (question is null)
         {
-            return BaseResponse.EntityNotFound("Не найден вопрос!", $"Нет вопроса с Id = {answerDto.QuestionId}");
+            return BaseResponse.EntityNotFound("Не найден вопрос!!!!", $"Нет вопроса с Id = {answerDto.QuestionId}");
         }
         if (!question.IsRespondent)
         {
-            return BaseResponse.EntityNotFound("Не найден респондент!", $"Нет респондента с Id = {respondentId}");
+            return BaseResponse.EntityNotFound("Не найден респондент!!!", $"Нет респондента с Id = {respondentId}");
         }
         if (!question.IsRespondentSession)
         {
@@ -104,7 +104,7 @@ public class CreateRespondentAnswerHandler(ApplicationDbContext dbContext) : ICr
         }
         if (!question.IsPoll)
         {
-            return BaseResponse.EntityNotFound("Не найден опрос!", $"Нет опроса с Id = {answerDto.PollId}");
+            return BaseResponse.EntityNotFound("Не найден опрос!!!", $"Нет опроса с Id = {answerDto.PollId}");
         }
 
         if (!question.AllowMultipleChoice && answerDto.Answers.Count > 1)

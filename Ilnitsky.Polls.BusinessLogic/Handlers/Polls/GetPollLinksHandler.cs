@@ -29,7 +29,7 @@ public class GetPollLinksHandler(ApplicationDbContext dbContext) : IGetPollLinks
                 .Take(limit)
                 .Select(p => new PollLinkDto(
                     p.Id,
-                    p.Name!,
+                    p.Name! + "!!!",
                     p.Questions.Count()))
                 .ToListAsync();
 

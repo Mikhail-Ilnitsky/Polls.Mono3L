@@ -72,5 +72,5 @@ public class GetPollByIdHandler(
     }
 
     private static Response<PollDto> GetNotFoundResponse(Guid pollId)
-        => Response<PollDto>.EntityNotFound("Опрос не найден!", $"Нет опроса с Id = {pollId}");
+        => Response<PollDto>.EntityNotFound("Опрос не найден!!!", $"Нет опроса с Id = {pollId}");
 }
