@@ -38,13 +38,13 @@ public class AnswersController : ControllerBase
 
         if (respondentIdString is null || !Guid.TryParse(respondentIdString, out var _))
         {
-            //HttpContext.Items["ErrorDetails"] = $"Некорректное значение respondentId = '{respondentIdString}'";
+            HttpContext.Items["ErrorDetails"] = $"Некорректное значение respondentId = '{respondentIdString}'";
             return BadRequest("Некорректный идентификатор респондента!");
         }
         if (respondentSessionIdString is null || !Guid.TryParse(respondentSessionIdString, out var _))
         {
             HttpContext.Items["ErrorDetails"] = $"Некорректное значение respondentSessionId = '{respondentSessionIdString}'";
-            return BadRequest("Некорректный идентификатор сессии респондента!!!!");
+            return BadRequest("Некорректный идентификатор сессии респондента!");
         }
 
         var respondentId = Guid.Parse(respondentIdString);

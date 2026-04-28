@@ -30,14 +30,14 @@ public class PollsController : ControllerBase
         [FromQuery] int? limit,
         [FromServices] IGetPollLinksHandler handler)
     {
-        if (offset is null)
+        if (offset is null || offset < 0)
         {
-            offset = 3;
+            offset = 0;
         }
 
-        if (limit is null)
+        if (limit is null || limit <= 0)
         {
-            limit = 7;
+            limit = 5;
         }
 
         return await handler.HandleAsync(offset.Value, limit.Value);
@@ -61,12 +61,12 @@ public class PollsController : ControllerBase
         [FromServices] IGetPollByIdHandler handler)
     {
         // HACK: тестовое исключение для несуществующего id
-        if (id == Guid.Parse("019c1aa8-9bf0-750d-9e6d-832de94b1c11"))
+        if (id == Guid.Parse("019c1aa8-9bf0-750d-9e6d-832de94b1c13"))
         {
             throw new Exception("Тестовое исключение!");
         }
 
-        var response = await handler.HandleAsync(Guid.NewGuid());
+        var response = await handler.HandleAsync(id);
 
         return response.GetActionResult(HttpContext);
     }

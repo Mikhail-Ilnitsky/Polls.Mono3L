@@ -51,10 +51,10 @@ public class RedisCacheService(
         {
             return genericResult;
         }
-        //if (result is RedisCacheResult baseResult)
-        //{
-        //    return new RedisCacheResult<T>(false, default, baseResult.IsRedisAvailable);
-        //}
+        if (result is RedisCacheResult baseResult)
+        {
+            return new RedisCacheResult<T>(false, default, baseResult.IsRedisAvailable);
+        }
 
         return new RedisCacheResult<T>(false, default, false);
     }
