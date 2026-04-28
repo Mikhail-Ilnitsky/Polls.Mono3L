@@ -60,7 +60,7 @@ public class DualCacheService(
 
     public async Task RemoveAsync(string key)
     {
-        await _redisCache.RemoveAsync(key);
+        //await _redisCache.RemoveAsync(key);
         _memoryCache.Remove(key);
         _logger.LogDebug("MemoryCache REMOVE for Key={Key}", key);
     }
