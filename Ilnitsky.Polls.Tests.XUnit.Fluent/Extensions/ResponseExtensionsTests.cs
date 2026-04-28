@@ -36,20 +36,28 @@ public class ResponseExtensionsTests
         var actionResult = RespExt.GetError(responseMock.Object, context);
 
         // Assert
-        actionResult.Should().BeOfType(expectedType);
-        var objectResult = actionResult.As<ObjectResult>();
+        actionResult
+            .Should().BeOfType(expectedType)
+            .And
+            .BeAssignableTo<ObjectResult>()
+            .Which
+                .Value.Should().BeOfType<ProblemDetails>()
+                .Which.Should().BeEquivalentTo(
+                new
+                {
+                    Status = expectedStatus,
+                    Detail = "Test Error",
+                    Title = "Ошибка!"
+                });
 
-        objectResult
-            .Value.Should().BeOfType<ProblemDetails>()
-            .Which.Should().BeEquivalentTo(
-            new
-            {
-                Status = expectedStatus,
-                Detail = "Test Error",
-                Title = "Ошибка!"
-            });
+        // v1
+        context.Items
+            .Should().Contain(new KeyValuePair<object, object?>("ErrorDetails", "Test Error Test Details"));
 
-        context.Items.Should().Contain(new KeyValuePair<object, object?>("ErrorDetails", "Test Error Test Details"));
+        // v2
+        context.Items
+            .Should().ContainKey("ErrorDetails")
+                .WhoseValue.Should().Be("Test Error Test Details");
     }
 
     [Fact]
@@ -98,6 +106,7 @@ public class ResponseExtensionsTests
                 .WhoseValue.Should().Be("Объект не найден Id=123");
     }
 
+    [Theory]
     [InlineData(true, typeof(CreatedResult), 201)]
     [InlineData(false, typeof(OkObjectResult), 200)]
     public void BaseResponse_GetActionResult_ReturnsCorrectStatus_WhenResponseIsSuccess(
