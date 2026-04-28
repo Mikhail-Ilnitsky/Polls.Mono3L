@@ -150,7 +150,7 @@ public class PollsControllerTests
 
         var controller = new PollsController
         {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
+            ControllerContext = new ControllerContext()
         };
 
         // Act
@@ -196,6 +196,10 @@ public class PollsControllerTests
         Assert.Equal(404, problemDetails.Status);
         Assert.Equal("Ошибка!", problemDetails.Title);
         Assert.Equal("Опрос не найден!", problemDetails.Detail);
+
+        Assert.True(controller.HttpContext.Items.ContainsKey("ErrorDetails"));
+        var errorDetails = controller.HttpContext.Items["ErrorDetails"] as string;
+        Assert.Equal($"Опрос не найден! Нет опроса с Id = {pollId}", errorDetails);
     }
 
     [Fact]

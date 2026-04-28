@@ -151,7 +151,7 @@ public class PollsControllerTests
 
         var controller = new PollsController
         {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() }
+            ControllerContext = new ControllerContext()
         };
 
         // Act
@@ -203,6 +203,11 @@ public class PollsControllerTests
                     Title = "Ошибка!",
                     Detail = "Опрос не найден!"
                 });
+
+        controller.HttpContext.Items
+            .Should().ContainKey("ErrorDetails")
+                .WhoseValue.Should().BeOfType<string>()
+                    .Which.Should().Be($"Опрос не найден! Нет опроса с Id = {pollId}");
     }
 
     [Fact]
