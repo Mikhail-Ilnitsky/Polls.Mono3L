@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 using FluentAssertions;
 
@@ -10,44 +9,17 @@ using Ilnitsky.Polls.Services.DualCache;
 using Ilnitsky.Polls.Services.OptionsProviders;
 using Ilnitsky.Polls.Services.RedisCache;
 
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ilnitsky.Polls.Tests.Smoke.DependencyInjection;
 
 public class DependencyRegistrationTests
 {
-    private static WebApplicationFactory<Program> CreateFactory()
-    {
-        return new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(builder =>
-            {
-                // Добавляем в конфигурацию настройку, заставляющую пропустить шаг миграции
-                builder.UseSetting("SkipMigrations", "true");
-
-                // Подменяем MySQL на SQLite (чтобы не падал при создании DbContext)
-                builder.ConfigureServices(services =>
-                {
-                    var descriptor = services.SingleOrDefault(
-                        d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-
-                    if (descriptor != null)
-                    {
-                        services.Remove(descriptor);
-                    }
-
-                    services.AddDbContext<ApplicationDbContext>(options =>
-                        options.UseSqlite("Filename=:memory:"));
-                });
-            });
-    }
-
     [Test]
     public void AppDatabaseContext_IsResolvable()
     {
         // Arrange
-        using var factory = CreateFactory();
+        var factory = SmokeTestFactory.GetInstance();
 
         // Act & Assert
         using var scope = factory.Services.CreateScope();
@@ -66,7 +38,7 @@ public class DependencyRegistrationTests
     public void AppRequiredService_IsResolvable(Type serviceType)
     {
         // Arrange
-        using var factory = CreateFactory();
+        var factory = SmokeTestFactory.GetInstance();
 
         // Act & Assert
         using var scope = factory.Services.CreateScope();
