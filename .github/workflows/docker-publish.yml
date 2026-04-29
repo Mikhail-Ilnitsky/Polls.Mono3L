@@ -54,16 +54,20 @@ jobs:
       - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
         uses: actions/checkout@v4
 
+      - name: Скачиваем уже собранное решение
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-app
+
       - name: Устанавливаем .NET SDK и настраиваем окружение для запуска тестов
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-          cache: true
-          cache-dependency-path: '**/*.csproj'
 
       - name: Запуск тестов smoke
         run: |
           dotnet test Ilnitsky.Polls.Tests.Smoke/Ilnitsky.Polls.Tests.Smoke.csproj \
+          --no-build \
           --configuration Release \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
@@ -171,7 +175,8 @@ jobs:
       - name: Запуск тестов NUnit
         run: |
           dotnet test Ilnitsky.Polls.Tests.NUnit/Ilnitsky.Polls.Tests.NUnit.csproj \
-          --no-build --configuration Release \
+          --no-build \
+          --configuration Release \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=nunit-test-results.trx"
@@ -221,7 +226,8 @@ jobs:
       - name: Запуск тестов ${{ matrix.test-type }}
         run: |
           dotnet test ${{ matrix.project }} \
-          --no-build --configuration Release \
+          --no-build \
+          --configuration Release \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=${{ matrix.test-type }}-test-results.trx"
