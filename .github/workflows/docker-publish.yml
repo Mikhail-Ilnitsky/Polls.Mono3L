@@ -54,20 +54,16 @@ jobs:
       - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
         uses: actions/checkout@v4
 
-      - name: Скачиваем уже собранное решение
-        uses: actions/download-artifact@v4
-        with:
-          name: compiled-app
-
       - name: Устанавливаем .NET SDK и настраиваем окружение для запуска тестов
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
       - name: Запуск тестов Smoke
         run: |
           dotnet test Ilnitsky.Polls.Tests.Smoke/Ilnitsky.Polls.Tests.Smoke.csproj \
-          --no-build \
           --configuration Release \
           --filter "Category!=LocalOnly" \
           --verbosity normal \
