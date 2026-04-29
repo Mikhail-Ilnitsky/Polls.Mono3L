@@ -67,7 +67,6 @@ jobs:
       - name: Запуск smoke-тестов
         run: |
           dotnet test Ilnitsky.Polls.Tests.Smoke/Ilnitsky.Polls.Tests.Smoke.csproj \
-          --no-build \
           --configuration Release \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
