@@ -70,11 +70,8 @@ jobs:
           --no-build
           --configuration Release \
           --verbosity normal \
-          #--collect:"XPlat Code Coverage" \
-          #--results-directory ./TestResults \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=smoke-test-results.trx"
-          #-- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
 
       - name: Сохраняем результаты тестов как артефакты
         uses: actions/upload-artifact@v4
