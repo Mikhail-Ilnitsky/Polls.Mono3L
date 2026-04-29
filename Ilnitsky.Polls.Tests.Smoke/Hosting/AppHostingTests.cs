@@ -59,6 +59,66 @@ public class AppHostingTests
             });
     }
 
+    private static WebApplicationFactory<Program> CreateFactory()
+    {
+        var keepAliveConnection = new SqliteConnection(
+            "DataSource=file::memory:?cache=shared");
+        keepAliveConnection.Open();
+
+        using var pragmaCmd = keepAliveConnection.CreateCommand();
+        pragmaCmd.CommandText = "PRAGMA foreign_keys = ON;";
+        pragmaCmd.ExecuteNonQuery();
+
+        var factory = new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseSetting("SkipMigrations", "true");
+
+                //builder.ConfigureLogging(logging =>
+                //{
+                //    logging.ClearProviders();
+                //    logging.AddConsole();
+                //    logging.SetMinimumLevel(LogLevel.Debug);
+                //});
+
+                builder.ConfigureServices(services =>
+                {
+                    // 1. Заменяем DbContext
+                    var descriptor = services.SingleOrDefault(
+                        d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                    if (descriptor != null)
+                        services.Remove(descriptor);
+
+                    services.AddDbContext<ApplicationDbContext>(options =>
+                        options.UseSqlite(keepAliveConnection));
+
+                    // 2. Полностью перезаписываем HealthChecks
+                    var hcDescriptors = services
+                        .Where(d => d.ServiceType?.FullName?.Contains("HealthCheck") == true
+                                 || d.ImplementationType?.FullName?.Contains("HealthCheck") == true)
+                        .ToList();
+
+                    foreach (var d in hcDescriptors)
+                    {
+                        services.Remove(d);
+                    }
+
+                    services.AddHealthChecks()
+                        .AddCheck("Self",
+                            () => HealthCheckResult.Healthy(),
+                            tags: new[] { "ready" }); // ← тег для /health/ready
+                });
+            });
+
+        // 3. Создаём схему БД
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider
+            .GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.EnsureCreated();
+
+        return factory;
+    }
+
     //[Test]
     //public async Task AppHealthCheckEndpoint_ReturnsHealthy()
     //{
@@ -82,6 +142,23 @@ public class AppHostingTests
     {
         // Arrange
         var httpClient = SmokeTestFactory.GetInstance().CreateClient();
+
+        // Act
+        var response = await httpClient.GetAsync("/health");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var content = await response.Content.ReadAsStringAsync();
+        content.Should().BeOneOf("Healthy", "Degraded");
+    }
+
+    [Test]
+    public async Task AppHealthCheckEndpoint_ReturnsHealthy3()
+    {
+        // Arrange
+        using var factory = CreateFactory();
+        using var httpClient = factory.CreateClient();
 
         // Act
         var response = await httpClient.GetAsync("/health");
