@@ -5,6 +5,7 @@ using FluentAssertions;
 
 namespace Ilnitsky.Polls.Tests.Smoke.Hosting;
 
+[Category("LocalOnly")]
 public class AppHostingTests
 {
     [Test]
