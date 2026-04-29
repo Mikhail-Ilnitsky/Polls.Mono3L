@@ -10,17 +10,23 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Ilnitsky.Polls.Tests.Smoke.Hosting;
 
 public class AppHostingTests
 {
-    private static WebApplicationFactory<Program> CreateFactory()
+    private static SqliteConnection CreateConnection()
+    {
+        var connection = new SqliteConnection("DataSource=:memory:");
+        connection.Open();
+        return connection;
+    }
+
+    private static WebApplicationFactory<Program> CreateFactory(SqliteConnection connection)
     {
         // Создаем и открываем соединение ДО создания фабрики
-        var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
-        keepAliveConnection.Open();
+        //var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
+        //keepAliveConnection.Open();
 
         return new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
@@ -40,17 +46,17 @@ public class AppHostingTests
                     }
 
                     services.AddDbContext<ApplicationDbContext>(options =>
-                        options.UseSqlite(keepAliveConnection));
+                        options.UseSqlite(connection));
 
-                    services.PostConfigure<HealthCheckServiceOptions>(options =>
-                    {
-                        // Очищаем все реальные проверки
-                        options.Registrations.Clear();
-                    });
+                    //services.PostConfigure<HealthCheckServiceOptions>(options =>
+                    //{
+                    //    // Очищаем все реальные проверки
+                    //    options.Registrations.Clear();
+                    //});
 
-                    services
-                        .AddHealthChecks()
-                        .AddCheck("Self", () => HealthCheckResult.Healthy());
+                    //services
+                    //    .AddHealthChecks()
+                    //    .AddCheck("Self", () => HealthCheckResult.Healthy());
                 });
             });
     }
@@ -59,7 +65,8 @@ public class AppHostingTests
     public async Task AppHealthCheckEndpoint_ReturnsHealthy()
     {
         // Arrange
-        using var factory = CreateFactory();
+        using var connection = CreateConnection();
+        using var factory = CreateFactory(connection);
         var httpClient = factory.CreateClient();
 
         // Act
@@ -76,7 +83,8 @@ public class AppHostingTests
     public async Task AppLivenessEndpoint_ReturnsHealthy()
     {
         // Arrange
-        using var factory = CreateFactory();
+        using var connection = CreateConnection();
+        using var factory = CreateFactory(connection);
         var httpClient = factory.CreateClient();
 
         // Act
@@ -93,7 +101,8 @@ public class AppHostingTests
     public async Task AppReadinessEndpoint_ReturnsOk()
     {
         // Arrange
-        using var factory = CreateFactory();
+        using var connection = CreateConnection();
+        using var factory = CreateFactory(connection);
         var httpClient = factory.CreateClient();
 
         // Act
@@ -107,7 +116,8 @@ public class AppHostingTests
     public async Task AppMetricsEndpoint_ReturnsData()
     {
         // Arrange
-        using var factory = CreateFactory();
+        using var connection = CreateConnection();
+        using var factory = CreateFactory(connection);
         var httpClient = factory.CreateClient();
 
         // Act
