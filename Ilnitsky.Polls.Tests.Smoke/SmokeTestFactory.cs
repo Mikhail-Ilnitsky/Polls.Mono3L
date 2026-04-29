@@ -3,6 +3,7 @@ using System.Linq;
 using Ilnitsky.Polls.DataAccess;
 
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,8 +33,12 @@ public static class SmokeTestFactory
                         services.Remove(descriptor);
                     }
 
+                    // Создаем соединение вручную, чтобы оно не закрылось
+                    var connection = new SqliteConnection("DataSource=:memory:");
+                    connection.Open();
+
                     services.AddDbContext<ApplicationDbContext>(options =>
-                        options.UseSqlite("Filename=:memory:"));
+                        options.UseSqlite(connection));
                 });
             });
     }
