@@ -249,9 +249,44 @@ jobs:
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
 
+  report-coverage:
+    needs: [run-xunit-tests, run-smoke-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Скачиваем все артефакты, начинающиеся на coverage-
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          path: merged-coverage/
+
+      - name: Устанавливаем .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Устанавливаем ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+      - name: Объединяем отчёты о покрытии
+        run: |
+          reportgenerator \
+            -reports:"merged-coverage/**/*.xml" \
+            -targetdir:"merged-reports" \
+            -reporttypes:"Cobertura;MarkdownSummaryGitHub"
+
+      - name: Выводим Summary
+        run: cat merged-reports/SummaryGitHub.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Сохраняем объединённый отчёт о покрытии
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-coverage-report
+          path: merged-reports/
+
   build-image-and-push:
     runs-on: ubuntu-latest
-    needs: [run-xunit-tests, run-nunit-tests, run-fluent-tests]
+    needs: [run-xunit-tests, run-nunit-tests, run-fluent-tests, run-smoke-tests]
     steps:
       - name: Клонируем код в рабочую директорию GitHub Actions runner'а
         uses: actions/checkout@v4
