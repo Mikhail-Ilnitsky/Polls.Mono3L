@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Ilnitsky.Polls.Tests.Smoke;
 
@@ -40,6 +41,16 @@ public static class SmokeTestFactory
 
                     services.AddDbContext<ApplicationDbContext>(options =>
                         options.UseSqlite(keepAliveConnection));
+
+                    services.PostConfigure<HealthCheckServiceOptions>(options =>
+                    {
+                        // Очищаем все реальные проверки
+                        options.Registrations.Clear();
+                    });
+
+                    services
+                        .AddHealthChecks()
+                        .AddCheck("Self", () => HealthCheckResult.Healthy());
                 });
             });
     }
