@@ -1,7 +1,11 @@
+using System.Runtime.CompilerServices;
+
 using Ilnitsky.Polls.DataAccess.Entities.Answers;
 using Ilnitsky.Polls.DataAccess.Entities.Polls;
 
 using Microsoft.EntityFrameworkCore;
+
+[assembly: InternalsVisibleTo("Ilnitsky.Polls.Tests.Smoke")]
 
 namespace Ilnitsky.Polls.DataAccess;
 
