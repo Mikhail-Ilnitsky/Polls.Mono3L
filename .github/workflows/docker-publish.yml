@@ -89,6 +89,10 @@ jobs:
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
 
+      - name: Удаляем дубликты отчетов покрытия (папки созданные VSTest), чтобы остались только папки созданные Coverlet
+        if: always()
+        run: rm -rf ./TestResults/_* 
+
       - name: Сохраняем артефакты отчёта по покрытию Smoke
         uses: actions/upload-artifact@v4
         if: always()
@@ -138,6 +142,10 @@ jobs:
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
 
+      - name: Удаляем дубликты отчетов покрытия (папки созданные VSTest), чтобы остались только папки созданные Coverlet
+        if: always()
+        run: rm -rf ./TestResults/_* 
+
       - name: Сохраняем артефакты отчёта по покрытию XUnit
         uses: actions/upload-artifact@v4
         if: always()
@@ -145,31 +153,6 @@ jobs:
           name: coverage-xunit # Имя должно начинаться с coverage-
           path: '**/TestResults/**/coverage.cobertura.xml'
           retention-days: 1
-
-      # - name: Очищаем дубликты отчетов покрытия (папки созданные VSTest), чтобы остались только папки созданные Coverlet
-      #   if: always()
-      #   run: rm -rf ./TestResults/_* 
-
-      # - name: Вычисляем покрытие тестами
-      #   uses: irongut/CodeCoverageSummary@v1.3.0
-      #   if: always()
-      #   with:
-      #     filename: './TestResults/**/coverage.cobertura.xml'
-      #     badge: true
-      #     format: markdown
-      #     output: both
-      #     thresholds: '40 75'
-      #     fail_below_min: true  
-
-      # - name: Выводим Summary
-      #   if: always()
-      #   run: |
-      #     ls -R ./TestResults # Для отладки смотрим содержимое папки
-      #     if [ -f code-coverage-results.md ]; then
-      #       cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
-      #     else
-      #       echo "Файл покрытия не найден" >> $GITHUB_STEP_SUMMARY
-      #     fi
 
   run-nunit-tests:
     needs: build-app
