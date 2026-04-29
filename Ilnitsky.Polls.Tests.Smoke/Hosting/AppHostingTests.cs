@@ -59,29 +59,13 @@ public class AppHostingTests
             });
     }
 
-    [Test]
-    public async Task AppHealthCheckEndpoint_ReturnsHealthy()
-    {
-        // Arrange
-        using var connection = CreateConnection();
-        using var factory = CreateFactory(connection);
-        var httpClient = factory.CreateClient();
-
-        // Act
-        var response = await httpClient.GetAsync("/health");
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var content = await response.Content.ReadAsStringAsync();
-        content.Should().BeOneOf("Healthy", "Degraded");
-    }
-
     //[Test]
-    //public async Task AppHealthCheckEndpoint_ReturnsHealthy2()
+    //public async Task AppHealthCheckEndpoint_ReturnsHealthy()
     //{
     //    // Arrange
-    //    var httpClient = SmokeTestFactory.GetInstance().CreateClient();
+    //    using var connection = CreateConnection();
+    //    using var factory = CreateFactory(connection);
+    //    var httpClient = factory.CreateClient();
 
     //    // Act
     //    var response = await httpClient.GetAsync("/health");
@@ -92,6 +76,22 @@ public class AppHostingTests
     //    var content = await response.Content.ReadAsStringAsync();
     //    content.Should().BeOneOf("Healthy", "Degraded");
     //}
+
+    [Test]
+    public async Task AppHealthCheckEndpoint_ReturnsHealthy2()
+    {
+        // Arrange
+        var httpClient = SmokeTestFactory.GetInstance().CreateClient();
+
+        // Act
+        var response = await httpClient.GetAsync("/health");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var content = await response.Content.ReadAsStringAsync();
+        content.Should().BeOneOf("Healthy", "Degraded");
+    }
 
     //[Test]
     //public async Task AppLivenessEndpoint_ReturnsHealthy()
