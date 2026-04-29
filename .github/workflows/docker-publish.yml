@@ -69,6 +69,7 @@ jobs:
           dotnet test Ilnitsky.Polls.Tests.Smoke/Ilnitsky.Polls.Tests.Smoke.csproj \
           --no-build \
           --configuration Release \
+          --filter "Category!=LocalOnly" \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=smoke-test-results.trx"
