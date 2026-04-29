@@ -67,13 +67,14 @@ jobs:
       - name: Запуск smoke-тестов
         run: |
           dotnet test Ilnitsky.Polls.Tests.Smoke/Ilnitsky.Polls.Tests.Smoke.csproj \
-          --no-build --configuration Release \
+          --no-build
+          --configuration Release \
           --verbosity normal \
-          --collect:"XPlat Code Coverage" \
-          --results-directory ./TestResults \
+          #--collect:"XPlat Code Coverage" \
+          #--results-directory ./TestResults \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=smoke-test-results.trx"
-          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
+          #-- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
 
       - name: Сохраняем результаты тестов как артефакты
         uses: actions/upload-artifact@v4
