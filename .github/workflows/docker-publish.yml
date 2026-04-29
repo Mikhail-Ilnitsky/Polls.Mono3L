@@ -294,6 +294,15 @@ jobs:
             -targetdir:"merged-reports" \
             -reporttypes:"Cobertura;MarkdownSummaryGitHub"
 
+      - name: Создаем краткую таблицу c помощью CodeCoverageSummary
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: 'merged-reports/Cobertura.xml' # Берем объединенный файл
+          badge: true
+          format: markdown
+          output: both
+          thresholds: '40 75'
+
       - name: Выводим Summary
         run: |
           # Для отладки смотрим содержимое папки
@@ -303,7 +312,11 @@ jobs:
             echo "Директория merged-reports не найдена!"
             exit 1
           fi
-          # Проверяем наличие файла перед cat, чтобы джоба не падала
+          # Сначала выводим короткую таблицу от CodeCoverageSummary
+          if [ -f code-coverage-results.md ]; then
+            cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+          fi
+          # Затем добавляем подробный отчет от ReportGenerator
           if [ -f merged-reports/SummaryGithub.md ]; then
             cat merged-reports/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
           else
