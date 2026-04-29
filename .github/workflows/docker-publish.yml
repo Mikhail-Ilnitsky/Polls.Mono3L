@@ -47,6 +47,50 @@ jobs:
             !**/node_modules
           retention-days: 1
 
+  run-smoke-tests:
+    needs: build-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
+        uses: actions/checkout@v4
+
+      - name: Скачиваем уже собранное решение
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-app
+
+      - name: Устанавливаем .NET SDK и настраиваем окружение для запуска тестов
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Запуск smoke-тестов
+        run: |
+          dotnet test Ilnitsky.Polls.Tests.Smoke/Ilnitsky.Polls.Tests.Smoke.csproj \
+          --no-build --configuration Release \
+          --verbosity normal \
+          --collect:"XPlat Code Coverage" \
+          --results-directory ./TestResults \
+          --logger "console;verbosity=detailed" \
+          --logger "trx;LogFileName=smoke-test-results.trx"
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
+
+      - name: Сохраняем результаты тестов как артефакты
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test-results-${{ github.run_number }}
+          path: '**/TestResults/*.trx'
+          retention-days: 7
+
+      - name: Публикуем отчёт в GitHub Pages
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Smoke Tests Results
+          path: '**/TestResults/*.trx'
+          reporter: dotnet-trx
+
   run-xunit-tests:
     needs: build-app
     runs-on: ubuntu-latest
@@ -72,7 +116,7 @@ jobs:
           --logger "trx;LogFileName=xunit-test-results.trx" \
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
 
-      - name: Загрузка результатов тестов как артефактов
+      - name: Сохраняем результаты тестов как артефакты
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -138,7 +182,7 @@ jobs:
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=nunit-test-results.trx"
 
-      - name: Загрузка результатов тестов как артефактов
+      - name: Сохраняем результаты тестов как артефакты
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -204,9 +248,44 @@ jobs:
           path: '**/TestResults/*.trx'
           reporter: dotnet-trx
 
+  report-coverage:
+    needs: [run-xunit-tests, run-smoke-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Скачиваем все артефакты, начинающиеся на coverage-
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          path: merged-coverage/
+
+      - name: Устанавливаем .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Устанавливаем ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+      - name: Объединяем отчёты о покрытии
+        run: |
+          reportgenerator \
+            -reports:"merged-coverage/**/*.xml" \
+            -targetdir:"merged-reports" \
+            -reporttypes:"Cobertura;MarkdownSummaryGitHub"
+
+      - name: Выводим Summary
+        run: cat merged-reports/SummaryGitHub.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Сохраняем объединённый отчёт о покрытии
+        uses: actions/upload-artifact@v4
+        with:
+          name: final-coverage-report
+          path: merged-reports/
+
   build-image-and-push:
     runs-on: ubuntu-latest
-    needs: [run-xunit-tests, run-nunit-tests, run-fluent-tests]
+    needs: [run-xunit-tests, run-nunit-tests, run-fluent-tests, run-smoke-tests]
     steps:
       - name: Клонируем код в рабочую директорию GitHub Actions runner'а
         uses: actions/checkout@v4
