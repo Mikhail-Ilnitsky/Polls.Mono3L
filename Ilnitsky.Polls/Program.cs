@@ -321,9 +321,13 @@ app.MapHealthChecks("/health/ready",                // Проверка сост
     });
 
 app.MapMetrics();                                   // Отдаём метрики по адресу /metrics (по умолчанию)
-app.MapFallbackToFile("index.html");                // Перенаправляем на index.html
 
-if (app.Configuration["SkipMigrations"] != "true")  // Для выключении миграции в тестах
+if (app.Configuration["SkipFallback"] != "true")    // Для выключения MapFallbackToFile в тестах
+{
+    app.MapFallbackToFile("index.html");            // Перенаправляем на index.html
+}
+
+if (app.Configuration["SkipMigrations"] != "true")  // Для выключения миграции в тестах
 {
     await app.MigrateAsync<ApplicationDbContext>(); // Выполняем миграцию БД
     await app.InitAsync<DbInitializer>();           // Выполняем инициализацию БД

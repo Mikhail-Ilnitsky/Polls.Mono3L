@@ -30,6 +30,7 @@ public class AppHostingTests
             {
                 // Добавляем в конфигурацию настройку, заставляющую пропустить шаг миграции
                 builder.UseSetting("SkipMigrations", "true");
+                builder.UseSetting("SkipFallback", "true");
 
                 // Подменяем MySQL на SQLite (чтобы не падал при создании DbContext)
                 builder.ConfigureServices(services =>
