@@ -323,7 +323,14 @@ app.MapHealthChecks("/health/ready",                // Проверка сост
 app.MapMetrics();                                   // Отдаём метрики по адресу /metrics (по умолчанию)
 app.MapFallbackToFile("index.html");                // Перенаправляем на index.html
 
-await app.MigrateAsync<ApplicationDbContext>();     // Выполняем миграцию БД
-await app.InitAsync<DbInitializer>();               // Выполняем инициализацию БД
+if (app.Configuration["SkipMigrations"] != "true")  // Для выключении миграции в тестах
+{
+    await app.MigrateAsync<ApplicationDbContext>(); // Выполняем миграцию БД
+    await app.InitAsync<DbInitializer>();           // Выполняем инициализацию БД
+}
 
 app.Run();
+
+// Эта строка делает неявный класс Program публичным, 
+// чтобы в проекте Tests.Smoke мог к нему обратиться WebApplicationFactory
+public partial class Program { }
