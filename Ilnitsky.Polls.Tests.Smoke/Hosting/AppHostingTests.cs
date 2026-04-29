@@ -25,10 +25,6 @@ public class AppHostingTests
 
     private static WebApplicationFactory<Program> CreateFactory(SqliteConnection connection)
     {
-        // Создаем и открываем соединение ДО создания фабрики
-        //var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
-        //keepAliveConnection.Open();
-
         return new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
@@ -80,21 +76,21 @@ public class AppHostingTests
         content.Should().BeOneOf("Healthy", "Degraded");
     }
 
-    [Test]
-    public async Task AppHealthCheckEndpoint_ReturnsHealthy2()
-    {
-        // Arrange
-        var httpClient = SmokeTestFactory.GetInstance().CreateClient();
+    //[Test]
+    //public async Task AppHealthCheckEndpoint_ReturnsHealthy2()
+    //{
+    //    // Arrange
+    //    var httpClient = SmokeTestFactory.GetInstance().CreateClient();
 
-        // Act
-        var response = await httpClient.GetAsync("/health");
+    //    // Act
+    //    var response = await httpClient.GetAsync("/health");
 
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    //    // Assert
+    //    response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var content = await response.Content.ReadAsStringAsync();
-        content.Should().BeOneOf("Healthy", "Degraded");
-    }
+    //    var content = await response.Content.ReadAsStringAsync();
+    //    content.Should().BeOneOf("Healthy", "Degraded");
+    //}
 
     //[Test]
     //public async Task AppLivenessEndpoint_ReturnsHealthy()
