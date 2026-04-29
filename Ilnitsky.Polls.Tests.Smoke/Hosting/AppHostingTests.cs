@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Ilnitsky.Polls.Tests.Smoke.Hosting;
 
@@ -48,15 +49,15 @@ public class AppHostingTests
                     services.AddDbContext<ApplicationDbContext>(options =>
                         options.UseSqlite(connection));
 
-                    //services.PostConfigure<HealthCheckServiceOptions>(options =>
-                    //{
-                    //    // Очищаем все реальные проверки
-                    //    options.Registrations.Clear();
-                    //});
+                    services.PostConfigure<HealthCheckServiceOptions>(options =>
+                    {
+                        // Очищаем все реальные проверки
+                        options.Registrations.Clear();
+                    });
 
-                    //services
-                    //    .AddHealthChecks()
-                    //    .AddCheck("Self", () => HealthCheckResult.Healthy());
+                    services
+                        .AddHealthChecks()
+                        .AddCheck("Self", () => HealthCheckResult.Healthy());
                 });
             });
     }
