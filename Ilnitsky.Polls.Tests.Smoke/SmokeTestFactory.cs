@@ -13,9 +13,14 @@ public static class SmokeTestFactory
 {
     private static readonly object _lock = new();
     private static WebApplicationFactory<Program>? _factory;
+    private static SqliteConnection? _keepAliveConnection;
 
     private static WebApplicationFactory<Program> CreateFactory()
     {
+        // Создаем и открываем соединение ДО создания фабрики
+        _keepAliveConnection = new SqliteConnection("DataSource=:memory:");
+        _keepAliveConnection.Open();
+
         return new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
             {
@@ -33,12 +38,8 @@ public static class SmokeTestFactory
                         services.Remove(descriptor);
                     }
 
-                    // Создаем соединение вручную, чтобы оно не закрылось
-                    var connection = new SqliteConnection("DataSource=:memory:");
-                    connection.Open();
-
                     services.AddDbContext<ApplicationDbContext>(options =>
-                        options.UseSqlite(connection));
+                        options.UseSqlite(_keepAliveConnection));
                 });
             });
     }
@@ -61,5 +62,7 @@ public static class SmokeTestFactory
     public static void DisposeInstance()
     {
         _factory?.Dispose();
+        _keepAliveConnection?.Close();
+        _keepAliveConnection?.Dispose();
     }
 }
