@@ -19,8 +19,8 @@ public static class SmokeTestFactory
     private static WebApplicationFactory<Program> CreateFactory()
     {
         // Создаем и открываем соединение ДО создания фабрики
-        var keepAliveConnection = new SqliteConnection("DataSource=:memory:");
-        keepAliveConnection.Open();
+        _keepAliveConnection = new SqliteConnection("DataSource=:memory:");
+        _keepAliveConnection.Open();
 
         return new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
@@ -40,7 +40,7 @@ public static class SmokeTestFactory
                     }
 
                     services.AddDbContext<ApplicationDbContext>(options =>
-                        options.UseSqlite(keepAliveConnection));
+                        options.UseSqlite(_keepAliveConnection));
 
                     services.PostConfigure<HealthCheckServiceOptions>(options =>
                     {
@@ -55,20 +55,20 @@ public static class SmokeTestFactory
             });
     }
 
-    public static WebApplicationFactory<Program> GetInstance() => CreateFactory();
-    //{
-    //    if (_factory != null)
-    //    {
-    //        return _factory;
-    //    }
+    public static WebApplicationFactory<Program> GetInstance()
+    {
+        if (_factory != null)
+        {
+            return _factory;
+        }
 
-    //    lock (_lock)
-    //    {
-    //        _factory ??= CreateFactory();
-    //    }
+        lock (_lock)
+        {
+            _factory ??= CreateFactory();
+        }
 
-    //    return _factory;
-    //}
+        return _factory;
+    }
 
     public static void DisposeInstance()
     {
