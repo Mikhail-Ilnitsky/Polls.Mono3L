@@ -276,8 +276,11 @@ app.UseWhen(                                        // Не перенаправ
         appBuilder.UseHttpsRedirection();           // Подключаем перенаправление HTTP-запросов на HTTPS
     });
 
-app.UseDefaultFiles();                              // Подключаем поддержку страниц html по умолчанию
-app.UseStaticFiles();                               // Подключаем поддержку статических файлов
+if (app.Configuration["SkipFallback"] != "true")    // Для выключения в тестах
+{
+    app.UseDefaultFiles();                          // Подключаем поддержку страниц html по умолчанию
+    app.UseStaticFiles();                           // Подключаем поддержку статических файлов
+}
 
 app.UseWhen(                                        // Проверяем respondentId только для API (кроме кэшируемого метода получения списка опросов)
     context =>
@@ -322,12 +325,12 @@ app.MapHealthChecks("/health/ready",                // Проверка сост
 
 app.MapMetrics();                                   // Отдаём метрики по адресу /metrics (по умолчанию)
 
-if (app.Configuration["SkipFallback"] != "true")    // Для выключения MapFallbackToFile в тестах
+if (app.Configuration["SkipFallback"] != "true")    // Для выключения в тестах
 {
     app.MapFallbackToFile("index.html");            // Перенаправляем на index.html
 }
 
-if (app.Configuration["SkipMigrations"] != "true")  // Для выключения миграции в тестах
+if (app.Configuration["SkipMigrations"] != "true")  // Для выключения в тестах
 {
     await app.MigrateAsync<ApplicationDbContext>(); // Выполняем миграцию БД
     await app.InitAsync<DbInitializer>();           // Выполняем инициализацию БД
