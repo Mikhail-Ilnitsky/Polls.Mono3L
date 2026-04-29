@@ -47,6 +47,48 @@ jobs:
             !**/node_modules
           retention-days: 1
 
+  run-smoke-tests:
+    needs: build-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
+        uses: actions/checkout@v4
+
+      - name: Скачиваем уже собранное решение
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-app
+
+      - name: Устанавливаем .NET SDK и настраиваем окружение для запуска тестов
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Запуск тестов Smoke
+        run: |
+          dotnet test Ilnitsky.Polls.Tests.Smoke/Ilnitsky.Polls.Tests.Smoke.csproj \
+          --no-build \
+          --configuration Release \
+          --verbosity normal \
+          --logger "console;verbosity=detailed" \
+          --logger "trx;LogFileName=smoke-test-results.trx"
+
+      - name: Загружаем результаты тестов как артефакты
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test-results-${{ github.run_number }}
+          path: '**/TestResults/*.trx'
+          retention-days: 7
+
+      - name: Публикуем отчёт в GitHub Pages
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Smoke Tests Results
+          path: '**/TestResults/*.trx'
+          reporter: dotnet-trx
+
   run-xunit-tests:
     needs: build-app
     runs-on: ubuntu-latest
@@ -72,7 +114,7 @@ jobs:
           --logger "trx;LogFileName=xunit-test-results.trx" \
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude="[*Tests*]*"
 
-      - name: Загрузка результатов тестов как артефактов
+      - name: Загружаем результаты тестов как артефакты
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -133,12 +175,13 @@ jobs:
       - name: Запуск тестов NUnit
         run: |
           dotnet test Ilnitsky.Polls.Tests.NUnit/Ilnitsky.Polls.Tests.NUnit.csproj \
-          --no-build --configuration Release \
+          --no-build \
+          --configuration Release \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=nunit-test-results.trx"
 
-      - name: Загрузка результатов тестов как артефактов
+      - name: Загружаем результаты тестов как артефакты
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -183,12 +226,13 @@ jobs:
       - name: Запуск тестов ${{ matrix.test-type }}
         run: |
           dotnet test ${{ matrix.project }} \
-          --no-build --configuration Release \
+          --no-build \
+          --configuration Release \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
           --logger "trx;LogFileName=${{ matrix.test-type }}-test-results.trx"
 
-      - name: Загрузка результатов тестов как артефактов
+      - name: Загружаем результаты тестов как артефакты
         uses: actions/upload-artifact@v4
         if: always()
         with:
