@@ -304,8 +304,8 @@ jobs:
             exit 1
           fi
           # Проверяем наличие файла перед cat, чтобы джоба не падала
-          if [ -f merged-reports/SummaryGitHub.md ]; then
-            cat merged-reports/SummaryGitHub.md >> $GITHUB_STEP_SUMMARY
+          if [ -f merged-reports/SummaryGithub.md ]; then
+            cat merged-reports/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
           else
             echo "Итоговый отчет не сформирован" >> $GITHUB_STEP_SUMMARY
             exit 1
