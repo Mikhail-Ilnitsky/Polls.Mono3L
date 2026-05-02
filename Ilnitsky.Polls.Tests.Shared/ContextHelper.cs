@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Moq;
 
-namespace Ilnitsky.Polls.Tests.XUnit.Middlewares;
+namespace Ilnitsky.Polls.Tests.Shared;
 
 public static class ContextHelper
 {

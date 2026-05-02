@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using Ilnitsky.Polls.BusinessLogic;
 using Ilnitsky.Polls.Middlewares;
+using Ilnitsky.Polls.Tests.Shared;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
