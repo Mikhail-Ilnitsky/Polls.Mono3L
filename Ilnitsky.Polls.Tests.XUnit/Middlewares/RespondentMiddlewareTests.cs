@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Ilnitsky.Polls.BusinessLogic;
-using Ilnitsky.Polls.DataAccess;
 using Ilnitsky.Polls.DataAccess.Entities.Answers;
 using Ilnitsky.Polls.Middlewares;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 using Moq;
 
@@ -17,49 +14,13 @@ namespace Ilnitsky.Polls.Tests.XUnit.Middlewares;
 
 public class RespondentMiddlewareTests
 {
-    private static DefaultHttpContext CreateHttpContext(ApplicationDbContext dbContext)
-    {
-        var context = new DefaultHttpContext();
-
-        // Настраиваем ServiceProvider для получения DbContext через RequestServices
-        var serviceProvider = new ServiceCollection()
-            .AddSingleton(dbContext)
-            .BuildServiceProvider();
-        context.RequestServices = serviceProvider;
-
-        // Мокаем сессию
-        var sessionMock = new Mock<ISession>();
-        var sessionData = new Dictionary<string, byte[]>();
-
-        sessionMock
-            .Setup(s => s.Set(It.IsAny<string>(), It.IsAny<byte[]>()))
-            .Callback<string, byte[]>((key, val) => sessionData[key] = val);
-        sessionMock
-            .Setup(s => s.TryGetValue(It.IsAny<string>(), out It.Ref<byte[]?>.IsAny))
-            .Returns((string key, out byte[]? val) => sessionData.TryGetValue(key, out val));
-        sessionMock
-            .Setup(s => s.Keys)
-            .Returns(sessionData.Keys);
-
-        context.Session = sessionMock.Object;
-        return context;
-    }
-
-    private static ApplicationDbContext CreateDbContext()
-    {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        return new ApplicationDbContext(options);
-    }
-
     [Fact]
     public async Task InvokeAsync_CallsNextAndDoesNotModifyDb_WhenIdIsInSession()
     {
         // Arrange
-        using var dbContext = CreateDbContext();
+        using var dbContext = ContextHelper.CreateDbContext();
 
-        var httpContext = CreateHttpContext(dbContext);
+        var httpContext = ContextHelper.CreateHttpContext(dbContext);
         var respondentIdString = GuidHelper.CreateGuidV7().ToString();
         httpContext.Session.SetString("RespondentId", respondentIdString);
 
@@ -84,12 +45,12 @@ public class RespondentMiddlewareTests
     public async Task InvokeAsync_SavesInSession_WhenIdExistsInCookiesAndDb()
     {
         // Arrange
-        using var dbContext = CreateDbContext();
+        using var dbContext = ContextHelper.CreateDbContext();
         var respondentId = GuidHelper.CreateGuidV7();
         dbContext.Respondents.Add(new Respondent { Id = respondentId });
         await dbContext.SaveChangesAsync();
 
-        var httpContext = CreateHttpContext(dbContext);
+        var httpContext = ContextHelper.CreateHttpContext(dbContext);
         httpContext.Request.Headers.Append("Cookie", $"RespondentId={respondentId}");
 
         bool wasNextCalled = false;
@@ -116,9 +77,9 @@ public class RespondentMiddlewareTests
     public async Task InvokeAsync_CreatesNewRespondent_WhenNoIdExists()
     {
         // Arrange
-        using var dbContext = CreateDbContext();
+        using var dbContext = ContextHelper.CreateDbContext();
 
-        var httpContext = CreateHttpContext(dbContext);
+        var httpContext = ContextHelper.CreateHttpContext(dbContext);
 
         bool wasNextCalled = false;
         var middleware = new RespondentMiddleware((innerContext) =>
@@ -151,8 +112,8 @@ public class RespondentMiddlewareTests
     public async Task InvokeAsync_CreatesNewRespondent_WhenCookieIdIsInvalid(string badGuid)
     {
         // Arrange
-        using var dbContext = CreateDbContext();
-        var httpContext = CreateHttpContext(dbContext);
+        using var dbContext = ContextHelper.CreateDbContext();
+        var httpContext = ContextHelper.CreateHttpContext(dbContext);
 
         // Подкладываем невалидный GUID в куки
         httpContext.Request.Headers.Append("Cookie", $"RespondentId={badGuid}");
