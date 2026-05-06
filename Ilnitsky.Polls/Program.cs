@@ -91,6 +91,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(        // Регистри�
     optionsBuilder => optionsBuilder
         .UseLazyLoadingProxies()
         .UseMySql(dbConnectionString, ServerVersion.AutoDetect(dbConnectionString)));
+//.UseMySql(dbConnectionString, new MariaDbServerVersion(new Version(11, 8))));
 
 builder.Services.AddTransient<DbInitializer>();             // Регистрируем инициализатор базы данных
 
@@ -333,4 +334,4 @@ app.Run();
 
 // Эта строка делает неявный класс Program публичным, 
 // чтобы в проекте Tests.Smoke мог к нему обратиться WebApplicationFactory
-public partial class Program { }
+public partial class Program;

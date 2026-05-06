@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 
 using Testcontainers.MariaDb;
 using Testcontainers.Redis;
@@ -10,7 +9,7 @@ namespace Ilnitsky.Polls.Tests.Integration.NUnit;
 public class GlobalTestsSetup
 {
     public static WebApplicationFactory<Program> Factory { private set; get; } = null!;
-    public static HttpClient Client { private set; get; } = null!;
+    public static HttpClient HttpClient { private set; get; } = null!;
     public static string DbConnectionString { private set; get; } = null!;
 
     private static readonly MariaDbContainer MariaDbContainer = new MariaDbBuilder()
@@ -32,29 +31,43 @@ public class GlobalTestsSetup
 
         // Получаем валидную строку подключения для MariaDB
         DbConnectionString = MariaDbContainer.GetConnectionString();
+        var redisConnectionString = RedisContainer.GetConnectionString();
 
         // Подменяем конфигурацию в приложении
-        Factory = new WebApplicationFactory<Program>()
-            .WithWebHostBuilder(hostBuilder =>
-            {
-                hostBuilder.ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
-                {
-                    configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>
-                    {
-                        ["ConnectionStrings:DefaultConnection"] = DbConnectionString,
-                        ["ConnectionStrings:Redis"] = RedisContainer.GetConnectionString()
-                    });
-                });
-            });
+        //Factory = new WebApplicationFactory<Program>()
+        //    .WithWebHostBuilder(hostBuilder =>
+        //    {
+        //        hostBuilder.ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
+        //        {
+        //            configurationBuilder.AddInMemoryCollection(new Dictionary<string, string?>
+        //            {
+        //                ["ConnectionStrings:DefaultConnection"] = DbConnectionString,
+        //                ["ConnectionStrings:Redis"] = RedisContainer.GetConnectionString()
+        //            });
+        //        });
+        //    });
 
-        Client = Factory.CreateClient();
+        // Устанавливаем переменные окружения напрямую в процесс тестов
+        Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", DbConnectionString);
+        Environment.SetEnvironmentVariable("ConnectionStrings__Redis", redisConnectionString);
+
+        Factory = new WebApplicationFactory<Program>();
+        HttpClient = Factory.CreateClient();
     }
 
     [OneTimeTearDown]
     public async Task RunAfterAllTestsAsync()
     {
-        Client.Dispose();
-        await Factory.DisposeAsync();
+        // Очищаем переменные
+        Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", null);
+        Environment.SetEnvironmentVariable("ConnectionStrings__Redis", null);
+
+        HttpClient?.Dispose();
+
+        if (Factory != null)
+        {
+            await Factory.DisposeAsync();
+        }
 
         // Уничтожаем контейнеры
         await MariaDbContainer.DisposeAsync();
