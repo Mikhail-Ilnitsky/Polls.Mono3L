@@ -5,11 +5,14 @@ using FluentAssertions;
 
 using Ilnitsky.Polls.Contracts.Dtos.Polls;
 using Ilnitsky.Polls.DataAccess;
+using Ilnitsky.Polls.Tests.Shared;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
+using StackExchange.Redis;
 
 namespace Ilnitsky.Polls.Tests.Integration.NUnit.Api;
 
@@ -69,6 +72,7 @@ public class PollsApiTests
         var response = await _httpClient.GetAsync(url);
 
         // Assert
+        response.Should().NotBeNull();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var pollsLinks = await response.Content.ReadFromJsonAsync<List<PollLinkDto>>();
@@ -95,6 +99,7 @@ public class PollsApiTests
         var response = await _httpClient.GetAsync($"api/v1/polls/{existingId}");
 
         // Assert
+        response.Should().NotBeNull();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var poll = await response.Content.ReadFromJsonAsync<PollDto>();
@@ -119,6 +124,7 @@ public class PollsApiTests
         var response = await _httpClient.GetAsync($"api/v1/polls/{nonExistentId}");
 
         // Assert
+        response.Should().NotBeNull();
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
@@ -137,7 +143,35 @@ public class PollsApiTests
         var response = await _httpClient.GetAsync($"api/v1/polls/{hackId}");
 
         // Assert
+        response.Should().NotBeNull();
         // Клиент должен получить код 500, а не падение процесса
         response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problem!.Status.Should().Be(500);
+        problem.Title.Should().Be("Ошибка!");
+        problem.Detail.Should().Contain("Внутренняя ошибка сервера");
+    }
+
+    [Test]
+    public async Task GetPollById_CachesResultInRedis_AfterFirstCall()
+    {
+        // Arrange
+        using var scope = GlobalTestsSetup.Factory.Services.CreateScope();
+        using var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var (poll, pollId, pollKey) = TestDbHelper.CreatePoll();
+        dbContext.Polls.Add(poll);
+        await dbContext.SaveChangesAsync();
+
+        var redisConnectionMultiplexer = GlobalTestsSetup.Factory.Services.GetRequiredService<IConnectionMultiplexer>();
+        var redisDb = redisConnectionMultiplexer.GetDatabase();
+
+        // Act
+        await _httpClient.GetAsync($"api/v1/polls/{pollId}");
+
+        // Assert
+        var isCachedData = await redisDb.KeyExistsAsync(pollKey);
+        isCachedData.Should().BeTrue("Данные должны сохраниться в Redis для ускорения");
     }
 }
