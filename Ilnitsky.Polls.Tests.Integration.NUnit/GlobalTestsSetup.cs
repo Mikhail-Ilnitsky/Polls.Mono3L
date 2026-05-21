@@ -35,7 +35,7 @@ public class GlobalTestsSetup
 
         // Получаем валидные строки подключения для MariaDB и Redis
         DbConnectionString = MariaDbContainer.GetConnectionString();
-        var redisConnectionString = RedisContainer.GetConnectionString();
+        var redisConnectionString = RedisContainer.GetConnectionString() + ",abortConnect=false,connectTimeout=5000,syncTimeout=5000";
 
         // Устанавливаем переменные окружения напрямую в процесс тестов (для запуска тестов в студии)
         Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", DbConnectionString);
