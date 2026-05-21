@@ -18,7 +18,7 @@ namespace Ilnitsky.Polls.Tests.Integration.NUnit.Api;
 
 public class PollsApiTests
 {
-    private readonly HttpClient _httpClient = GlobalTestsSetup.HttpClient;
+    private HttpClient _httpClient => GlobalTestsSetup.HttpClient;
 
     // Некорректные/незаданные offset и limit
     [TestCase(null, null, 5)]
