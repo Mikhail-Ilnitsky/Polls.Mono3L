@@ -18,7 +18,7 @@ namespace Ilnitsky.Polls.Tests.Integration.NUnit.Api;
 
 public class PollsApiTests
 {
-    private HttpClient _httpClient => GlobalTestsSetup.HttpClient;
+    private static HttpClient HttpClient => GlobalTestsSetup.HttpClient;
 
     // Некорректные/незаданные offset и limit
     [TestCase(null, null, 5)]
@@ -69,7 +69,7 @@ public class PollsApiTests
         var url = QueryHelpers.AddQueryString("api/v1/polls", queryParams);
 
         // Act
-        var response = await _httpClient.GetAsync(url);
+        var response = await HttpClient.GetAsync(url);
 
         // Assert
         response.Should().NotBeNull();
@@ -96,7 +96,7 @@ public class PollsApiTests
         var existingId = existingPoll.Id;
 
         // Act
-        var response = await _httpClient.GetAsync($"api/v1/polls/{existingId}");
+        var response = await HttpClient.GetAsync($"api/v1/polls/{existingId}");
 
         // Assert
         response.Should().NotBeNull();
@@ -121,7 +121,7 @@ public class PollsApiTests
         var nonExistentId = Guid.NewGuid();
 
         // Act
-        var response = await _httpClient.GetAsync($"api/v1/polls/{nonExistentId}");
+        var response = await HttpClient.GetAsync($"api/v1/polls/{nonExistentId}");
 
         // Assert
         response.Should().NotBeNull();
@@ -140,7 +140,7 @@ public class PollsApiTests
         var hackId = Guid.Parse("019c1aa8-9bf0-750d-9e6d-832de94b1c13");
 
         // Act
-        var response = await _httpClient.GetAsync($"api/v1/polls/{hackId}");
+        var response = await HttpClient.GetAsync($"api/v1/polls/{hackId}");
 
         // Assert
         response.Should().NotBeNull();
@@ -168,7 +168,7 @@ public class PollsApiTests
         var redisDb = redisConnectionMultiplexer.GetDatabase();
 
         // Act
-        await _httpClient.GetAsync($"api/v1/polls/{pollId}");
+        await HttpClient.GetAsync($"api/v1/polls/{pollId}");
 
         // Assert
         var isCachedData = await redisDb.KeyExistsAsync(pollKey);
