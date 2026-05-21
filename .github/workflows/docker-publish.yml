@@ -48,7 +48,6 @@ jobs:
           retention-days: 1
 
   run-smoke-tests:
-    needs: build-app
     runs-on: ubuntu-latest
     steps:
       - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
@@ -102,7 +101,6 @@ jobs:
           retention-days: 1
 
   run-xunit-tests:
-    needs: build-app
     runs-on: ubuntu-latest
     steps:
       - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
@@ -155,7 +153,6 @@ jobs:
           retention-days: 1
 
   run-integration-tests:
-    needs: build-app
     runs-on: ubuntu-latest
     steps:
       - name: Клонируем репозиторий, чтобы dorny/test-reporter имел доступ к хэшам коммитов git-а
