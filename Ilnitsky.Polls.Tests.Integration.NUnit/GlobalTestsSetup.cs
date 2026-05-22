@@ -41,16 +41,16 @@ public class GlobalTestsSetup
         Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", DbConnectionString);
         Environment.SetEnvironmentVariable("ConnectionStrings__Redis", redisConnectionString);
 
-        // Устанавливаем переменные окружения в фабрике для CI/CD
+        // Устанавливаем переменные окружения в фабрике (для запуска тестов в CI/CD)
         Factory = new TestWebAppFactory(DbConnectionString, redisConnectionString);
         HttpClient = Factory.CreateClient();
 
-        // Прогрев веб-сервера
-        try
-        {
-            await HttpClient.GetAsync("api/v1/polls");
-        }
-        catch { /* игнорируем ошибки прогрева */ }
+        //// Прогрев веб-сервера
+        //try
+        //{
+        //    await HttpClient.GetAsync("api/v1/polls");
+        //}
+        //catch { /* игнорируем ошибки прогрева */ }
     }
 
     [OneTimeTearDown]
