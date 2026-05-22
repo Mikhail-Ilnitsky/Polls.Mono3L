@@ -263,11 +263,13 @@ builder.Services.AddTransient<IGetPollLinksHandler, GetPollLinksHandler>();
 builder.Services.AddTransient<IGetPollByIdHandler, GetPollByIdHandler>();
 builder.Services.AddTransient<ICreateRespondentAnswerHandler, CreateRespondentAnswerHandler>();
 
-// Подключение ============================================================================================= //
+// ============================================================================================= //
+//                                    --- Подключение ---
+// ============================================================================================= //
 
 var app = builder.Build();
 
-//app.UseMiddleware<ErrorLoggingMiddleware>();        // Логируем явные ошибки и обрабатываем (и логируем) необработанные исключения
+app.UseMiddleware<ErrorLoggingMiddleware>();        // Логируем явные ошибки и обрабатываем (и логируем) необработанные исключения
 
 app.UseForwardedHeaders(forwardedOptions);          // Подключаем распозначание протокола в случае наличия обратного прокси
 //app.UseHsts();                                    // ТОЛЬКО НА СЕРВЕРЕ! Запрещаем браузеру впредь обращаться не по HTTPS
