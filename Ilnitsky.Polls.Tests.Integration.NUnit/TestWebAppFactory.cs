@@ -11,6 +11,7 @@ public class TestWebAppFactory(string dbConnectionString, string redisConnection
 
     protected override IHost CreateHost(IHostBuilder builder)
     {
+        // Устанавливаем среду Testing, чтобы не настраивался и не запускался Swagger
         builder.UseEnvironment("Testing");
 
         // Этот метод вызывается в самом начале построения Host, 
@@ -24,24 +25,6 @@ public class TestWebAppFactory(string dbConnectionString, string redisConnection
             });
         });
 
-        //return base.CreateHost(builder);
-
-        // Отключаем валидацию DI для тестов, чтобы проверить, в ней ли дело
-        builder.UseDefaultServiceProvider((context, options) =>
-        {
-            options.ValidateScopes = false;
-            options.ValidateOnBuild = false;
-        });
-
-        try
-        {
-            return base.CreateHost(builder);
-        }
-        catch (Exception ex)
-        {
-            // Если приложение падает при старте хоста, мы увидим это в логах NUnit
-            Console.WriteLine($"!!! ФАТАЛЬНЫЙ СБОЙ ИНИЦИАЛИЗАЦИИ ХОСТА: {ex}");
-            throw;
-        }
+        return base.CreateHost(builder);
     }
 }

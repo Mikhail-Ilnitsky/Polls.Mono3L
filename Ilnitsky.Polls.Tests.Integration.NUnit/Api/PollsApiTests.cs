@@ -123,19 +123,6 @@ public class PollsApiTests
         // Act
         var response = await HttpClient.GetAsync($"api/v1/polls/{nonExistentId}");
 
-        // ВРЕМЕННЫЙ ПЕРЕХВАТ ДЛЯ CI/CD: Выведет системный StackTrace Kestrel в консоль
-        if (response.StatusCode == HttpStatusCode.InternalServerError)
-        {
-            var rawContent = await response.Content.ReadAsStringAsync();
-
-            // Пишем в стандартный вывод NUnit — вы увидите это в "Standard Output Messages"
-            Console.WriteLine("================ КРИТИЧЕСКИЙ ЛОГ СЕРВЕРА ================");
-            Console.WriteLine(rawContent);
-            Console.WriteLine("=========================================================");
-
-            Assert.Fail($"Сервер вернул 500. Сырой ответ: {rawContent}");
-        }
-
         // Assert
         response.Should().NotBeNull();
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
