@@ -168,7 +168,7 @@ jobs:
       - name: Запуск тестов Integration
         run: |
           dotnet test Ilnitsky.Polls.Tests.Integration.NUnit/Ilnitsky.Polls.Tests.Integration.NUnit.csproj \
-          --configuration Release \
+          --configuration Debug \
           --filter "Category!=LocalOnly" \
           --verbosity normal \
           --logger "console;verbosity=detailed" \
