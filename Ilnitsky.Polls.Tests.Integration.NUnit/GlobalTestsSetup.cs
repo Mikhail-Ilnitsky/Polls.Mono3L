@@ -37,20 +37,15 @@ public class GlobalTestsSetup
         DbConnectionString = MariaDbContainer.GetConnectionString();
         var redisConnectionString = RedisContainer.GetConnectionString() + ",abortConnect=false,connectTimeout=5000,syncTimeout=5000";
 
-        // Устанавливаем переменные окружения напрямую в процесс тестов (для запуска тестов в студии)
+        // Устанавливаем переменные окружения напрямую в процесс тестов
         Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", DbConnectionString);
         Environment.SetEnvironmentVariable("ConnectionStrings__Redis", redisConnectionString);
 
-        // Устанавливаем переменные окружения в фабрике (для запуска тестов в CI/CD)
-        Factory = new TestWebAppFactory(DbConnectionString, redisConnectionString);
-        HttpClient = Factory.CreateClient();
+        // Устанавливаем среду Testing, чтобы не настраивался и не запускался Swagger
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Testing");
 
-        //// Прогрев веб-сервера
-        //try
-        //{
-        //    await HttpClient.GetAsync("api/v1/polls");
-        //}
-        //catch { /* игнорируем ошибки прогрева */ }
+        Factory = new WebApplicationFactory<Program>();
+        HttpClient = Factory.CreateClient();
     }
 
     [OneTimeTearDown]
