@@ -11,6 +11,8 @@ public class TestWebAppFactory(string dbConnectionString, string redisConnection
 
     protected override IHost CreateHost(IHostBuilder builder)
     {
+        builder.UseEnvironment("Testing");
+
         // Этот метод вызывается в самом начале построения Host, 
         // перекрывая параметры до вызова AutoDetect в Program.cs
         builder.ConfigureAppConfiguration((context, configBuilder) =>
