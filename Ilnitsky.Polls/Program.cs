@@ -98,14 +98,18 @@ builder.Services.AddTransient<DbInitializer>();             // Регистри�
 builder.Services.AddControllers(                            // Регистрируем сервисы контроллеров
     options => options.Filters.Add<ErrorResultFilter>());   // Регистрируем фильтр для сохранения информации об ошибках
 
-// Learn more at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();                 // Регистрируем обнаружитель конечных точек для minimalAPI
-builder.Services.AddSwaggerGen(options =>                   // Регистрируем генератор документации API
+
+if (builder.Environment.IsDevelopment())
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Ilnitsky.Polls.Mono3L API Опросов", Version = "1.0" });
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, "Api.xml");
-    options.IncludeXmlComments(xmlPath);                    // Подключаем XML-комментарии из проекта
-});
+    // Learn more at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddSwaggerGen(options =>               // Регистрируем генератор документации API
+    {
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Ilnitsky.Polls.Mono3L API Опросов", Version = "1.0" });
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, "Api.xml");
+        options.IncludeXmlComments(xmlPath);                // Подключаем XML-комментарии из проекта
+    });
+}
 
 // Кэширование ============================================================================================= //
 
