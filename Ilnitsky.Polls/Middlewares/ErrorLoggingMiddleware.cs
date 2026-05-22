@@ -60,16 +60,10 @@ public class ErrorLoggingMiddleware(
             }
             finally
             {
-                //httpContext.Response.Clear();   // Удаляем возможно неправильные заголовки установленные до выброса исключения
-                //httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                //await httpContext.Response
-                //    .WriteAsJsonAsync(Extensions.ResponseExtensions.GetProblemDetails(httpContext.Response.StatusCode, "Внутренняя ошибка сервера"));
-
-                // ДЛЯ CI/CD: Передаем реальный текст ошибки в HTTP-ответ
-                httpContext.Response.Clear();
+                httpContext.Response.Clear();   // Удаляем возможно неправильные заголовки установленные до выброса исключения
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                httpContext.Response.ContentType = "text/plain";
-                await httpContext.Response.WriteAsync($"[REALLY_ERROR]: {ex.Message}\n{ex.StackTrace}");
+                await httpContext.Response
+                    .WriteAsJsonAsync(Extensions.ResponseExtensions.GetProblemDetails(httpContext.Response.StatusCode, "Внутренняя ошибка сервера"));
             }
         }
     }
