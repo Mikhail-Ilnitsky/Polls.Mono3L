@@ -1,6 +1,7 @@
 using System.Net;
 
 using FluentAssertions;
+using FluentAssertions.Execution;
 
 namespace Ilnitsky.Polls.Tests.Integration.NUnit.Hosting;
 
@@ -14,8 +15,11 @@ public class AppHealthTests
         var content = await response.Content.ReadAsStringAsync();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        content.Should().BeOneOf("Healthy", "Degraded");
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            content.Should().BeOneOf("Healthy", "Degraded");
+        }
     }
 
     [Test]
@@ -26,8 +30,11 @@ public class AppHealthTests
         var content = await response.Content.ReadAsStringAsync();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        content.Should().Be("Healthy");
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            content.Should().Be("Healthy");
+        }
     }
 
     [Test]
@@ -48,13 +55,16 @@ public class AppHealthTests
         var content = await response.Content.ReadAsStringAsync();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        using (new AssertionScope())
+        {
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        // Проверяем наличие стандартных имен метрик prometheus-net
-        content.Should().Contain("http_requests_received_total");
-        content.Should().Contain("http_request_duration_seconds");
+            // Проверяем наличие стандартных имен метрик prometheus-net
+            content.Should().Contain("http_requests_received_total");
+            content.Should().Contain("http_request_duration_seconds");
 
-        // Проверяем наличие имен метрик MariaDB (MySqlConnector)
-        content.Should().Contain("mysqlconnector_db_client_connections_max");
+            // Проверяем наличие имен метрик MariaDB (MySqlConnector)
+            content.Should().Contain("mysqlconnector_db_client_connections_max");
+        }
     }
 }

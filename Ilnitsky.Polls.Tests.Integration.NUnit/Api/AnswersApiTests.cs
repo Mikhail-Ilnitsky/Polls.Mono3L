@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 
 using FluentAssertions;
+using FluentAssertions.Execution;
 
 using Ilnitsky.Polls.Contracts.Dtos.Answers;
 using Ilnitsky.Polls.DataAccess;
@@ -55,8 +56,11 @@ public class AnswersApiTests
             .FirstOrDefaultAsync(a => a.QuestionId == questionId && a.Text == customAnswer);
 
         savedAnswer.Should().NotBeNull();
-        savedAnswer.RespondentId.Should().NotBe(Guid.Empty);
-        savedAnswer.RespondentSessionId.Should().NotBe(Guid.Empty);
+        using (new AssertionScope())
+        {
+            savedAnswer.RespondentId.Should().NotBe(Guid.Empty);
+            savedAnswer.RespondentSessionId.Should().NotBe(Guid.Empty);
+        }
     }
 
     [Test]
@@ -100,8 +104,11 @@ public class AnswersApiTests
             .FirstOrDefaultAsync(a => a.QuestionId == question.Id && a.Text == answer.Text);
 
         savedAnswer.Should().NotBeNull();
-        savedAnswer.RespondentId.Should().NotBe(Guid.Empty);
-        savedAnswer.RespondentSessionId.Should().NotBe(Guid.Empty);
+        using (new AssertionScope())
+        {
+            savedAnswer.RespondentId.Should().NotBe(Guid.Empty);
+            savedAnswer.RespondentSessionId.Should().NotBe(Guid.Empty);
+        }
     }
 
     [TestCase(0, 1)]
@@ -237,11 +244,13 @@ public class AnswersApiTests
         var respondentAnswer = await dbContext.RespondentAnswers
             .FirstOrDefaultAsync(a => a.Text == customAnswer);
 
-        respondentAnswer.Should().NotBeNull();
-        respondentAnswer.PollId.Should().Be(poll.Id);
-        respondentAnswer.QuestionId.Should().Be(questionId);
-        respondentAnswer.RespondentId.Should().Be(respondentId);
-        respondentAnswer.Text.Should().Be(customAnswer);
+        respondentAnswer.Should().BeEquivalentTo(new
+        {
+            PollId = poll.Id,
+            QuestionId = questionId,
+            RespondentId = respondentId,
+            Text = customAnswer
+        });
     }
 
     [Test]
@@ -288,11 +297,13 @@ public class AnswersApiTests
         var respondentAnswer = await dbContext.RespondentAnswers
             .FirstOrDefaultAsync(a => a.Text == customAnswer);
 
-        respondentAnswer.Should().NotBeNull();
-        respondentAnswer.PollId.Should().Be(poll.Id);
-        respondentAnswer.QuestionId.Should().Be(questionId);
-        respondentAnswer.RespondentId.Should().Be(respondentId);
-        respondentAnswer.Text.Should().Be(customAnswer);
+        respondentAnswer.Should().BeEquivalentTo(new
+        {
+            PollId = poll.Id,
+            QuestionId = questionId,
+            RespondentId = respondentId,
+            Text = customAnswer
+        });
     }
 
     [Test]
@@ -337,10 +348,12 @@ public class AnswersApiTests
         var respondentAnswer1 = await dbContext.RespondentAnswers
             .FirstOrDefaultAsync(a => a.Text == answer1 && a.QuestionId == question1.Id);
 
-        respondentAnswer1.Should().NotBeNull();
-        respondentAnswer1.PollId.Should().Be(poll.Id);
-        respondentAnswer1.QuestionId.Should().Be(question1.Id);
-        respondentAnswer1.RespondentId.Should().Be(respondentId);
+        respondentAnswer1.Should().BeEquivalentTo(new
+        {
+            PollId = poll.Id,
+            QuestionId = question1.Id,
+            RespondentId = respondentId
+        });
 
         var question2 = poll.Questions.Skip(1).First();
         var answer2 = question2.Answers.Last().Text;
@@ -356,10 +369,12 @@ public class AnswersApiTests
         var respondentAnswer2 = await dbContext.RespondentAnswers
             .FirstOrDefaultAsync(a => a.Text == answer2 && a.QuestionId == question2.Id);
 
-        respondentAnswer2.Should().NotBeNull();
-        respondentAnswer2.PollId.Should().Be(poll.Id);
-        respondentAnswer2.QuestionId.Should().Be(question2.Id);
-        respondentAnswer2.RespondentId.Should().Be(respondentId);
+        respondentAnswer2.Should().BeEquivalentTo(new
+        {
+            PollId = poll.Id,
+            QuestionId = question2.Id,
+            RespondentId = respondentId
+        });
 
         // Проверяем что сессия не изменилась
         respondentAnswer1.RespondentSessionId.Should().Be(respondentAnswer2.RespondentSessionId);

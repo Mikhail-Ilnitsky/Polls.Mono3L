@@ -103,15 +103,14 @@ public class PollsApiTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var poll = await response.Content.ReadFromJsonAsync<PollDto>();
-        poll.Should().BeEquivalentTo(
-            new
-            {
-                PollId = existingId,
-                existingPoll.Name,
-                existingPoll.DateTime,
-                existingPoll.IsActive,
-                existingPoll.Html
-            });
+        poll.Should().BeEquivalentTo(new
+        {
+            PollId = existingId,
+            existingPoll.Name,
+            existingPoll.DateTime,
+            existingPoll.IsActive,
+            existingPoll.Html
+        });
     }
 
     [Test]
@@ -128,9 +127,12 @@ public class PollsApiTests
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-        problem!.Status.Should().Be(404);
-        problem.Title.Should().Be("Ошибка!");
-        problem.Detail.Should().Contain("Опрос не найден");
+        problem.Should().BeEquivalentTo(new
+        {
+            Status = 404,
+            Title = "Ошибка!",
+            Detail = "Опрос не найден!"
+        });
     }
 
     [Test]
@@ -148,9 +150,12 @@ public class PollsApiTests
         response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
 
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-        problem!.Status.Should().Be(500);
-        problem.Title.Should().Be("Ошибка!");
-        problem.Detail.Should().Contain("Внутренняя ошибка сервера");
+        problem.Should().BeEquivalentTo(new
+        {
+            Status = 500,
+            Title = "Ошибка!",
+            Detail = "Внутренняя ошибка сервера"
+        });
     }
 
     [Test]
